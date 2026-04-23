@@ -90,6 +90,7 @@ function Show-InputForm {
     $txtSecret = New-Object System.Windows.Forms.TextBox
     $txtSecret.Location = New-Object System.Drawing.Point(100,138)
     $txtSecret.Size = New-Object System.Drawing.Size(360,20)
+    $txtSecret.Text = '1234'
     $form.Controls.Add($txtSecret)
 
     $lblMask = New-Object System.Windows.Forms.Label
