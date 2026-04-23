@@ -425,6 +425,89 @@ $mask   = @('root.name','root.email')
 
 After running, check the `examples/out` folder for generated CSV tables and `examples/key.csv` for the mapping file.
 
+# JSON Schema Tree Viewer (GUI Tool)
+
+This utility provides a quick way to inspect the **field structure (schema)** of a JSON file.
+
+It generates a hierarchical view of all variable paths and exports the result to a `tree.txt` file in the same directory as the selected JSON file.
+
+---
+
+## ▶️ How to Run
+
+1. Double-click the batch file:
+
+    run_json_schema_tree.bat
+
+2. A GUI window will open.  
+3. Click **“Select JSON File”** and choose your `.json` file.  
+4. The schema tree will be displayed in the console.  
+5. A `tree.txt` file will be created next to the input JSON file.
+
+---
+
+## 📁 Output Example
+
+For input:
+
+```json
+{
+  "user": {
+    "email": "a@test.com"
+  },
+  "orders": [
+    {
+      "id": 1
+    }
+  ]
+}
+```
+
+Output:
+```
+root
+root.user
+root.user.email
+root.orders[]
+root.orders.id
+```
+Saved to:
+```
+/path/to/your/file/tree.txt
+```
+
+### What This Tool Is For
+Inspecting unknown JSON structures
+Preparing ETL / flattening pipelines
+Identifying relational fields and arrays
+Supporting masking and schema design tools
+
+🎯 How to Use the Tree Effectively
+
+⭐ Good inputs for downstream processing
+Leaf fields:
+root.user.email
+Array fields:
+root.orders.id
+Parent groupings:
+root.user, root.orders
+
+⚠️ Avoid using as inputs
+root (container only)
+[] markers (structural only)
+Intermediate nodes with no leaves
+
+💡 Rule of Thumb
+Use leaf paths → actual values
+Use array.item paths → relational structure
+Ignore structural markers
+
+⚙️ Behavior Notes
+Arrays are shown as [] (structure only)
+Only first array element is inspected
+Output reflects schema, not data values
+
+
 ---
 
 ## Disclaimer

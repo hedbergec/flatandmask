@@ -2,7 +2,7 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
 # -----------------------------
-# Schema collection (for file output)
+# Global storage for export
 # -----------------------------
 $global:TreeLines = New-Object System.Collections.Generic.List[string]
 
@@ -12,7 +12,7 @@ function Add-TreeLine {
 }
 
 # -----------------------------
-# Recursive schema printer
+# Core schema tree traversal
 # -----------------------------
 function Show-TreeFromJson {
     param(
@@ -20,25 +20,45 @@ function Show-TreeFromJson {
         [string]$Prefix = ""
     )
 
+    # -------------------------
+    # Object (dictionary / PSObject)
+    # -------------------------
     if ($Object -is [System.Collections.IDictionary] -or $Object -is [PSCustomObject]) {
 
         foreach ($prop in $Object.PSObject.Properties) {
-            $newPrefix = if ($Prefix) { "$Prefix.$($prop.Name)" } else { $prop.Name }
-            Show-TreeFromJson -Object $prop.Value -Prefix $newPrefix
+
+            $name = $prop.Name
+            $value = $prop.Value
+
+            $newPrefix = if ($Prefix) { "$Prefix.$name" } else { $name }
+
+            Show-TreeFromJson -Object $value -Prefix $newPrefix
         }
     }
+
+    # -------------------------
+    # Array handling
+    # -------------------------
     elseif ($Object -is [System.Collections.IEnumerable] -and -not ($Object -is [string])) {
 
-        $arrayPath = "$Prefix[]"
+        # Print array node (structural marker only)
+        if ($Prefix) {
+            Write-Host "$Prefix[]"
+            Add-TreeLine "$Prefix[]"
+        }
 
-        Write-Host $arrayPath
-        Add-TreeLine $arrayPath
-
+        # Inspect first element only (schema inference)
         $first = $Object | Select-Object -First 1
+
         if ($first) {
-            Show-TreeFromJson -Object $first -Prefix $arrayPath
+            # IMPORTANT: do NOT append [] to prefix for children
+            Show-TreeFromJson -Object $first -Prefix $Prefix
         }
     }
+
+    # -------------------------
+    # Leaf node (primitive)
+    # -------------------------
     else {
         if ($Prefix) {
             Write-Host $Prefix
@@ -65,7 +85,7 @@ $button.Left = 120
 $form.Controls.Add($button)
 
 # -----------------------------
-# Button click logic
+# Button click handler
 # -----------------------------
 $button.Add_Click({
 
@@ -85,16 +105,19 @@ $button.Add_Click({
         try {
             $json = Get-Content $dialog.FileName -Raw | ConvertFrom-Json
 
-            $global:TreeLines.Add("root") | Out-Null
+            # Root
             Write-Host "root"
+            Add-TreeLine "root"
 
+            # Array root case
             if ($json -is [System.Collections.IEnumerable] -and -not ($json -is [string])) {
-                $global:TreeLines.Add("root[]") | Out-Null
+
                 Write-Host "root[]"
+                Add-TreeLine "root[]"
 
                 $first = $json | Select-Object -First 1
                 if ($first) {
-                    Show-TreeFromJson -Object $first -Prefix "root[]"
+                    Show-TreeFromJson -Object $first -Prefix "root"
                 }
             }
             else {
@@ -102,22 +125,25 @@ $button.Add_Click({
             }
 
             # -----------------------------
-            # EXPORT tree.txt next to JSON
+            # Export tree.txt next to JSON
             # -----------------------------
             $outPath = Join-Path (Split-Path $dialog.FileName) "tree.txt"
 
             $global:TreeLines | Set-Content -Path $outPath -Encoding UTF8
 
             Write-Host "`n===================================="
-            Write-Host "Saved schema tree to:"
+            Write-Host "Exported schema tree to:"
             Write-Host $outPath
             Write-Host "===================================="
 
         }
         catch {
-            Write-Host "ERROR: Invalid JSON or unreadable file."
+            Write-Host "ERROR: Invalid JSON or file could not be parsed."
         }
     }
 })
 
+# -----------------------------
+# Run GUI
+# -----------------------------
 $form.ShowDialog()
