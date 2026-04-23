@@ -90,7 +90,6 @@ function Show-InputForm {
     $txtSecret = New-Object System.Windows.Forms.TextBox
     $txtSecret.Location = New-Object System.Drawing.Point(100,138)
     $txtSecret.Size = New-Object System.Drawing.Size(360,20)
-    $txtSecret.Text = '1234'
     $form.Controls.Add($txtSecret)
 
     $lblMask = New-Object System.Windows.Forms.Label
@@ -113,7 +112,15 @@ function Show-InputForm {
     $btnCancel.Location = New-Object System.Drawing.Point(470,240)
     $btnCancel.Size = New-Object System.Drawing.Size(80,28)
 
-    $btnOK.Add_Click({ $form.Tag = 'OK'; $form.Close() })
+    $btnOK.Add_Click({
+        if ($txtSecret.Text.Trim().Length -eq 0) {
+            [System.Windows.Forms.MessageBox]::Show($form, 'Please enter a Secret Key.','Missing Input',[System.Windows.Forms.MessageBoxButtons]::OK,[System.Windows.Forms.MessageBoxIcon]::Warning) | Out-Null
+            return
+        }
+
+        $form.Tag = 'OK'
+        $form.Close()
+    })
     $btnCancel.Add_Click({ $form.Tag = 'Cancel'; $form.Close() })
 
     $form.Controls.Add($btnOK)
