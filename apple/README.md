@@ -39,50 +39,50 @@ pip install openpyxl
 
 Usage examples
 -
-- Process a JSON example (writes outputs to `examples/out_mac` and mapping to `examples/key_mac.csv`):
+- Example 1 — GitHub users (JSON):
 
 ```bash
 ./flatandmask.sh \
 	-i ../examples/complex1.json \
 	-o ../examples/out_mac \
 	-k ../examples/key_mac.csv \
-	-s 's3cr3t' \
-	-m 'root.name,root.email'
+	-s 'my-secret-key' \
+	-m 'root.login,root.avatar_url'
 ```
 
-- Process a CSV input (same flags apply):
+- Example 2 — CSV input:
 
 ```bash
-./flatandmask.sh -i ../examples/sample.csv -o ../examples/out_csv_mac -k ../examples/key_csv_mac.csv -s 's3cr3t' -m 'root.name,root.email'
+./flatandmask.sh \
+	-i ../examples/sample.csv \
+	-o ../examples/out_csv_mac \
+	-k ../examples/key_csv_mac.csv \
+	-s 'my-secret-key' \
+	-m 'root.Name,root.Email'
 ```
 
 Notes on behavior and parity with PowerShell
--
 - Masking: deterministic HMAC-SHA256 with Base64 and 12-character prefix — same as PowerShell.
 - Output: one CSV per table (top-level `root.csv` plus nested child tables like `root_projects.csv`) and a mapping CSV with Original→Masked.
 - XLSX: supported in `flatandmask.py` if `openpyxl` is installed. If not installed, the script will error with an instruction to install it.
 
 Permissions and non-admin use
--
 - The `pip3 --user` install and running the scripts do not require admin privileges.
 - Use user-writable output locations (for example, under `~/Documents` or the project `examples` folder).
 
 Troubleshooting
--
 - "python3 not found": install Python 3 via Homebrew: `brew install python`
 - "openpyxl required": run `python3 -m pip install --user openpyxl`
 - If the shell script fails with permission errors, ensure `flatandmask.sh` is executable and output paths are writable.
 
 Verifying outputs
--
-After a run, inspect the output folder you specified. Example:
+- After a run, inspect the output folder you specified. Example:
 
 ```bash
 ls -l ../examples/out_mac
 head -n 5 ../examples/out_mac/root.csv
-cat ../examples/key_mac.csv | sed -n '1,20p'
+sed -n '1,20p' ../examples/key_mac.csv
 ```
 
 Support
--
-If you want, I can add an automated dependency check to `flatandmask.sh` (auto-install `openpyxl --user` or print a one-line helper). Request that and I will add it.
+- If you want, I can add an automated dependency check to `flatandmask.sh` (auto-install `openpyxl --user` or print a one-line helper). Request that and I will add it.

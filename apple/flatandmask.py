@@ -172,13 +172,10 @@ if __name__ == '__main__':
     SECRET = args.secret
     MASK = args.mask
 
+    # compute mask fields list and export globals for functions
     MASK_FIELDS = [m.strip() for m in MASK.split(',') if m.strip()]
-
-    # expose SECRET + MASK_FIELDS to functions
-    global SECRET
-    SECRET = SECRET
-    global MASK_FIELDS
-    MASK_FIELDS = MASK_FIELDS
+    globals()['SECRET'] = SECRET
+    globals()['MASK_FIELDS'] = MASK_FIELDS
 
     ensure_out(OUTPUT)
 
