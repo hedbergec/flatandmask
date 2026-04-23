@@ -415,10 +415,10 @@ Import-Csv 'C:\output\mapping.csv'
 
 - **Run a non-interactive test** (PowerShell):
 ```powershell
-$script = 'y:\Dropbox\Work\Consult\Consult.Katz\ppd\flatandmask\flatandmask_gui.ps1'
-$input  = 'y:\Dropbox\Work\Consult\Consult.Katz\ppd\flatandmask\examples\sample.json'
-$out    = 'y:\Dropbox\Work\Consult\Consult.Katz\ppd\flatandmask\examples\out'
-$key    = 'y:\Dropbox\Work\Consult\Consult.Katz\ppd\flatandmask\examples\key.csv'
+$script = 'c:\flatandmask\flatandmask_gui.ps1'
+$input  = 'c:\flatandmask\examples\sample.json'
+$out    = 'c:\flatandmask\examples\out'
+$key    = 'c:\flatandmask\examples\key.csv'
 $mask   = @('root.name','root.email')
 & $script -InputFile $input -OutputFolder $out -KeyFile $key -SecretKey 's3cr3t' -MaskFields $mask
 ```

@@ -1,0 +1,200 @@
+﻿"description" : "", "address1" : "LÃƒÂ¤rchenweg 7", "address2" : "", 
+"zip_code" : "6403", "city" : "KÃƒÂ¼ssnacht", "state_code" : null, 
+"country_code" : "CHE", "latitude" : 47.0882193, "longitude" : 
+8.437163399999999 } ], "milestones" : [], "ipo" : null, "video_embeds" : [], 
+"screenshots" : [], "external_links" : [ { "external_url" : 
+"http://origo.ethz.ch", "title" : "Public instance of Oriact Appliance" } ], 
+"partners" : [] }
+{ "_id" : { "$oid" : "52cdef7f4bab8bd67529c6f6" }, "name" : "Adhunk", 
+"permalink" : "adhunk", "crunchbase_url" : 
+"http://www.crunchbase.com/company/adhunk", "homepage_url" : 
+"http://www.adhunk.com", "blog_url" : "http://blog.adhunk.com", 
+"blog_feed_url" : "http://blog.adhunk.com/feed", "twitter_username" : "", 
+"category_code" : "advertising", "number_of_employees" : 3, "founded_year" : 
+2009, "founded_month" : null, "founded_day" : null, "deadpooled_year" : null, 
+"deadpooled_month" : null, "deadpooled_day" : null, "deadpooled_url" : null, 
+"tag_list" : "adhunk, advertiseing, adhunk-publishers, 
+web-publishers-earn-money", "alias_list" : null, "email_address" : 
+"info@adhunk.com", "phone_number" : "9214908579", "description" : "Online 
+Admanager", "created_at" : "Sun Jul 12 12:27:42 UTC 2009", "updated_at" : "Tue 
+Jul 14 00:05:40 UTC 2009", "overview" : "<p>Adhunk is text ad based 
+advertising network which allow advertisers to get the full value of their 
+budget and allow publishers to make money from their blog or site.  </p>", 
+"image" : { "available_sizes" : [ [ [ 99, 33 ], 
+"assets/images/resized/0005/2654/52654v2-max-150x150.jpg" ], [ [ 99, 33 ], 
+"assets/images/resized/0005/2654/52654v2-max-250x250.jpg" ], [ [ 99, 33 ], 
+"assets/images/resized/0005/2654/52654v2-max-450x450.jpg" ] ], "attribution" : 
+null }, "products" : [ { "name" : "Advertisieng", "permalink" : "advertisieng" 
+} ], "relationships" : [ { "is_past" : false, "title" : "Founder", "person" : 
+{ "first_name" : "Manoj", "last_name" : "Sangwan", "permalink" : 
+"manoj-sangwan" } } ], "competitions" : [ { "competitor" : { "name" : 
+"Yahoo!", "permalink" : "yahoo" } }, { "competitor" : { "name" : "Google", 
+"permalink" : "google" } }, { "competitor" : { "name" : "adBrite", "permalink" 
+: "adbrite" } }, { "competitor" : { "name" : "Microsoft", "permalink" : 
+"microsoft" } } ], "providerships" : [], "total_money_raised" : "$0", 
+"funding_rounds" : [], "investments" : [], "acquisition" : null, 
+"acquisitions" : [], "offices" : [ { "description" : "Indian Office", 
+"address1" : "Near Tube Well(south)", "address2" : "Patel Nagar", "zip_code" : 
+"334003", "city" : "Bikaner", "state_code" : null, "country_code" : "IND", 
+"latitude" : null, "longitude" : null } ], "milestones" : [], "ipo" : null, 
+"video_embeds" : [], "screenshots" : [], "external_links" : [ { "external_url" 
+: "http://www.hubpages.in/internet-and-businesses-online/adhunk/tips-to-earn-mo
+ney-from-adhunk", "title" : "Tips to earn money from Adhunk" } ], "partners" : 
+[] }
+{ "_id" : { "$oid" : "52cdef7f4bab8bd67529c6f7" }, "name" : "AfterLogic", 
+"permalink" : "afterlogic", "crunchbase_url" : 
+"http://www.crunchbase.com/company/afterlogic", "homepage_url" : 
+"http://www.afterlogic.com", "blog_url" : "", "blog_feed_url" : "", 
+"twitter_username" : "afterlogic", "category_code" : "software", 
+"number_of_employees" : null, "founded_year" : 2002, "founded_month" : null, 
+"founded_day" : null, "deadpooled_year" : null, "deadpooled_month" : null, 
+"deadpooled_day" : null, "deadpooled_url" : null, "tag_list" : "", 
+"alias_list" : "", "email_address" : "support@afterlogic.com", "phone_number" 
+: "+1-973-784-1100", "description" : ".NET Email Components and Webmail", 
+"created_at" : "Sun Jul 12 13:05:23 UTC 2009", "updated_at" : "Wed Jul 24 
+16:16:50 UTC 2013", "overview" : "<p>AfterLogic Corporation is a Livingston, 
+New Jersey based technology corporation founded in 2002. The company&#8217;s 
+areas of specialization are COM/ActiveX and .NET email components development, 
+email software development and software consulting. </p>", "image" : { 
+"available_sizes" : [ [ [ 150, 147 ], 
+"assets/images/resized/0025/0177/250177v1-max-150x150.jpg" ], [ [ 210, 206 ], 
+"assets/images/resized/0025/0177/250177v1-max-250x250.jpg" ], [ [ 210, 206 ], 
+"assets/images/resized/0025/0177/250177v1-max-450x450.jpg" ] ], "attribution" 
+: null }, "products" : [ { "name" : "AfterLogic  WebMail Pro", "permalink" : 
+"afterlogic-webmail-pro" }, { "name" : "MailBee.NET  Objects", "permalink" : 
+"mailbee-net-objects" }, { "name" : "MailBee  Objects", "permalink" : 
+"mailbee-objects" }, { "name" : "MailBee  Message Queue", "permalink" : 
+"mailbee-message-queue" } ], "relationships" : [ { "is_past" : true, "title" : 
+"Technical Writer", "person" : { "first_name" : "Sergey", "last_name" : 
+"Gerasimenko", "permalink" : "sergey-gerasimenko" } } ], "competitions" : [], 
+"providerships" : [], "total_money_raised" : "$0", "funding_rounds" : [], 
+"investments" : [], "acquisition" : null, "acquisitions" : [], "offices" : [ { 
+"description" : "Livingston", "address1" : "P.O. Box 2096", "address2" : "", 
+"zip_code" : "07039", "city" : "Livingston", "state_code" : "NJ", 
+"country_code" : "USA", "latitude" : 40.7930239, "longitude" : 
+-74.32355389999999 } ], "milestones" : [], "ipo" : null, "video_embeds" : [], 
+"screenshots" : [ { "available_sizes" : [ [ [ 150, 137 ], 
+"assets/images/resized/0027/1251/271251v2-max-150x150.png" ], [ [ 250, 229 ], 
+"assets/images/resized/0027/1251/271251v2-max-250x250.png" ], [ [ 450, 412 ], 
+"assets/images/resized/0027/1251/271251v2-max-450x450.png" ] ], "attribution" 
+: null } ], "external_links" : [], "partners" : [] }
+{ "_id" : { "$oid" : "52cdef7f4bab8bd67529c6f8" }, "name" : "goBookmaker", 
+"permalink" : "gobookmaker", "crunchbase_url" : 
+"http://www.crunchbase.com/company/gobookmaker", "homepage_url" : 
+"http://www.gobookmaker.com", "blog_url" : "http://blog.gobookmaker.com", 
+"blog_feed_url" : "", "twitter_username" : "gobookmaker", "category_code" : 
+"web", "number_of_employees" : null, "founded_year" : null, "founded_month" : 
+null, "founded_day" : null, "deadpooled_year" : null, "deadpooled_month" : 
+null, "deadpooled_day" : null, "deadpooled_url" : null, "tag_list" : 
+"sportsbook-agent, pay-per-head, bookie-software, sportsbook-software, 
+sports-betting-software, betting-manager, sports-book-betting, 
+online-sports-betting, betting-software, online-sportsbook, sports-bet, 
+sportsbooks, bookies, wagering, bookie, sports-boo", "alias_list" : "", 
+"email_address" : "sales@gobookmaker.com", "phone_number" : "+44 (20) 8144 
+2683", "description" : "Create your own sportsbook", "created_at" : "Sun Jul 
+12 13:38:20 UTC 2009", "updated_at" : "Sun Jul 26 16:39:58 UTC 2009", 
+"overview" : "<p>goBookmaker lets you create your own sportsbook 
+website.</p>", "image" : { "available_sizes" : [ [ [ 150, 29 ], 
+"assets/images/resized/0005/2657/52657v4-max-150x150.jpg" ], [ [ 250, 49 ], 
+"assets/images/resized/0005/2657/52657v4-max-250x250.jpg" ], [ [ 268, 53 ], 
+"assets/images/resized/0005/2657/52657v4-max-450x450.jpg" ] ], "attribution" : 
+null }, "products" : [], "relationships" : [ { "is_past" : false, "title" : 
+"Marketing manager", "person" : { "first_name" : "Chris", "last_name" : 
+"Miles", "permalink" : "chris-miles" } }, { "is_past" : false, "title" : 
+"Sales manager", "person" : { "first_name" : "Mike", "last_name" : "Jameson", 
+"permalink" : "mike-jameson" } } ], "competitions" : [], "providerships" : [], 
+"total_money_raised" : "$0", "funding_rounds" : [], "investments" : [], 
+"acquisition" : null, "acquisitions" : [], "offices" : [], "milestones" : [], 
+"ipo" : null, "video_embeds" : [], "screenshots" : [ { "available_sizes" : [ [ 
+[ 150, 80 ], "assets/images/resized/0005/4226/54226v2-max-150x150.jpg" ], [ [ 
+250, 133 ], "assets/images/resized/0005/4226/54226v2-max-250x250.jpg" ], [ [ 
+450, 240 ], "assets/images/resized/0005/4226/54226v2-max-450x450.jpg" ] ], 
+"attribution" : null } ], "external_links" : [], "partners" : [] }
+{ "_id" : { "$oid" : "52cdef7f4bab8bd67529c6f9" }, "name" : "EnteGreat 
+Solutions", "permalink" : "entegreat-solutions", "crunchbase_url" : 
+"http://www.crunchbase.com/company/entegreat-solutions", "homepage_url" : "", 
+"blog_url" : "", "blog_feed_url" : "", "twitter_username" : "", 
+"category_code" : "software", "number_of_employees" : null, "founded_year" : 
+null, "founded_month" : null, "founded_day" : null, "deadpooled_year" : null, 
+"deadpooled_month" : null, "deadpooled_day" : null, "deadpooled_url" : null, 
+"tag_list" : "", "alias_list" : "", "email_address" : "", "phone_number" : "", 
+"description" : "", "created_at" : "Sun Jul 12 14:52:14 UTC 2009", 
+"updated_at" : "Sun Jul 12 14:54:32 UTC 2009", "overview" : "<p>EnteGreat 
+Solutions, LLC offers supply chain consulting and project management services. 
+It offers advanced planning and scheduling, management consulting, supplier 
+relationship management, service lifecycle management, supply chain 
+management, and customer relationship management services, as well as 
+upgrading and migration services for SAP application. The company also offers 
+change and learning technologies, including ERP, CRM, SCM, and ebusiness 
+training; business and operations training; multimedia and Web-based training 
+development; change management and process adoption; and elearning services. 
+It serves general manufacturing, oil and gas, distribution, and high-tech 
+industries. The company is based in Birmingham, Alabama. As of May 5, 2008, 
+EnteGreat Solutions, LLC operates as a subsidiary of EnteGreat, Inc.</p>", 
+"image" : null, "products" : [], "relationships" : [], "competitions" : [], 
+"providerships" : [], "total_money_raised" : "$0", "funding_rounds" : [], 
+"investments" : [], "acquisition" : null, "acquisitions" : [ { "price_amount" 
+: 5120000, "price_currency_code" : "USD", "term_code" : null, "source_url" : 
+"", "source_description" : "", "acquired_year" : 2008, "acquired_month" : 5, 
+"acquired_day" : 10, "company" : { "name" : "EnteGreat", "permalink" : 
+"entegreat" } } ], "offices" : [ { "description" : "", "address1" : "", 
+"address2" : "", "zip_code" : "", "city" : "Birmingham", "state_code" : "AL", 
+"country_code" : "USA", "latitude" : 33.518885, "longitude" : -86.816068 } ], 
+"milestones" : [], "ipo" : null, "video_embeds" : [], "screenshots" : [], 
+"external_links" : [], "partners" : [] }
+{ "_id" : { "$oid" : "52cdef7f4bab8bd67529c6fa" }, "name" : "EnteGreat", 
+"permalink" : "entegreat", "crunchbase_url" : 
+"http://www.crunchbase.com/company/entegreat", "homepage_url" : 
+"http://www.entegreat.com", "blog_url" : "", "blog_feed_url" : "", 
+"twitter_username" : "", "category_code" : "enterprise", "number_of_employees" 
+: null, "founded_year" : 2000, "founded_month" : null, "founded_day" : null, 
+"deadpooled_year" : null, "deadpooled_month" : null, "deadpooled_day" : null, 
+"deadpooled_url" : null, "tag_list" : null, "alias_list" : "", "email_address" 
+: "support@entegreat.com", "phone_number" : "205-968-3050", "description" : 
+"", "created_at" : "Sun Jul 12 14:53:40 UTC 2009", "updated_at" : "Sat Mar 09 
+03:11:49 UTC 2013", "overview" : "<p>EnteGreat, Inc. provides consulting and 
+systems integration services for manufacturers in North America. It offers 
+Manufacturing Value Framework solutions, including Compliant Manufacturing 
+Framework, manufacturing energy management solutions, Manufacturing 
+Performance Framework, and Packaging Performance Solutions. The company also 
+provides professional development training and Werum PAS-X training services. 
+It helps its clients to deal with manufacturing and supply chain management 
+issues. It serves food, beverage and brewing, consumer packaged goods, life 
+sciences, pharmaceuticals, packaging, automotive, electronics, oil, biotech, 
+medical devices, chemicals, plastics, polymers, fibers, films, mill products, 
+gas, metals and mining, and pulp and paper industries. EnteGreat, Inc. was 
+incorporated in 2000 and is based in Birmingham, Alabama.</p>", "image" : { 
+"available_sizes" : [ [ [ 145, 35 ], 
+"assets/images/resized/0005/2663/52663v1-max-150x150.png" ], [ [ 145, 35 ], 
+"assets/images/resized/0005/2663/52663v1-max-250x250.png" ], [ [ 145, 35 ], 
+"assets/images/resized/0005/2663/52663v1-max-450x450.png" ] ], "attribution" : 
+null }, "products" : [], "relationships" : [], "competitions" : [], 
+"providerships" : [], "total_money_raised" : "$0", "funding_rounds" : [ { "id" 
+: 36090, "round_code" : "unattributed", "source_url" : 
+"http://www.finsmes.com/2013/03/entegreat-receives-investment.html", 
+"source_description" : "EnteGreat Receives Investment", "raised_amount" : 
+null, "raised_currency_code" : null, "funded_year" : 2013, "funded_month" : 3, 
+"funded_day" : 8, "investments" : [ { "company" : null, "financial_org" : { 
+"name" : "Fidelis Capital", "permalink" : "fidelis-capital" }, "person" : null 
+}, { "company" : null, "financial_org" : { "name" : "Bonaventure Capital", 
+"permalink" : "bonaventure-capital" }, "person" : null } ] } ], "investments" 
+: [], "acquisition" : { "price_amount" : 5120000, "price_currency_code" : 
+"USD", "term_code" : null, "source_url" : "", "source_description" : "", 
+"acquired_year" : 2008, "acquired_month" : 5, "acquired_day" : 10, 
+"acquiring_company" : { "name" : "EnteGreat Solutions", "permalink" : 
+"entegreat-solutions" } }, "acquisitions" : [], "offices" : [ { "description" 
+: "", "address1" : "1900 International Park Drive", "address2" : "Suite 200", 
+"zip_code" : "35243-4204", "city" : "Birmingham", "state_code" : "AL", 
+"country_code" : "USA", "latitude" : 33.4077856, "longitude" : 
+-86.76130190000001 } ], "milestones" : [], "ipo" : null, "video_embeds" : [], 
+"screenshots" : [], "external_links" : [], "partners" : [] }
+.
+At Y:\Dropbox\Work\Consult\Consult.Katz\ppd\flatandmask\flatandmask.ps1:31 
+char:46
++             return (Get-Content $Path -Raw | ConvertFrom-Json)
++                                              ~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [ConvertFrom-Json], ArgumentEx 
+   ception
+    + FullyQualifiedErrorId : System.ArgumentException,Microsoft.PowerShell.Co 
+   mmands.ConvertFromJsonCommand
+ 

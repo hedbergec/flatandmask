@@ -28,7 +28,13 @@ function Load-InputData {
 
     switch ($ext) {
         ".json" {
-            return (Get-Content $Path -Raw | ConvertFrom-Json)
+            try {
+                return (Get-Content $Path -Raw | ConvertFrom-Json)
+            }
+            catch {
+                # Fallback: treat file as NDJSON (one JSON object per line)
+                return (Get-Content $Path | ForEach-Object { $_ | ConvertFrom-Json })
+            }
         }
         ".csv" {
             return (Import-Csv $Path)
