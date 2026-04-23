@@ -1,0 +1,6 @@
+"_parent_id","value","_id"
+"6d5be529-3dd9-44a0-9cb7-748873188984","@{name=ProjectA; budget=50000; tasks=System.Object[]}","e7608fe1-6f04-490d-a7ba-2c91e13d282c"
+"6d5be529-3dd9-44a0-9cb7-748873188984","@{name=ProjectB; budget=75000}","63f06129-b0f2-425a-9a3e-c7933103ba7e"
+"93ad2b57-b40d-4f55-b29b-5cb1d865d246","@{name=DataPipe; budget=20000}","791d8d91-2648-42cb-b45e-25539507d999"
+"134e801e-6246-48fe-bc97-21f45c7100ee","@{name=UpgradeX; budget=150000; tasks=System.Object[]}","5eeb77f4-ea77-4121-becf-b6ecaf4a4303"
+"23db3ee3-e503-424a-b715-f8cc856da32f","@{name=HelpPortal; budget=12000}","8aa4c14d-787d-483f-92ac-4e92ac60eee9"

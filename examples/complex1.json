@@ -1,0 +1,88 @@
+[
+  {
+    "id": 1,
+    "name": "Alice Johnson",
+    "email": "alice.johnson@example.com",
+    "role": "Engineer",
+    "address": {
+      "street": "123 Maple Ave",
+      "city": "Springfield",
+      "zip": "12345",
+      "geo": { "lat": 40.123, "lng": -75.123 }
+    },
+    "company": {
+      "name": "Acme Widgets",
+      "department": { "name": "Engineering", "floor": 5 }
+    },
+    "projects": [
+      { "name": "ProjectA", "budget": 50000, "tasks": [ { "task": "design", "owner": "Alice" }, { "task": "build", "owner": "Team" } ] },
+      { "name": "ProjectB", "budget": 75000 }
+    ],
+    "contacts": [ { "type": "mobile", "number": "555-0101" }, { "type": "work", "number": "555-0111" } ],
+    "meta": { "created": "2024-01-01T10:00:00Z", "tags": ["premium","active"] }
+  },
+  {
+    "id": 2,
+    "name": "Bob Smith",
+    "email": "bob.smith@example.com",
+    "role": "Analyst",
+    "address": {
+      "street": "456 Oak St",
+      "city": "Riverside",
+      "zip": "23456",
+      "geo": { "lat": 41.234, "lng": -74.234 }
+    },
+    "company": { "name": "DataCorp", "department": { "name": "Analytics", "floor": 3 } },
+    "projects": [ { "name": "DataPipe", "budget": 20000 } ],
+    "contacts": [ { "type": "mobile", "number": "555-0202" } ],
+    "meta": { "created": "2024-02-10T09:30:00Z", "tags": ["trial"] }
+  },
+  {
+    "id": 3,
+    "name": "Carol Lee",
+    "email": "carol.lee@example.com",
+    "role": "Manager",
+    "address": {
+      "street": "789 Pine Rd",
+      "city": "Lakeside",
+      "zip": "34567",
+      "geo": { "lat": 42.345, "lng": -73.345 }
+    },
+    "company": { "name": "Acme Widgets", "department": { "name": "Product", "floor": 4 } },
+    "projects": [
+      { "name": "UpgradeX", "budget": 150000, "tasks": [ { "task": "plan", "owner": "Carol" } ] }
+    ],
+    "contacts": [],
+    "meta": { "created": "2024-03-15T14:20:00Z", "tags": [] }
+  },
+  {
+    "id": 4,
+    "name": "Dan Turner",
+    "email": "dan.turner@example.com",
+    "role": "Contractor",
+    "address": {
+      "street": "321 Birch Blvd",
+      "city": "Hilltown",
+      "zip": "45678"
+    },
+    "company": { "name": "Contractors Inc" },
+    "projects": [],
+    "meta": { "created": "2024-04-01T08:00:00Z", "notes": { "priority": "low" } }
+  },
+  {
+    "id": 5,
+    "name": "Eve Martinez",
+    "email": "eve.martinez@example.com",
+    "role": "Support",
+    "address": {
+      "street": "159 Cedar Way",
+      "city": "Meadowville",
+      "zip": "56789",
+      "geo": { "lat": 43.456, "lng": -72.456 }
+    },
+    "company": { "name": "HelpDesk", "department": { "name": "Support", "floor": 2 } },
+    "projects": [ { "name": "HelpPortal", "budget": 12000 } ],
+    "contacts": [ { "type": "email", "value": "eve.contact@example.com" } ],
+    "meta": { "created": "2024-04-20T12:00:00Z" }
+  }
+]
