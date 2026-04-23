@@ -27,6 +27,31 @@ chmod +x flatandmask.sh
 
 ```bash
 python3 -m pip install --user openpyxl
+Unit tests
+-
+Install the test dependencies and run the unit tests included in `apple/tests`:
+
+```bash
+python3 -m pip install --user -r requirements.txt
+python3 -m pytest -q
+```
+
+Example (complex public JSON)
+-
+This repo includes a pytest that downloads a publicly available, nested JSON (jsonplaceholder.typicode.com/users), runs the processor, and masks two fields (`root.name` and `root.email`). To run the same manual example:
+
+```bash
+mkdir -p examples
+curl -s https://jsonplaceholder.typicode.com/users -o examples/jsonplaceholder_users.json
+./flatandmask.sh \
+	-i examples/jsonplaceholder_users.json \
+	-o examples/out_jsonplaceholder \
+	-k examples/key_jsonplaceholder.csv \
+	-s 'my-secret-key' \
+	-m 'root.name,root.email'
+```
+
+After running, inspect `examples/key_jsonplaceholder.csv` to see the Original→Masked mappings for the two masked fields.
 ```
 
 3. (Optional) Create a virtual environment to isolate dependencies:
