@@ -74,6 +74,8 @@ Avoids manual execution policy configuration.
 
 No PowerShell, installation, or configuration needed.
 
+![DataMaskingTool.exe in Windows Explorer](screenshots/theexecutable.png)
+
 ## Usage
 
 ### Basic Workflow
@@ -116,6 +118,10 @@ launch.bat
 Double-click DataMaskingTool.exe
 ```
 
+Main application window:
+
+![Initial application window](screenshots/firstopened.png)
+
 #### 2. Select Input File
 
 Click "Browse..." next to "Input File (JSON/CSV)" and choose your data file.
@@ -144,6 +150,10 @@ Click "Select Fields to Mask" to open the field selection dialog.
 - Shows all column names
 - Check boxes for columns containing sensitive data
 
+Example field selection dialog:
+
+![Field selection dialog](screenshots/pickfields.png)
+
 #### 5. Enter Secret Key
 
 Enter a strong, memorable secret key. This key:
@@ -166,6 +176,10 @@ Click "Run Masking" to process the file.
 #### 7. Review Output
 
 Output files are saved to your chosen output folder.
+
+Completed run example:
+
+![Completed masking run](screenshots/endscreen.png)
 
 ## Output Files
 
