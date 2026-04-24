@@ -1,4 +1,3 @@
-
 # Data Masking Tool
 
 **Version 1.0.1**
@@ -44,9 +43,10 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 ### Option 1: PowerShell Script (Direct Execution)
 
 1. Keep only these files:
-   - `DataMaskingTool.ps1`
 
+   - `DataMaskingTool.ps1`
 2. Run in PowerShell:
+
    ```powershell
    Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
    .\DataMaskingTool.ps1
@@ -55,9 +55,9 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 ### Option 2: Batch File Launcher
 
 1. Keep only:
+
    - `DataMaskingTool.ps1`
    - `launch.bat`
-
 2. Double-click `launch.bat` to start the GUI
 
 Avoids manual execution policy configuration.
@@ -65,12 +65,11 @@ Avoids manual execution policy configuration.
 ### Option 3: Standalone EXE (Fully Portable)
 
 1. Build the EXE:
+
    ```powershell
    .\Build.ps1 -BuildEXE
    ```
-
 2. Copy only `DataMaskingTool.exe` from the `build/exe/` folder
-
 3. Double-click `DataMaskingTool.exe` on any Windows machine
 
 No PowerShell, installation, or configuration needed.
@@ -100,16 +99,19 @@ No PowerShell, installation, or configuration needed.
 #### 1. Launch the Application
 
 **PowerShell:**
+
 ```powershell
 .\DataMaskingTool.ps1
 ```
 
 **Batch File:**
+
 ```batch
 launch.bat
 ```
 
 **EXE:**
+
 ```
 Double-click DataMaskingTool.exe
 ```
@@ -119,6 +121,7 @@ Double-click DataMaskingTool.exe
 Click "Browse..." next to "Input File (JSON/CSV)" and choose your data file.
 
 **Supported Formats:**
+
 - `*.json` - JSON files with objects or arrays of objects
 - `*.csv` - CSV files with headers
 
@@ -131,22 +134,26 @@ For JSON files only: Click "View Tree" to browse the schema structure with searc
 Click "Select Fields to Mask" to open the field selection dialog.
 
 **For JSON Files:**
+
 - Shows all nested field paths (e.g., `root.user.email`, `root.address.city`)
 - PowerShell internal properties are auto-filtered
 - Check boxes for sensitive fields
 
 **For CSV Files:**
+
 - Shows all column names
 - Check boxes for columns containing sensitive data
 
 #### 5. Enter Secret Key
 
 Enter a strong, memorable secret key. This key:
+
 - Determines the masked output values
 - Must remain consistent for replication and merging
 - Should be stored securely
 
 **Example keys:**
+
 ```
 MyCompany_TestEnv_Q2024
 SecretKey_PII_Masking_V1
@@ -165,6 +172,7 @@ Output files are saved to your chosen output folder.
 ### CSV Files (All Data)
 
 **data.csv** - Complete dataset with selected fields masked and all others intact
+
 ```csv
 id,name,email,phone,department
 1,John Doe,ABC123XYZ,DEF456GHI,Sales
@@ -172,6 +180,7 @@ id,name,email,phone,department
 ```
 
 **Additional normalized tables** (e.g., user.csv, address.csv, contact.csv)
+
 - Generated from nested JSON structures
 - Include foreign key relationships (root_id, user_id, address_id, etc.)
 - Usable for manual SQL/Excel JOIN operations
@@ -179,6 +188,7 @@ id,name,email,phone,department
 ### Masking Key
 
 **masking_key.csv** - Complete mapping of original → masked values with field names
+
 ```csv
 Original,Masked,Field
 john.doe@company.com,ABC123XYZ,email
@@ -187,6 +197,7 @@ jane.smith@company.com,JKL789MNO,email
 ```
 
 Uses for this file:
+
 - Verify masking consistency
 - Troubleshoot data issues
 - Create reverse lookups (if needed)
@@ -195,6 +206,7 @@ Uses for this file:
 ### JSON Export (JSON Input Only)
 
 **<filename>_masked.json** - Full JSON with original structure preserved, only selected fields masked
+
 ```json
 [
   {
@@ -215,6 +227,7 @@ Uses for this file:
 **replicate_masking.ps1** - Auto-generated script containing all masking logic and settings
 
 Usage:
+
 ```powershell
 .\replicate_masking.ps1 -InputFile "new_data.json"
 
@@ -249,6 +262,7 @@ Complete mapping of all masked values created, including field name for each mas
 ### Table Normalization
 
 CSV data is processed through normalization logic:
+
 - Flat CSV stays as single table: `data.csv`
 - Generates `masking_key.csv` with all original→masked mappings
 - Generates replication script with identical masking logic
@@ -256,6 +270,7 @@ CSV data is processed through normalization logic:
 ### Replication for CSV
 
 Auto-generated `replicate_masking.ps1` can re-run same masking on new CSV files:
+
 - Uses same secret key for consistent values
 - Applies same field selections
 - Outputs same structure
@@ -263,6 +278,7 @@ Auto-generated `replicate_masking.ps1` can re-run same masking on new CSV files:
 ### Merging Masked CSVs
 
 When running replication:
+
 - Secret key determines masked values (deterministic)
 - Same input produces same output
 - You can safely merge multiple masked datasets with consistent IDs
@@ -273,6 +289,7 @@ When running replication:
 ### Example 1: Mask Customer PII in CSV
 
 **Input:** `customers.csv`
+
 ```csv
 customer_id,name,email,phone,signup_date
 101,Alice Johnson,alice@mail.com,555-0001,2024-01-15
@@ -280,6 +297,7 @@ customer_id,name,email,phone,signup_date
 ```
 
 **Steps:**
+
 1. Launch tool
 2. Select `customers.csv`
 3. Select fields: `email`, `phone`
@@ -287,6 +305,7 @@ customer_id,name,email,phone,signup_date
 5. Click Run
 
 **Output:** `data.csv`
+
 ```csv
 customer_id,name,email,phone,signup_date
 101,Alice Johnson,KmF7JxQpL2,NmPqRsTu,2024-01-15
@@ -294,6 +313,7 @@ customer_id,name,email,phone,signup_date
 ```
 
 **Output:** `masking_key.csv`
+
 ```csv
 Original,Masked,Field
 alice@mail.com,KmF7JxQpL2,email
@@ -305,6 +325,7 @@ bob@mail.com,VwXyZaBcD,email
 ### Example 2: Mask Nested JSON with Tables
 
 **Input:** `users.json`
+
 ```json
 [
   {
@@ -326,18 +347,21 @@ bob@mail.com,VwXyZaBcD,email
 **Outputs:**
 
 `data.csv` (normalized root table):
+
 ```csv
 root_id,id,name,address
 abc12345,1,Charlie Brown,456 Oak Ave
 ```
 
 `profile.csv` (nested profile table):
+
 ```csv
 root_id,profile_id,name,email
 abc12345,prof1111,Charlie Brown,OpQrStUvWx
 ```
 
 `contact.csv` (nested contact table):
+
 ```csv
 root_id,contact_id,phone
 abc12345,cont1111,YzAbCdEfGh
@@ -355,6 +379,7 @@ After initial masking with secret key `TestMask_2024`:
 ```
 
 Results:
+
 - `alice@mail.com` always masks to `KmF7JxQpL2`
 - Same deterministic IDs generated
 - Safe to merge multiple masked datasets
@@ -364,6 +389,7 @@ Results:
 The tool generates usable IDs for manual merging:
 
 **Key Features:**
+
 - Each table gets a unique ID column (`root_id`, `user_id`, `address_id`, etc.)
 - Parent-child relationships maintained through foreign key IDs
 - IDs are deterministic (same input + same key = same ID)
@@ -371,6 +397,7 @@ The tool generates usable IDs for manual merging:
 - Cross-reference child tables back to parent using ID columns
 
 **Manual Merge Example:**
+
 ```sql
 SELECT d.*, p.email, c.phone
 FROM data d
@@ -394,12 +421,14 @@ LEFT JOIN contact c ON d.root_id = c.root_id
 ### "PowerShell execution policy" Error
 
 **Solution - Temporary:**
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
 .\DataMaskingTool.ps1
 ```
 
 **Solution - Persistent:**
+
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
@@ -413,11 +442,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### Output Files Are Empty
 
 **Causes:**
+
 - Input file format issue or invalid JSON/CSV
 - No fields selected for masking
 - Input file locked by another program
 
 **Solutions:**
+
 1. Verify input file is valid JSON/CSV
 2. Ensure at least one field is selected
 3. Close other programs using the file
@@ -443,31 +474,21 @@ Install-Module -Name ps2exe -Force
 ```
 
 Outputs:
+
 - `build/dist/` - PowerShell portable version
 - `build/exe/` - Standalone EXE (fully portable)
 
-### What You Can Delete
-
-After building, you only need one of these:
-
-- ✅ **Just the EXE**: Copy `build/exe/DataMaskingTool.exe` to any Windows machine
-- ✅ **Just the script**: Keep `DataMaskingTool.ps1` and `launch.bat`
-
-Delete these files:
-- ❌ `Build.ps1` (no longer needed after building)
-- ❌ `DataMasking.ps1` (merged into DataMaskingTool.ps1)
-- ❌ `CsvFieldSelector.ps1` (merged into DataMaskingTool.ps1)
-- ❌ `TreeViewer.ps1` (merged into DataMaskingTool.ps1)
-- ❌ `Wrapper.vb` (not needed for consolidated version)
 
 ## Files Structure
 
 **Minimal deployment:**
+
 ```
 DataMaskingTool.exe              # Portable, no dependencies
 ```
 
 **Or with script:**
+
 ```
 DataMaskingTool.ps1              # Main script
 launch.bat                        # Batch launcher (optional)
