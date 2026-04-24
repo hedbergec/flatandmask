@@ -1,0 +1,6 @@
+﻿"address_id","addresses_id","city","isPrimary","root_id","state","street","type","verified","zipCode"
+"ua001","addresses-0001","7muYoO27cBZF","True","root-0001","CA","3t6Dw5QeXfE3","home","True","94102"
+"ua002","addresses-0002","7muYoO27cBZF","False","root-0001","CA","s8m4tExUztPO","work","True","94103"
+"ua003","addresses-0003","ji+/3s+elBKu","True","root-0002","NY","6YuxDI1cnQbi","home","True","10006"
+"ua004","addresses-0004","lwCAkpI0VnES","True","root-0003","MA","pznjuCs4AY1x","home","False","02116"
+"ua005","addresses-0005","lwCAkpI0VnES","False","root-0003","MA","Gzm5FAJ/ObmZ","work","True","02115"

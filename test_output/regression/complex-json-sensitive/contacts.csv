@@ -1,0 +1,4 @@
+﻿"contact_id","contacts_id","email","name","phone","relationship","root_id"
+"ct001","contacts-0001","s8OOuko9VQH5","322ZE/MoriiV","cE5RmNZ41TXP","spouse","root-0001"
+"ct002","contacts-0002",,"MzcYABTCHrc+","c/RGxSnHsYU+","brother","root-0001"
+"ct003","contacts-0003","f5ICq5Bvg0Fe","Z5ulsDDEIiiZ","8bDihVuEjzdC","father","root-0002"
