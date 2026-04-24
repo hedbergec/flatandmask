@@ -1,6 +1,0 @@
-"meta","company","id","role","name","address","_id","email"
-"@{created=2024-01-01T10:00:00Z; tags=System.Object[]}","@{name=Acme Widgets; department=}","1","Engineer","T6VrKrguIydk","@{street=123 Maple Ave; city=Springfield; zip=12345; geo=}","6d5be529-3dd9-44a0-9cb7-748873188984","uhiGsCYbdsrp"
-"@{created=2024-02-10T09:30:00Z; tags=System.Object[]}","@{name=DataCorp; department=}","2","Analyst","28+JllkAAVKq","@{street=456 Oak St; city=Riverside; zip=23456; geo=}","93ad2b57-b40d-4f55-b29b-5cb1d865d246","zcJiiKc//out"
-"@{created=2024-03-15T14:20:00Z; tags=System.Object[]}","@{name=Acme Widgets; department=}","3","Manager","SzFVsaLUEVWx","@{street=789 Pine Rd; city=Lakeside; zip=34567; geo=}","134e801e-6246-48fe-bc97-21f45c7100ee","WpJDjdcpt160"
-"@{created=2024-04-01T08:00:00Z; notes=}","@{name=Contractors Inc}","4","Contractor","JAm1Sjg63nOH","@{street=321 Birch Blvd; city=Hilltown; zip=45678}","d2f515bf-ec38-4e4e-9ad1-a72ac2c4ed97","o1fstFOeO1ZX"
-"@{created=2024-04-20T12:00:00Z}","@{name=HelpDesk; department=}","5","Support","in/SZCrMUr4J","@{street=159 Cedar Way; city=Meadowville; zip=56789; geo=}","23db3ee3-e503-424a-b715-f8cc856da32f","6UDZJHZPa5mW"

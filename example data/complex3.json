@@ -1,0 +1,225 @@
+
+[
+  {
+    "root_id": "u001",
+    "firstName": "James",
+    "lastName": "Anderson",
+    "email": "james.anderson@example.com",
+    "phone": "555-0101",
+    "ssn": "123-45-6789",
+    "dateOfBirth": "1985-03-15",
+    "isActive": true,
+    "createdAt": "2020-01-15T10:30:00Z",
+    "metadata": {
+      "lastLogin": "2024-01-20T14:22:30Z",
+      "loginCount": 247,
+      "preferredLanguage": "en"
+    },
+    "company": {
+      "company_id": "c001",
+      "name": "Tech Solutions Inc",
+      "companySize": "medium",
+      "industryCode": "software",
+      "founded": 2005,
+      "headquarters": {
+        "address_id": "a001",
+        "street": "123 Silicon Valley Drive",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94105",
+        "country": "USA",
+        "latitude": 37.7749,
+        "longitude": -122.4194
+      },
+      "employees": 250
+    },
+    "addresses": [
+      {
+        "address_id": "ua001",
+        "type": "home",
+        "street": "456 Oak Street",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94102",
+        "isPrimary": true,
+        "verified": true
+      },
+      {
+        "address_id": "ua002",
+        "type": "work",
+        "street": "789 Market Street",
+        "city": "San Francisco",
+        "state": "CA",
+        "zipCode": "94103",
+        "isPrimary": false,
+        "verified": true
+      }
+    ],
+    "contacts": [
+      {
+        "contact_id": "ct001",
+        "name": "Sarah Anderson",
+        "relationship": "spouse",
+        "phone": "555-0102",
+        "email": "sarah.anderson@example.com"
+      },
+      {
+        "contact_id": "ct002",
+        "name": "Michael Anderson",
+        "relationship": "brother",
+        "phone": "555-0103"
+      }
+    ],
+    "paymentMethods": [
+      {
+        "payment_id": "pm001",
+        "type": "credit_card",
+        "cardNumber": "4532015112830366",
+        "cardholderName": "JAMES ANDERSON",
+        "expiryMonth": 12,
+        "expiryYear": 2025,
+        "cvv": "123",
+        "billingAddress": "456 Oak Street, San Francisco, CA 94102"
+      }
+    ]
+  },
+  {
+    "root_id": "u002",
+    "firstName": "Maria",
+    "lastName": "Garcia",
+    "email": "maria.garcia@example.com",
+    "phone": "555-0201",
+    "ssn": "987-65-4321",
+    "dateOfBirth": "1990-07-22",
+    "isActive": true,
+    "createdAt": "2020-06-10T08:15:00Z",
+    "metadata": {
+      "lastLogin": "2024-01-21T09:45:15Z",
+      "loginCount": 512,
+      "preferredLanguage": "es"
+    },
+    "company": {
+      "company_id": "c002",
+      "name": "Global Finance Corp",
+      "companySize": "large",
+      "industryCode": "finance",
+      "founded": 1995,
+      "headquarters": {
+        "address_id": "a002",
+        "street": "321 Wall Street",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10005",
+        "country": "USA",
+        "latitude": 40.7074,
+        "longitude": -74.0113
+      },
+      "employees": 5000
+    },
+    "addresses": [
+      {
+        "address_id": "ua003",
+        "type": "home",
+        "street": "101 Broadway",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10006",
+        "isPrimary": true,
+        "verified": true
+      }
+    ],
+    "contacts": [
+      {
+        "contact_id": "ct003",
+        "name": "Carlos Garcia",
+        "relationship": "father",
+        "phone": "555-0204",
+        "email": "carlos.garcia@example.com"
+      }
+    ],
+    "paymentMethods": [
+      {
+        "payment_id": "pm002",
+        "type": "debit_card",
+        "cardNumber": "5425233010103442",
+        "cardholderName": "MARIA GARCIA",
+        "expiryMonth": 8,
+        "expiryYear": 2026
+      }
+    ]
+  },
+  {
+    "root_id": "u003",
+    "firstName": "Robert",
+    "lastName": "Chen",
+    "email": "robert.chen@example.com",
+    "phone": "555-0301",
+    "ssn": "456-78-9012",
+    "dateOfBirth": "1988-11-05",
+    "isActive": false,
+    "createdAt": "2019-03-20T16:45:00Z",
+    "metadata": {
+      "lastLogin": "2023-12-15T11:20:00Z",
+      "loginCount": 189,
+      "preferredLanguage": "zh"
+    },
+    "company": {
+      "company_id": "c003",
+      "name": "Innovation Labs",
+      "companySize": "small",
+      "industryCode": "research",
+      "founded": 2018,
+      "headquarters": {
+        "address_id": "a003",
+        "street": "555 Research Parkway",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02115",
+        "country": "USA",
+        "latitude": 42.3601,
+        "longitude": -71.0589
+      },
+      "employees": 75
+    },
+    "addresses": [
+      {
+        "address_id": "ua004",
+        "type": "home",
+        "street": "222 Commonwealth Avenue",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02116",
+        "isPrimary": true,
+        "verified": false
+      },
+      {
+        "address_id": "ua005",
+        "type": "work",
+        "street": "555 Research Parkway",
+        "city": "Boston",
+        "state": "MA",
+        "zipCode": "02115",
+        "isPrimary": false,
+        "verified": true
+      }
+    ],
+    "contacts": [],
+    "paymentMethods": [
+      {
+        "payment_id": "pm003",
+        "type": "credit_card",
+        "cardNumber": "378282246310005",
+        "cardholderName": "ROBERT CHEN",
+        "expiryMonth": 3,
+        "expiryYear": 2024
+      },
+      {
+        "payment_id": "pm004",
+        "type": "bank_account",
+        "accountNumber": "123456789",
+        "routingNumber": "121000248",
+        "accountHolderName": "Robert Chen"
+      }
+    ]
+  }
+]

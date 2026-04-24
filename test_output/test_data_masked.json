@@ -1,0 +1,48 @@
+﻿[
+    {
+        "ssn":  "vUZx4e7+vbLZ",
+        "root_id":  "u001",
+        "firstName":  "x6fsVNo170RD",
+        "addresses":  [
+                          {
+                              "address_id":  "a001",
+                              "street":  "123 Main St",
+                              "zipCode":  "94102",
+                              "city":  "San Francisco"
+                          },
+                          {
+                              "address_id":  "a002",
+                              "street":  "456 Oak Ave",
+                              "zipCode":  "02115",
+                              "city":  "Boston"
+                          }
+                      ],
+        "lastName":  "Rdms09XvopVo",
+        "phone":  "8vnja62TUx7S",
+        "metadata":  {
+                         "lastLogin":  "2024-01-20T14:22:30Z",
+                         "loginCount":  247
+                     },
+        "email":  "oA16KnDEYgpK"
+    },
+    {
+        "ssn":  "Vp50IIRNFWRj",
+        "root_id":  "u002",
+        "firstName":  "TRY9+QildoaI",
+        "addresses":  [
+                          {
+                              "address_id":  "a003",
+                              "street":  "789 Pine St",
+                              "zipCode":  "10005",
+                              "city":  "New York"
+                          }
+                      ],
+        "lastName":  "GFbzcfrwJGvG",
+        "phone":  "BK1Ame0W0oH6",
+        "metadata":  {
+                         "lastLogin":  "2024-01-21T09:45:15Z",
+                         "loginCount":  512
+                     },
+        "email":  "Uvs2OQCGtR8w"
+    }
+]

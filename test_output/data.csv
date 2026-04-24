@@ -1,0 +1,4 @@
+﻿"CustomerID","Name","Email","Phone","SSN","Department"
+"C001","John Smith","john.smith@example.com","555-1234","111-22-3333","Sales"
+"C002","Jane Doe","jane.doe@example.com","555-5678","444-55-6666","Marketing"
+"C003","Bob Johnson","bob.johnson@example.com","555-9999","777-88-9999","IT"

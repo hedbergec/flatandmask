@@ -1,0 +1,48 @@
+﻿[
+    {
+        "ssn":  "123-45-6789",
+        "root_id":  "u001",
+        "firstName":  "James",
+        "addresses":  [
+                          {
+                              "address_id":  "a001",
+                              "street":  "123 Main St",
+                              "zipCode":  "94102",
+                              "city":  "San Francisco"
+                          },
+                          {
+                              "address_id":  "a002",
+                              "street":  "456 Oak Ave",
+                              "zipCode":  "02115",
+                              "city":  "Boston"
+                          }
+                      ],
+        "lastName":  "Anderson",
+        "phone":  "555-0101",
+        "metadata":  {
+                         "lastLogin":  "2024-01-20T14:22:30Z",
+                         "loginCount":  247
+                     },
+        "email":  "james.anderson@example.com"
+    },
+    {
+        "ssn":  "987-65-4321",
+        "root_id":  "u002",
+        "firstName":  "Maria",
+        "addresses":  [
+                          {
+                              "address_id":  "a003",
+                              "street":  "789 Pine St",
+                              "zipCode":  "10005",
+                              "city":  "New York"
+                          }
+                      ],
+        "lastName":  "Garcia",
+        "phone":  "555-0201",
+        "metadata":  {
+                         "lastLogin":  "2024-01-21T09:45:15Z",
+                         "loginCount":  512
+                     },
+        "email":  "maria.garcia@example.com"
+    }
+]
