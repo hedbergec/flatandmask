@@ -170,7 +170,7 @@ function Apply-Masking-ToObject {
         if ($mainForm) {
             $mainForm.Invoke([action]{
                 $progressBar.Value = [Math]::Min($script:ProcessedLines, $progressBar.Maximum)
-                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines | Tables: $($script:TablesProduced)"
+                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
                 $mainForm.Refresh()
             })
         }
@@ -265,7 +265,7 @@ function Process-MaskedObject {
     if ($row.Count -gt 0) {
         if (-not $script:Tables.ContainsKey($TableName)) {
             $script:Tables[$TableName] = @()
-            $script:TablesProduced++
+            $script:TablesProduced++  # INCREMENT counter when new table is created
         }
         $script:Tables[$TableName] += [PSCustomObject]$row
     }
@@ -331,10 +331,14 @@ function Invoke-Masking {
         
         if ($script:MaskedData -is [System.Collections.IEnumerable] -and $script:MaskedData -isnot [string]) {
             $maskedArray = @($script:MaskedData)
+            $script:Tables = @{}  # Reset tables
+            $script:TablesProduced = 0  # Reset counter BEFORE processing
             foreach ($item in $maskedArray) {
                 Process-MaskedObject -Object $item -TableName "root" -IdMap @{}
             }
         } else {
+            $script:Tables = @{}  # Reset tables
+            $script:TablesProduced = 0  # Reset counter BEFORE processing
             Process-MaskedObject -Object $script:MaskedData -TableName "root" -IdMap @{}
         }
         
@@ -366,7 +370,7 @@ function Invoke-Masking {
             $script:ProcessedLines++
             $mainForm.Invoke([action]{
                 $progressBar.Value = $script:ProcessedLines
-                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines | Tables: $($script:TablesProduced)"
+                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
                 $mainForm.Refresh()
             })
             
@@ -390,9 +394,15 @@ function Invoke-Masking {
         
         if (-not $script:Tables.ContainsKey("root")) {
             $script:Tables["root"] = @()
-            $script:TablesProduced++
+            $script:TablesProduced++  # INCREMENT counter when root table is created
         }
         $script:Tables["root"] += $script:MaskedData
+        
+        # Update GUI to show final table count
+        $mainForm.Invoke([action]{
+            $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
+            $mainForm.Refresh()
+        })
     }
     
     foreach ($tableName in $script:Tables.Keys) {
@@ -901,7 +911,7 @@ $fieldsLabel.BorderStyle = "FixedSingle"
 $fieldsLabel.BackColor = [System.Drawing.Color]::WhiteSmoke
 
 $progressLabel = New-Object System.Windows.Forms.Label
-$progressLabel.Text = "Processing: 0 lines | Tables: 0"
+$progressLabel.Text = "Processing: 0 lines"
 $progressLabel.AutoSize = $false
 $progressLabel.Width = 480
 $progressLabel.Height = 20
@@ -1177,7 +1187,7 @@ $resetButton.Add_Click({
     $keyTextBox.Text = ""
     $fieldsLabel.Text = "Selected Fields: None"
     $progressBar.Value = 0
-    $progressLabel.Text = "Processing: 0 lines | Tables: 0"
+    $progressLabel.Text = "Processing: 0 lines"
     $statusLabel.Text = "Ready"
     $script:LastInputFile = $null
     $script:LastOutputFolder = $null
