@@ -2,7 +2,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.0.1"
+$script:AppVersion = "1.0.3"
 $script:AppTitle = "Data Masking Tool"
 $script:LastInputFile = $null
 $script:LastOutputFolder = $null

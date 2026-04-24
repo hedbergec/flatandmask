@@ -1,6 +1,6 @@
 # Data Masking Tool
 
-**Version 1.0.1**
+**Version 1.0.3**
 
 ## ⚠️ Disclaimer
 
@@ -527,6 +527,7 @@ launch.bat                        # Batch launcher (optional)
 
 ## Version History
 
+- **v1.0.3** - Updated release version
 - **v1.0.1** - Consolidated single file, JSON tree viewer, complete CSV masking, table normalization, deterministic IDs for merging
 - **v1.0.0** - Initial multi-file release
 
