@@ -232,10 +232,27 @@ Usage:
 .\replicate_masking.ps1 -InputFile "new_data.json"
 
 # Or with custom parameters:
-.\replicate_masking.ps1 -InputFile "data.csv" -OutputFolder "C:\output" -SecretKey "MyKey"
+.\replicate_masking.ps1 -InputFile ".\data.csv" -OutputFolder ".\masked-output" -SecretKey "MyKey"
 ```
 
 Ensures new data is masked with identical values and table structure.
+
+## Regression Testing
+
+Run the local regression suite with:
+
+```powershell
+.\testing scripts\run-test-masking.ps1 -Clean -MaxCsvRows 250
+```
+
+This test flow masks bundled example JSON and CSV data, including fields such as names, emails, locations, phones, and credit card values. It verifies that:
+
+- `masking_key.csv` contains the expected original-to-masked mappings
+- Masked JSON matches the original JSON except for approved masked fields
+- Generated table CSVs match the original flattened data except for approved masked fields
+- CSV regression runs use only the first 250 rows of each fixture to keep runs fast and repeatable
+
+Regression artifacts are written under `test_output/regression/`.
 
 ## CSV-Specific Functionality
 

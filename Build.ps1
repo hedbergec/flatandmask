@@ -1,23 +1,19 @@
 
 param(
     [switch]$BuildEXE = $true,
-    [switch]$RunTests = $true,
     [string]$OutputPath = "$PSScriptRoot\build",
     [string]$Version = "1.0.1",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
-    [switch]$SkipIcon = $false,
-    [switch]$SkipTests = $true
+    [switch]$SkipIcon = $false
 )
 
 $projectRoot = $PSScriptRoot
 $distDir = Join-Path $OutputPath "dist"
 $exeDir = Join-Path $OutputPath "exe"
 $logsDir = Join-Path $OutputPath "logs"
-$testDataDir = Join-Path $OutputPath "test_data"
-$testOutputDir = Join-Path $OutputPath "test_output"
 
 # Create directories
-foreach ($dir in @($OutputPath, $distDir, $exeDir, $logsDir, $testDataDir, $testOutputDir)) {
+foreach ($dir in @($OutputPath, $distDir, $exeDir, $logsDir)) {
     if (-not (Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
     }
@@ -38,15 +34,6 @@ if (Test-Path $requiredFile) {
     exit 1
 }
 
-# Check for test script
-$testScript = Join-Path $projectRoot "test-masking-tool.ps1"
-if (Test-Path $testScript) {
-    Write-Host "Found: test-masking-tool.ps1" -ForegroundColor Green
-} else {
-    Write-Host "Warning: test-masking-tool.ps1 not found - tests will be skipped" -ForegroundColor Yellow
-    $SkipTests = $true
-}
-
 # Check for icon file
 $iconExists = $false
 if (-not $SkipIcon) {
@@ -61,33 +48,6 @@ if (-not $SkipIcon) {
 }
 
 Write-Host ""
-
-# Run tests if not skipped
-if (-not $SkipTests) {
-    Write-Host "Running Test Suite" -ForegroundColor Green
-    Write-Host "==================" -ForegroundColor Green
-    
-    $testParams = @{
-        ToolPath = $requiredFile
-        TestDataFolder = $testDataDir
-        OutputFolder = $testOutputDir
-    }
-    
-    & $testScript @testParams
-    $testExitCode = $LASTEXITCODE
-    
-    if ($testExitCode -eq 0) {
-        Write-Host ""
-        Write-Host "Test suite passed!" -ForegroundColor Green
-    } else {
-        Write-Host ""
-        Write-Host "Test suite failed with exit code $testExitCode" -ForegroundColor Red
-        Write-Host "Build aborted due to test failures" -ForegroundColor Red
-        exit $testExitCode
-    }
-    
-    Write-Host ""
-}
 
 Write-Host "Copying Source File" -ForegroundColor Green
 Copy-Item -Path $requiredFile -Destination $distDir -Force
@@ -169,7 +129,5 @@ if ($BuildEXE) {
 }
 Write-Host ""
 Write-Host "Usage:"
-Write-Host "  .\Build.ps1                      # Build with tests and icon (if icon.ico exists)"
-Write-Host "  .\Build.ps1 -SkipIcon            # Build without icon"
-Write-Host "  .\Build.ps1 -SkipTests           # Build without running tests"
-Write-Host "  .\Build.ps1 -SkipIcon -SkipTests # Build without icon or tests"
+Write-Host "  .\Build.ps1           # Build with icon (if icon.ico exists)"
+Write-Host "  .\Build.ps1 -SkipIcon # Build without icon"

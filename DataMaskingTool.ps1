@@ -271,6 +271,24 @@ function Process-MaskedObject {
     }
 }
 
+function Convert-RowsForCsvExport {
+    param([object[]]$Rows)
+
+    $columns = @($Rows | ForEach-Object { $_.PSObject.Properties.Name } | Sort-Object -Unique)
+    $normalizedRows = @()
+
+    foreach ($row in $Rows) {
+        $normalizedRow = [ordered]@{}
+        foreach ($column in $columns) {
+            $property = $row.PSObject.Properties[$column]
+            $normalizedRow[$column] = if ($null -ne $property) { $property.Value } else { $null }
+        }
+        $normalizedRows += [PSCustomObject]$normalizedRow
+    }
+
+    return @($normalizedRows)
+}
+
 function Invoke-Masking {
     param(
         [string]$InputFile,
@@ -380,7 +398,7 @@ function Invoke-Masking {
     foreach ($tableName in $script:Tables.Keys) {
         $name = if ($tableName -eq "root") { "data" } else { $tableName.Replace("root_", "") }
         $path = Join-Path $OutputFolder "$name.csv"
-        $script:Tables[$tableName] | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
+        Convert-RowsForCsvExport -Rows @($script:Tables[$tableName].ToArray()) | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
     }
     
     if ($script:MappingWithRows.Count -gt 0) {
@@ -414,12 +432,16 @@ function Generate-ReplicationScript {
     }
     $maskFieldsForScript = $maskFieldsList -join ','
     
-    $scriptContent = @"
+$scriptContent = @"
 param(
-    [string]`$InputFile = "$InputFile",
-    [string]`$OutputFolder = "$OutputFolder",
+    [string]`$InputFile = "",
+    [string]`$OutputFolder = "`$PSScriptRoot",
     [string]`$SecretKey = "$SecretKey"
 )
+
+if ([string]::IsNullOrWhiteSpace(`$InputFile)) {
+    throw "Provide -InputFile when running replicate_masking.ps1."
+}
 
 `$MaskFields = @($maskFieldsForScript)
 `$Mapping = @{}

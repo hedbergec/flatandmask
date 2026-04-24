@@ -1,0 +1,4 @@
+﻿"address_id","city","company_id","country","headquarters_id","latitude","longitude","root_id","state","street","zipCode"
+"a001","M5+piJxSQKVW","company-0001","USA","company-headquarters-0001","37.7749","-122.4194","root-0001","CA","WWR7ZQd5r2WN","94105"
+"a002","+u4rP7Gs1avD","company-0002","USA","company-headquarters-0002","40.7074","-74.0113","root-0002","NY","peyQQ4LutKzF","10005"
+"a003","il3Tqq7K2hIv","company-0003","USA","company-headquarters-0003","42.3601","-71.0589","root-0003","MA","iqVAPeVUOTDK","02115"
