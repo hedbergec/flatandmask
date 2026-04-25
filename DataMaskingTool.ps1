@@ -152,6 +152,7 @@ function Get-ToolUpdateStatus {
     $headers = @{ "User-Agent" = "DataMaskingTool/$($script:AppVersion)" }
     $releaseUrl = "https://api.github.com/repos/hedbergec/flatandmask/releases/latest"
     $tagsUrl = "https://api.github.com/repos/hedbergec/flatandmask/tags"
+    $rawHeaders = @{ "User-Agent" = "DataMaskingTool/$($script:AppVersion)" }
 
     try {
         $latestVersionText = $null
@@ -179,6 +180,33 @@ function Get-ToolUpdateStatus {
             if ($latestTag) {
                 $latestVersionText = $latestTag.Name
                 $downloadUrl = "$($script:RepoUrl)/tree/$($latestTag.Name)"
+            }
+        }
+
+        if (-not (ConvertTo-AppVersion -VersionText $latestVersionText)) {
+            foreach ($branchName in @("main", "master")) {
+                try {
+                    $versionInfoUrl = "https://raw.githubusercontent.com/hedbergec/flatandmask/$branchName/build/dist/VERSION.json"
+                    $versionInfo = Invoke-RestMethod -Uri $versionInfoUrl -Headers $rawHeaders -UseBasicParsing -ErrorAction Stop
+                    if ($versionInfo.Version) {
+                        $latestVersionText = [string]$versionInfo.Version
+                        $downloadUrl = "$($script:RepoUrl)/tree/$branchName"
+                        break
+                    }
+                }
+                catch {}
+
+                try {
+                    $scriptUrl = "https://raw.githubusercontent.com/hedbergec/flatandmask/$branchName/DataMaskingTool.ps1"
+                    $remoteScript = Invoke-RestMethod -Uri $scriptUrl -Headers $rawHeaders -UseBasicParsing -ErrorAction Stop
+                    $versionMatch = [regex]::Match([string]$remoteScript, '(?m)^\$script:AppVersion\s*=\s*"([^"]+)"')
+                    if ($versionMatch.Success) {
+                        $latestVersionText = $versionMatch.Groups[1].Value
+                        $downloadUrl = "$($script:RepoUrl)/tree/$branchName"
+                        break
+                    }
+                }
+                catch {}
             }
         }
 
@@ -1996,7 +2024,7 @@ $footerLabel.Width = 500
 $footerLabel.Height = 70
 $footerLabel.Left = 20
 $footerLabel.Top = 535
-$footerLabel.Font = New-Object System.Drawing.Font("Arial", 8)
+$footerLabel.Font = New-Object System.Drawing.Font("Arial", 11)
 
 $repoButton = New-Object System.Windows.Forms.Button
 $repoButton.Text = "Open Repo"
