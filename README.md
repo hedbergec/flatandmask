@@ -1,6 +1,6 @@
 # Data Masking Tool
 
-**Version 1.1.0**
+**Version 1.1.2**
 
 ## ⚠️ Disclaimer
 
@@ -29,6 +29,7 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 - **Table Normalization**: Nested JSON automatically normalized into related CSV tables with foreign keys
 - **Deterministic IDs**: Parent-child relationships maintained for manual merging/joining
 - **Live Progress Panel**: Console output updates in-place with five status lines instead of verbose log spam
+- **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and Eric Hedberg contact info; the GUI can check GitHub for newer releases or tags
 - **Replication Scripts**: Auto-generated scripts to re-run masking on new data with consistent results
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
 
@@ -74,6 +75,8 @@ Avoids manual execution policy configuration.
 3. Double-click `DataMaskingTool.exe` on any Windows machine
 
 No PowerShell, installation, or configuration needed.
+
+_Note: Screenshots below are from earlier builds and do not exactly match the current version, but the core functionality and UI flow remain consistent._
 
 ![DataMaskingTool.exe in Windows Explorer](screenshots/theexecutable.png)
 
@@ -267,20 +270,51 @@ Ensures new data is masked with identical values and table structure.
 
 ## Regression Testing
 
-Run the local regression suite with:
+Run the full local regression suite with:
 
 ```powershell
-.\testing scripts\run-test-masking.ps1 -Clean -MaxCsvRows 250
+.\testing scripts\run-all-tests.ps1 -Clean
 ```
 
-This test flow masks bundled example JSON and CSV data, including fields such as names, emails, locations, phones, and credit card values. It verifies that:
+The all-tests runner uses a fixed regression key, reads the current version from `Build.ps1`, and writes artifacts under:
+
+```text
+test_output\regression\<version>\
+```
+
+For the current build, outputs are saved under `test_output\regression\1.1.2\`.
+
+This test flow masks all bundled example data plus core synthetic fixtures, including:
+
+- Simple and complex JSON examples
+- Synthetic HR JSON files, including `synthetic_hr_dataset_with_role_dates.json` and `large_hr_dataset_approx_10mb.json`
+- City of London CSV examples
+- NYPD officer profile CSV and JSON examples
+- NDJSON, concatenated JSON, envelope JSON, GeoJSON, header-array JSON, and Socrata-style JSON fixtures
+
+It verifies that:
 
 - `masking_key.csv` contains the expected original-to-masked mappings
 - Masked JSON matches the original JSON except for approved masked fields
 - Generated table CSVs match the original flattened data except for approved masked fields
 - CSV regression runs use only the first 250 rows of each fixture to keep runs fast and repeatable
+- Real-tool scenarios produce non-empty `data.csv`, masked JSON/NDJSON where applicable, and expected masking-key fields
 
-Regression artifacts are written under `test_output/regression/`.
+The run also writes `artifact-manifest.json`, which records output files and SHA-256 hashes for future comparisons.
+
+To compare a new version against an older saved run:
+
+```powershell
+.\testing scripts\run-all-tests.ps1 -Clean -CompareToRoot .\test_output\regression\1.1.1
+```
+
+That writes `artifact-comparison.json` in the new version's output folder and lists added, removed, or changed artifacts.
+
+For a smaller focused regression pass, run:
+
+```powershell
+.\testing scripts\run-test-masking.ps1 -Clean -MaxCsvRows 250
+```
 
 ## CSV-Specific Functionality
 
@@ -541,6 +575,7 @@ launch.bat                        # Batch launcher (optional)
 
 ## Version History
 
+- **v1.1.2** - Added no-warranty/repository/contact notice to the GUI and terminal startup, GUI buttons to open the repo and check GitHub for updates, deterministic table row IDs, and expanded regression coverage
 - **v1.1.0** - Added optimized Socrata JSON processing, NDJSON/loose JSON, envelope JSON, GeoJSON, header-array JSON support, and a five-line live progress panel
 - **v1.0.3** - Updated release version
 - **v1.0.1** - Consolidated single file, JSON tree viewer, complete CSV masking, table normalization, deterministic IDs for merging

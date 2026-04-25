@@ -1,5 +1,7 @@
 
 File								                    SOURCE
+large_hr_dataset_approx_10mb.json                     fake synthetic HR data generated for testing only; no real people or organizations
+synthetic_hr_dataset_with_role_dates.json             fake synthetic HR data generated for testing only; no real people or organizations
 2026-02-city-of-london-outcomes.csv                     https://data.police.uk/docs/
 2026-02-city-of-london-stop-and-search.csv              https://data.police.uk/docs/
 2026-02-city-of-london-street.csv                       https://data.police.uk/docs/

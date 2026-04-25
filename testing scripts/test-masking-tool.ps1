@@ -949,6 +949,59 @@ $scenarios = @(
         )
     },
     [PSCustomObject]@{
+        Name       = "complex1-json-sensitive"
+        Type       = "json"
+        InputFile  = (Join-Path $repoRoot "example data\complex1.json")
+        MaskFields = @(
+            "name",
+            "email",
+            "address.street",
+            "address.city",
+            "contacts.number",
+            "contacts.value"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "complex2-json-sensitive"
+        Type       = "json"
+        InputFile  = (Join-Path $repoRoot "example data\complex2.json")
+        MaskFields = @(
+            "name",
+            "email",
+            "address.street",
+            "address.city",
+            "contacts.number",
+            "contacts.value"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "synthetic-hr-role-dates-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "example data\synthetic_hr_dataset_with_role_dates.json")
+        MaskFields = @(
+            "root.employees.employee_id",
+            "root.employees.personal.first_name",
+            "root.employees.personal.last_name",
+            "root.employees.personal.ssn_like_test_value",
+            "root.employees.contact.work_email",
+            "root.employees.contact.personal_email",
+            "root.employees.contact.phone",
+            "root.employees.contact.address.street"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "large-hr-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "example data\large_hr_dataset_approx_10mb.json")
+        MaskFields = @(
+            "root.employees.employee_id",
+            "root.employees.name",
+            "root.employees.ssn_like",
+            "root.employees.history.department",
+            "root.employees.history.job_title"
+        )
+    },
+    [PSCustomObject]@{
         Name       = "city-of-london-street"
         Type       = "csv"
         InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-street.csv")
@@ -959,6 +1012,17 @@ $scenarios = @(
         )
     },
     [PSCustomObject]@{
+        Name       = "city-of-london-stop-and-search"
+        Type       = "csv"
+        InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-stop-and-search.csv")
+        MaskFields = @(
+            "Gender",
+            "Age range",
+            "Self-defined ethnicity",
+            "Officer-defined ethnicity"
+        )
+    },
+    [PSCustomObject]@{
         Name       = "city-of-london-outcomes"
         Type       = "csv"
         InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-outcomes.csv")
@@ -966,6 +1030,24 @@ $scenarios = @(
             "Reported by",
             "Falls within",
             "Location"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "nypd-officer-profile-csv"
+        Type       = "csv"
+        InputFile  = (Join-Path $repoRoot "example data\NYPD_Officer_Profile_-_Title_Shield_History.csv")
+        MaskFields = @(
+            "PROFILE_ID",
+            "SHIELD_NO"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "nypd-officer-profile-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "example data\NYPD Officer Profile - Title Shield History.json")
+        MaskFields = @(
+            "root.PROFILE_ID",
+            "root.SHIELD_NO"
         )
     },
     [PSCustomObject]@{

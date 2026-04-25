@@ -1,9 +1,13 @@
-
+﻿
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.1.0"
+$script:AppVersion = "1.1.2"
 $script:AppTitle = "Data Masking Tool"
+$script:AuthorName = "Eric Hedberg"
+$script:AuthorEmail = "hedbergec@gmail.com"
+$script:RepoUrl = "https://github.com/hedbergec/flatandmask"
+$script:WarrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $($script:RepoUrl). Contact: $($script:AuthorName) <$($script:AuthorEmail)>."
 $script:LastInputFile = $null
 $script:LastOutputFolder = $null
 $script:SelectedFields = @()
@@ -11,12 +15,18 @@ $script:SecretKey = ""
 $script:Mapping = @{}
 $script:MappingWithRows = New-Object System.Collections.ArrayList
 $script:Tables = @{}
+$script:TableIdCounters = @{}
 $script:OriginalData = $null
 $script:MaskedData = $null
 $script:InputWasJson = $false
 $script:TotalLines = 0
 $script:ProcessedLines = 0
 $script:TablesProduced = 0
+$script:EstimatedFieldsToMask = 0
+$script:EstimatedTablesToProduce = 0
+$script:EstimatedWorkUnits = 0
+$script:EstimateMethod = ""
+$script:MaskedFieldsProcessed = 0
 $script:VerboseLogging = $true  # Enable verbose logging by default
 $script:StatusPanelInitialized = $false
 $script:StatusPanelTop = 0
@@ -28,6 +38,9 @@ $script:StatusState = @{
     Detail   = ""
     Mask     = ""
 }
+
+Write-Host $script:WarrantyDisclaimer -ForegroundColor Yellow
+Write-Host ""
 
 function Format-StatusLine {
     param([string]$Text)
@@ -114,6 +127,94 @@ function Write-VerboseLog {
     Write-StatusPanel -Detail $Message
 }
 
+function ConvertTo-AppVersion {
+    param([string]$VersionText)
+
+    if ([string]::IsNullOrWhiteSpace($VersionText)) {
+        return $null
+    }
+
+    $cleanVersion = $VersionText.Trim() -replace '^[vV]', ''
+    $match = [regex]::Match($cleanVersion, '\d+(\.\d+){0,3}')
+    if (-not $match.Success) {
+        return $null
+    }
+
+    try {
+        return [version]$match.Value
+    }
+    catch {
+        return $null
+    }
+}
+
+function Get-ToolUpdateStatus {
+    $headers = @{ "User-Agent" = "DataMaskingTool/$($script:AppVersion)" }
+    $releaseUrl = "https://api.github.com/repos/hedbergec/flatandmask/releases/latest"
+    $tagsUrl = "https://api.github.com/repos/hedbergec/flatandmask/tags"
+
+    try {
+        $latestVersionText = $null
+        $downloadUrl = $script:RepoUrl
+
+        try {
+            $release = Invoke-RestMethod -Uri $releaseUrl -Headers $headers -UseBasicParsing -ErrorAction Stop
+            $latestVersionText = if ($release.tag_name) { [string]$release.tag_name } else { [string]$release.name }
+            if ($release.html_url) {
+                $downloadUrl = [string]$release.html_url
+            }
+        }
+        catch {
+            $tags = @(Invoke-RestMethod -Uri $tagsUrl -Headers $headers -UseBasicParsing -ErrorAction Stop)
+            $latestTag = $tags |
+                ForEach-Object {
+                    $parsed = ConvertTo-AppVersion -VersionText $_.name
+                    if ($parsed) {
+                        [PSCustomObject]@{ Name = [string]$_.name; Version = $parsed }
+                    }
+                } |
+                Sort-Object Version -Descending |
+                Select-Object -First 1
+
+            if ($latestTag) {
+                $latestVersionText = $latestTag.Name
+                $downloadUrl = "$($script:RepoUrl)/tree/$($latestTag.Name)"
+            }
+        }
+
+        $currentVersion = ConvertTo-AppVersion -VersionText $script:AppVersion
+        $latestVersion = ConvertTo-AppVersion -VersionText $latestVersionText
+        if (-not $latestVersion) {
+            return [PSCustomObject]@{
+                Status = "Unknown"
+                Message = "Could not find a release or tag version. Check the repo manually:`r`n$($script:RepoUrl)"
+                Url = $script:RepoUrl
+            }
+        }
+
+        if ($currentVersion -and $latestVersion -gt $currentVersion) {
+            return [PSCustomObject]@{
+                Status = "UpdateAvailable"
+                Message = "Update available: $latestVersionText`r`nCurrent version: $($script:AppVersion)`r`nCheck the repo: $downloadUrl"
+                Url = $downloadUrl
+            }
+        }
+
+        return [PSCustomObject]@{
+            Status = "Current"
+            Message = "You are running the latest known version ($($script:AppVersion)).`r`nRepo: $($script:RepoUrl)"
+            Url = $script:RepoUrl
+        }
+    }
+    catch {
+        return [PSCustomObject]@{
+            Status = "Error"
+            Message = "Could not check for updates: $($_.Exception.Message)`r`nCheck the repo manually: $($script:RepoUrl)"
+            Url = $script:RepoUrl
+        }
+    }
+}
+
 function Write-MaskLog {
     param([string]$Field, [string]$OriginalValue, [string]$MaskedValue)
     if ($script:VerboseLogging -and $OriginalValue) {
@@ -131,15 +232,228 @@ function Update-ProcessingProgress {
         [switch]$Force
     )
 
-    Write-StatusPanel -Phase $Phase -Current $Current -Total $Total -Detail $Detail -Force:$Force
+    $progressDetail = Get-JobProgressDetail -Detail $Detail
+    Write-StatusPanel -Phase $Phase -Current $Current -Total $Total -Detail $progressDetail -Force:$Force
 
     if ($mainForm -and $progressBar -and (($Current % 250) -eq 0 -or $Current -eq $Total -or $Force)) {
         $mainForm.Invoke([action]{
             $progressBar.Value = [Math]::Min($script:ProcessedLines, $progressBar.Maximum)
-            $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
+            $progressLabel.Text = "Rows: $($script:ProcessedLines) / $($script:TotalLines) | Fields: $($script:MaskedFieldsProcessed) / ~$($script:EstimatedFieldsToMask) | Tables: $($script:TablesProduced) / ~$($script:EstimatedTablesToProduce)"
             $mainForm.Refresh()
         })
     }
+}
+
+# ==================== Job Size Estimation ====================
+function Reset-JobEstimate {
+    $script:EstimatedFieldsToMask = 0
+    $script:EstimatedTablesToProduce = 0
+    $script:EstimatedWorkUnits = 0
+    $script:EstimateMethod = ""
+    $script:MaskedFieldsProcessed = 0
+}
+
+function Set-JobEstimate {
+    param(
+        [int]$Rows,
+        [int]$Fields,
+        [int]$Tables,
+        [string]$Method
+    )
+
+    $script:TotalLines = [Math]::Max(0, $Rows)
+    $script:EstimatedFieldsToMask = [Math]::Max(0, $Fields)
+    $script:EstimatedTablesToProduce = [Math]::Max(0, $Tables)
+    $script:EstimatedWorkUnits = $script:TotalLines + $script:EstimatedFieldsToMask + $script:EstimatedTablesToProduce
+    $script:EstimateMethod = $Method
+}
+
+function Get-JobProgressDetail {
+    param([string]$Detail = $null)
+
+    $parts = @()
+    if ($Detail) { $parts += $Detail }
+    if ($script:EstimatedFieldsToMask -gt 0) {
+        $parts += "fields $($script:MaskedFieldsProcessed)/~$($script:EstimatedFieldsToMask)"
+    }
+    if ($script:EstimatedTablesToProduce -gt 0) {
+        $parts += "tables $($script:TablesProduced)/~$($script:EstimatedTablesToProduce)"
+    }
+    if ($script:EstimateMethod) {
+        $parts += $script:EstimateMethod
+    }
+
+    return ($parts -join "; ")
+}
+
+function Write-JobEstimateStatus {
+    param([string]$Mode = $null)
+
+    $detail = "rows $($script:TotalLines); fields ~$($script:EstimatedFieldsToMask); tables ~$($script:EstimatedTablesToProduce)"
+    if ($script:EstimatedWorkUnits -gt 0) {
+        $detail += "; work units ~$($script:EstimatedWorkUnits)"
+    }
+    if ($script:EstimateMethod) {
+        $detail += "; $($script:EstimateMethod)"
+    }
+    Write-StatusPanel -Mode $Mode -Phase "Estimated" -Current 0 -Total $script:TotalLines -Detail $detail -Force
+}
+
+function Get-SelectedFieldSet {
+    param([string[]]$MaskFields)
+
+    $set = @{}
+    foreach ($field in @($MaskFields)) {
+        if (-not [string]::IsNullOrWhiteSpace($field)) {
+            $set[(Normalize-FieldName $field)] = $true
+        }
+    }
+    return $set
+}
+
+function Test-EstimateFieldMatch {
+    param(
+        [string]$FieldName,
+        [hashtable]$SelectedFieldSet
+    )
+
+    return $SelectedFieldSet.ContainsKey((Normalize-FieldName $FieldName))
+}
+
+function Count-MaskableFieldsInObject {
+    param(
+        $Object,
+        [string]$Prefix = "root",
+        [hashtable]$SelectedFieldSet
+    )
+
+    if ($null -eq $Object) {
+        if (Test-EstimateFieldMatch -FieldName $Prefix -SelectedFieldSet $SelectedFieldSet) { return 1 }
+        return 0
+    }
+
+    if ($Object -is [PSCustomObject]) {
+        $count = 0
+        $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
+        foreach ($prop in $properties) {
+            $count += Count-MaskableFieldsInObject -Object $prop.Value -Prefix "$Prefix.$($prop.Name)" -SelectedFieldSet $SelectedFieldSet
+        }
+        return $count
+    }
+
+    if ($Object -is [System.Collections.IEnumerable] -and $Object -isnot [string]) {
+        $count = 0
+        foreach ($item in $Object) {
+            $count += Count-MaskableFieldsInObject -Object $item -Prefix $Prefix -SelectedFieldSet $SelectedFieldSet
+        }
+        return $count
+    }
+
+    if (Test-EstimateFieldMatch -FieldName $Prefix -SelectedFieldSet $SelectedFieldSet) { return 1 }
+    return 0
+}
+
+function Add-EstimatedTableNamesFromObject {
+    param(
+        $Object,
+        [string]$TableName = "root",
+        [hashtable]$TableNames
+    )
+
+    if ($null -eq $Object -or $Object -isnot [PSCustomObject]) { return }
+
+    $TableNames[$TableName] = $true
+    $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
+    foreach ($prop in $properties) {
+        $value = $prop.Value
+        if ($value -is [PSCustomObject]) {
+            Add-EstimatedTableNamesFromObject -Object $value -TableName "${TableName}_$($prop.Name)" -TableNames $TableNames
+        }
+        elseif ($value -is [System.Collections.IEnumerable] -and $value -isnot [string]) {
+            foreach ($item in $value) {
+                if ($item -is [PSCustomObject]) {
+                    Add-EstimatedTableNamesFromObject -Object $item -TableName "${TableName}_$($prop.Name)" -TableNames $TableNames
+                }
+            }
+        }
+    }
+}
+
+function Set-JsonRecordJobEstimate {
+    param(
+        [object[]]$Records,
+        [string[]]$MaskFields,
+        [string]$ModeName
+    )
+
+    $rows = @($Records).Count
+    $selectedFieldSet = Get-SelectedFieldSet -MaskFields $MaskFields
+    $sampleSize = if ($rows -le 1000) { $rows } else { [Math]::Min($rows, [Math]::Max(1000, [int][Math]::Ceiling($rows * 0.10))) }
+    $fieldCount = 0
+    $tableNames = @{}
+
+    if ($sampleSize -gt 0) {
+        for ($i = 0; $i -lt $sampleSize; $i++) {
+            $record = $Records[$i]
+            $fieldCount += Count-MaskableFieldsInObject -Object $record -Prefix "root" -SelectedFieldSet $selectedFieldSet
+            Add-EstimatedTableNamesFromObject -Object $record -TableName "root" -TableNames $tableNames
+        }
+    }
+
+    $estimatedFields = if ($sampleSize -gt 0 -and $sampleSize -lt $rows) {
+        [int][Math]::Ceiling(($fieldCount / [double]$sampleSize) * $rows)
+    } else {
+        $fieldCount
+    }
+    $method = if ($sampleSize -lt $rows) { "$ModeName estimate from $sampleSize/$rows records" } else { "$ModeName exact preflight" }
+    Set-JobEstimate -Rows $rows -Fields $estimatedFields -Tables $tableNames.Count -Method $method
+}
+
+function Set-CsvJobEstimate {
+    param(
+        [string]$InputFile,
+        [string[]]$MaskFields,
+        [int]$RowCount
+    )
+
+    $selectedFieldSet = Get-SelectedFieldSet -MaskFields $MaskFields
+    $sampleLimit = if ($RowCount -le 1000) { $RowCount } else { [Math]::Min($RowCount, [Math]::Max(1000, [int][Math]::Ceiling($RowCount * 0.10))) }
+    $sampledRows = 0
+    $selectedColumns = 0
+    $fieldCount = 0
+
+    if ($sampleLimit -gt 0) {
+        Import-Csv $InputFile -ErrorAction Stop | Select-Object -First $sampleLimit | ForEach-Object {
+            $sampledRows++
+            $properties = @($_.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" })
+            if ($sampledRows -eq 1) {
+                foreach ($prop in $properties) {
+                    if (Test-EstimateFieldMatch -FieldName "root.$($prop.Name)" -SelectedFieldSet $selectedFieldSet) {
+                        $selectedColumns++
+                    }
+                }
+            }
+            foreach ($prop in $properties) {
+                if (Test-EstimateFieldMatch -FieldName "root.$($prop.Name)" -SelectedFieldSet $selectedFieldSet) {
+                    $fieldCount++
+                }
+            }
+        }
+    }
+
+    if ($sampledRows -eq 0) {
+        $selectedColumns = @($MaskFields).Count
+    }
+
+    $estimatedFields = if ($sampledRows -gt 0 -and $sampledRows -lt $RowCount) {
+        [int][Math]::Ceiling(($fieldCount / [double]$sampledRows) * $RowCount)
+    } elseif ($sampledRows -gt 0) {
+        $fieldCount
+    } else {
+        $RowCount * $selectedColumns
+    }
+    $method = if ($sampledRows -lt $RowCount) { "CSV estimate from $sampledRows/$RowCount rows" } else { "CSV exact preflight" }
+    Set-JobEstimate -Rows $RowCount -Fields $estimatedFields -Tables 1 -Method $method
 }
 
 # ==================== CSV Field Selector ====================
@@ -282,6 +596,7 @@ function Add-MappingRow {
 function Mask-IfNeeded {
     param($FieldName, $Value, $RowIndex = $null)
     if (Should-MaskField $FieldName) {
+        $script:MaskedFieldsProcessed++
         $strVal = [string]$Value
         $normalizedField = Normalize-FieldName $FieldName
         if (-not $script:Mapping.ContainsKey($strVal)) {
@@ -303,8 +618,10 @@ function Apply-Masking-ToObject {
     param($Object, [string]$Prefix = "root")
     
     if ($Object -is [PSCustomObject]) {
-        $script:ProcessedLines++
-        Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking JSON" -Detail "Walking object fields"
+        if ($Prefix -eq "root") {
+            $script:ProcessedLines++
+            Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking JSON" -Detail "Walking object fields"
+        }
         
         $maskedObj = [PSCustomObject]@{}
         $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
@@ -354,13 +671,32 @@ function Get-TableNameFromPath {
     return $parts[-1]
 }
 
+function New-TableRowId {
+    param([string]$TableName)
+
+    if (-not $script:TableIdCounters.ContainsKey($TableName)) {
+        $script:TableIdCounters[$TableName] = 0
+    }
+    $script:TableIdCounters[$TableName]++
+
+    $idSource = "$TableName|$($script:TableIdCounters[$TableName])"
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $hash = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($idSource))
+        return (($hash | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 8)
+    }
+    finally {
+        $sha.Dispose()
+    }
+}
+
 function Process-MaskedObject {
     param($Object, [string]$TableName = "root", [hashtable]$IdMap = @{})
     if ($null -eq $Object) { return }
     
     $tableSuffix = Get-TableNameFromPath $TableName
     $currentIdKey = "${tableSuffix}_id"
-    $currentId = [guid]::NewGuid().ToString().Substring(0, 8)
+    $currentId = New-TableRowId -TableName $TableName
     
     Write-VerboseLog "Processing table: $TableName (ID: $currentId)"
     
@@ -637,6 +973,7 @@ function Invoke-JsonRecordsMasking {
         [string]$OutputFolder,
         [string]$KeyFile,
         [string]$ModeName,
+        [string[]]$MaskFields,
         [string]$OutputFormat = "JsonArray"
     )
 
@@ -649,6 +986,8 @@ function Invoke-JsonRecordsMasking {
     $script:TotalLines = $Records.Count
     $script:ProcessedLines = 0
     $script:InputWasJson = $true
+    Set-JsonRecordJobEstimate -Records $Records -MaskFields $MaskFields -ModeName $ModeName
+    Write-JobEstimateStatus -Mode $ModeName
     if ($progressBar) {
         $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
     }
@@ -695,7 +1034,7 @@ function Invoke-HeaderArrayJsonMasking {
     )
 
     $records = @(Convert-HeaderArrayRowsToObjects $Json)
-    Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Header Array JSON"
+    Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Header Array JSON" -MaskFields $MaskFields
 }
 
 function Complete-MaskingOutputs {
@@ -722,7 +1061,7 @@ function Complete-MaskingOutputs {
     if (-not $SkipReplicationScript) {
         Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
     }
-    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Tables: $($script:Tables.Keys.Count); unique masked values: $($script:Mapping.Count)" -Force
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Tables: $($script:Tables.Keys.Count); unique masked values: $($script:Mapping.Count); fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
 function Export-MaskingKey {
@@ -792,6 +1131,8 @@ function Invoke-SocrataJsonMasking {
     $script:InputWasJson = $true
     $script:MaskedData = $null
     $script:OriginalData = $null
+    Set-JobEstimate -Rows $script:TotalLines -Fields ($script:TotalLines * $maskIndexes.Count) -Tables 1 -Method "Socrata exact column preflight"
+    Write-JobEstimateStatus -Mode "Socrata JSON"
 
     if ($progressBar) {
         $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
@@ -857,7 +1198,7 @@ function Invoke-SocrataJsonMasking {
     }
 
     Export-MaskingKey -KeyFile $KeyFile
-    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv, masked JSON, and masking key" -Force
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv, masked JSON, and masking key; fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
 function Invoke-CsvMaskingFast {
@@ -882,6 +1223,9 @@ function Invoke-CsvMaskingFast {
     $script:MaskedData = $null
     $script:OriginalData = $null
     $script:Tables = @{}
+
+    Set-CsvJobEstimate -InputFile $InputFile -MaskFields $MaskFields -RowCount $script:TotalLines
+    Write-JobEstimateStatus -Mode "CSV"
 
     if ($progressBar) {
         $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
@@ -920,7 +1264,7 @@ function Invoke-CsvMaskingFast {
     Write-StatusPanel -Phase "Finalizing" -Detail "Writing masking key" -Force
     Export-MaskingKey -KeyFile $KeyFile
     Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
-    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv and masking key" -Force
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv and masking key; fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
 function Write-SocrataReplicationNotice {
@@ -946,9 +1290,11 @@ function Invoke-Masking {
     $script:Mapping = @{}
     $script:MappingWithRows = New-Object System.Collections.ArrayList
     $script:Tables = @{}
+    $script:TableIdCounters = @{}
     $script:ProcessedLines = 0
     $script:TablesProduced = 0
     $script:InputWasJson = $false
+    Reset-JobEstimate
     
     $ext = [System.IO.Path]::GetExtension($InputFile).ToLower()
     
@@ -962,7 +1308,7 @@ function Invoke-Masking {
         catch {
             Write-StatusPanel -Mode "Loose JSON" -Phase "Parsing" -Current 0 -Total 0 -Detail "Trying NDJSON / loose object records" -Mask "" -Force
             $records = @(Read-LooseJsonRecords -FilePath $InputFile)
-            Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Loose JSON" -OutputFormat "Ndjson"
+            Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Loose JSON" -MaskFields $MaskFields -OutputFormat "Ndjson"
             Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
             Write-SocrataReplicationNotice -OutputFolder $OutputFolder
             return
@@ -987,7 +1333,7 @@ function Invoke-Masking {
 
         $recordCollection = Get-JsonRecordCollectionInfo $json
         if ($null -ne $recordCollection) {
-            Invoke-JsonRecordsMasking -Records @($recordCollection.Records) -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName $recordCollection.Format
+            Invoke-JsonRecordsMasking -Records @($recordCollection.Records) -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName $recordCollection.Format -MaskFields $MaskFields
             Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
             Write-SocrataReplicationNotice -OutputFolder $OutputFolder
             return
@@ -1003,7 +1349,11 @@ function Invoke-Masking {
             $script:TotalLines = 1
             Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total 1 -Detail "Single object" -Force
         }
-        
+
+        $recordsForEstimate = if ($isArray) { @($json) } else { @($json) }
+        Set-JsonRecordJobEstimate -Records $recordsForEstimate -MaskFields $MaskFields -ModeName "JSON"
+        Write-JobEstimateStatus -Mode "JSON"
+
         $progressBar.Maximum = $script:TotalLines
         
         if ($isArray) {
@@ -1090,6 +1440,7 @@ if ([string]::IsNullOrWhiteSpace(`$InputFile)) {
 `$Mapping = @{}
 `$MappingWithRows = @()
 `$Tables = @{}
+`$TableIdCounters = @{}
 
 function Normalize-FieldName {
     param([string]`$FieldPath)
@@ -1192,13 +1543,32 @@ function Get-TableNameFromPath {
     return `$parts[-1]
 }
 
+function New-TableRowId {
+    param([string]`$TableName)
+
+    if (-not `$TableIdCounters.ContainsKey(`$TableName)) {
+        `$TableIdCounters[`$TableName] = 0
+    }
+    `$TableIdCounters[`$TableName]++
+
+    `$idSource = "`$TableName|`$(`$TableIdCounters[`$TableName])"
+    `$sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        `$hash = `$sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(`$idSource))
+        return ((`$hash | ForEach-Object { `$_.ToString("x2") }) -join "").Substring(0, 8)
+    }
+    finally {
+        `$sha.Dispose()
+    }
+}
+
 function Process-MaskedObject {
     param(`$Object, [string]`$TableName = "root", [hashtable]`$IdMap = @{})
     if (`$null -eq `$Object) { return }
     
     `$tableSuffix = Get-TableNameFromPath `$TableName
     `$currentIdKey = "`${tableSuffix}_id"
-    `$currentId = [guid]::NewGuid().ToString().Substring(0, 8)
+    `$currentId = New-TableRowId -TableName `$TableName
     
     `$row = @{}
     foreach (`$parentKey in `$IdMap.Keys | Sort-Object) {
@@ -1479,7 +1849,7 @@ function Show-TreeViewer {
 # ==================== Main GUI ====================
 $mainForm = New-Object System.Windows.Forms.Form
 $mainForm.Text = $script:AppTitle
-$mainForm.Size = New-Object System.Drawing.Size(700, 700)
+$mainForm.Size = New-Object System.Drawing.Size(700, 760)
 $mainForm.StartPosition = "CenterScreen"
 $mainForm.FormBorderStyle = "FixedDialog"
 $mainForm.MaximizeBox = $false
@@ -1619,6 +1989,29 @@ $statusLabel.Left = 20
 $statusLabel.Top = 485
 $statusLabel.BorderStyle = "FixedSingle"
 
+$footerLabel = New-Object System.Windows.Forms.Label
+$footerLabel.Text = "NO WARRANTY: This tool is provided as-is, without warranty of any kind.`r`nCheck the Git repo for source and updates: $($script:RepoUrl)`r`n$($script:AuthorName) <$($script:AuthorEmail)>"
+$footerLabel.AutoSize = $false
+$footerLabel.Width = 500
+$footerLabel.Height = 70
+$footerLabel.Left = 20
+$footerLabel.Top = 535
+$footerLabel.Font = New-Object System.Drawing.Font("Arial", 8)
+
+$repoButton = New-Object System.Windows.Forms.Button
+$repoButton.Text = "Open Repo"
+$repoButton.Width = 90
+$repoButton.Height = 28
+$repoButton.Left = 530
+$repoButton.Top = 535
+
+$updateButton = New-Object System.Windows.Forms.Button
+$updateButton.Text = "Check for Update"
+$updateButton.Width = 130
+$updateButton.Height = 32
+$updateButton.Left = 530
+$updateButton.Top = 570
+
 $inputButton.Add_Click({
     $dialog = New-Object System.Windows.Forms.OpenFileDialog
     $dialog.Filter = "Data Files (*.json;*.csv)|*.json;*.csv|JSON Files (*.json)|*.json|CSV Files (*.csv)|*.csv|All Files (*.*)|*.*"
@@ -1648,6 +2041,36 @@ $outputButton.Add_Click({
         $script:LastOutputFolder = $dialog.SelectedPath
         $outputTextBox.Text = $dialog.SelectedPath
         $statusLabel.Text = "Output folder selected"
+    }
+})
+
+$repoButton.Add_Click({
+    try {
+        Start-Process $script:RepoUrl
+    }
+    catch {
+        [System.Windows.Forms.MessageBox]::Show("Repo URL:`r`n$($script:RepoUrl)", "Git Repository", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+    }
+})
+
+$updateButton.Add_Click({
+    $updateButton.Enabled = $false
+    $previousStatus = $statusLabel.Text
+    $statusLabel.Text = "Checking for updates..."
+    $mainForm.Refresh()
+
+    try {
+        $updateStatus = Get-ToolUpdateStatus
+        $statusLabel.Text = if ($updateStatus.Status -eq "UpdateAvailable") { "Update available" } elseif ($updateStatus.Status -eq "Current") { "No update found" } else { "Update check inconclusive" }
+        $icon = if ($updateStatus.Status -eq "UpdateAvailable") { [System.Windows.Forms.MessageBoxIcon]::Information } elseif ($updateStatus.Status -eq "Error") { [System.Windows.Forms.MessageBoxIcon]::Warning } else { [System.Windows.Forms.MessageBoxIcon]::Information }
+        [System.Windows.Forms.MessageBox]::Show($updateStatus.Message, "Update Check", [System.Windows.Forms.MessageBoxButtons]::OK, $icon)
+    }
+    catch {
+        $statusLabel.Text = $previousStatus
+        [System.Windows.Forms.MessageBox]::Show("Could not check for updates: $($_.Exception.Message)`r`nCheck the repo manually: $($script:RepoUrl)", "Update Check", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Warning)
+    }
+    finally {
+        $updateButton.Enabled = $true
     }
 })
 
@@ -1833,9 +2256,9 @@ $runButton.Add_Click({
     try {
         $keyFile = Join-Path $script:LastOutputFolder "masking_key.csv"
         Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $script:LastOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields
-        $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) lines | Generated $($script:TablesProduced) tables"
+        $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) lines | Masked $($script:MaskedFieldsProcessed) fields | Generated $($script:TablesProduced) tables"
         $progressBar.Value = $progressBar.Maximum
-        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`nLines processed: $($script:ProcessedLines)`nTables produced: $($script:TablesProduced)", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`nLines processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
     }
     catch {
         $statusLabel.Text = "Error: $($_.Exception.Message)"
@@ -1879,5 +2302,8 @@ $mainForm.Controls.Add($progressLabel)
 $mainForm.Controls.Add($progressBar)
 $mainForm.Controls.Add($buttonPanel)
 $mainForm.Controls.Add($statusLabel)
+$mainForm.Controls.Add($footerLabel)
+$mainForm.Controls.Add($repoButton)
+$mainForm.Controls.Add($updateButton)
 
 $mainForm.ShowDialog() | Out-Null

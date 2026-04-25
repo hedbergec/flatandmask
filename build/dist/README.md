@@ -1,4 +1,7 @@
-﻿# Data Masking Tool v1.1.0
+﻿# Data Masking Tool v1.1.2
+
+## Notice
+NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: https://github.com/hedbergec/flatandmask. Contact: Eric Hedberg <hedbergec@gmail.com>.
 
 ## Quick Start
 Double-click launch.bat to launch the tool

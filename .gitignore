@@ -2,3 +2,4 @@ todo.txt
 BUILD_EXECUTABLE.md
 build-executable.sh
 build-executable.ps1
+test_output/regression/
