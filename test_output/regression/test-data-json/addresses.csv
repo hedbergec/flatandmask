@@ -1,0 +1,4 @@
+﻿"address_id","addresses_id","city","root_id","street","zipCode"
+"a001","c73aff23","San Francisco","fce2023d","123 Main St","94102"
+"a002","e688fb3b","Boston","fce2023d","456 Oak Ave","02115"
+"a003","414e36b8","New York","af9d4469","789 Pine St","10005"

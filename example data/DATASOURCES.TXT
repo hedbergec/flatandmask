@@ -1,0 +1,13 @@
+
+File								                    SOURCE
+2026-02-city-of-london-outcomes.csv                     https://data.police.uk/docs/
+2026-02-city-of-london-stop-and-search.csv              https://data.police.uk/docs/
+2026-02-city-of-london-street.csv                       https://data.police.uk/docs/
+NYPD_Officer_Profile_-_Title_Shield_History.CSV			https://catalog.data.gov/dataset/nypd-officer-profile-title-shield-history\
+NYPD Officer Profile - Title Shield History.json 		https://catalog.data.gov/dataset/nypd-officer-profile-title-shield-history}
+test_data/test_concatenated.json                         fake
+test_data/test_envelope.json                             fake
+test_data/test_geojson.json                              fake
+test_data/test_header_array.json                         fake
+test_data/test_ndjson.json                               fake
+test_data/test_socrata.json                              fake

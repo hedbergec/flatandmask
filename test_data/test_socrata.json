@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "view": {
+      "id": "fake-socrata",
+      "name": "Fake Socrata Officer Profile",
+      "columns": [
+        { "name": "sid", "fieldName": ":sid", "dataTypeName": "meta_data" },
+        { "name": "id", "fieldName": ":id", "dataTypeName": "meta_data" },
+        { "name": "position", "fieldName": ":position", "dataTypeName": "meta_data" },
+        { "name": "created_at", "fieldName": ":created_at", "dataTypeName": "meta_data" },
+        { "name": "created_meta", "fieldName": ":created_meta", "dataTypeName": "meta_data" },
+        { "name": "updated_at", "fieldName": ":updated_at", "dataTypeName": "meta_data" },
+        { "name": "updated_meta", "fieldName": ":updated_meta", "dataTypeName": "meta_data" },
+        { "name": "meta", "fieldName": ":meta", "dataTypeName": "meta_data" },
+        { "name": "PROFILE_ID", "fieldName": "profile_id", "dataTypeName": "text" },
+        { "name": "EFFECTIVE_DATE", "fieldName": "effective_date", "dataTypeName": "calendar_date" },
+        { "name": "TITLE", "fieldName": "title", "dataTypeName": "text" },
+        { "name": "SHIELD_NO", "fieldName": "shield_no", "dataTypeName": "text" },
+        { "name": "EXPORT_DATE", "fieldName": "export_date", "dataTypeName": "calendar_date" }
+      ]
+    }
+  },
+  "data": [
+    [ "row-fake-1", "00000000-0000-0000-0000-000000000001", 0, 1776704062, null, 1776704062, null, "{ }", "fake-profile-001", "2026-01-01T00:00:00", "POLICE OFFICER", "1234", "2026-04-19T00:00:00" ],
+    [ "row-fake-2", "00000000-0000-0000-0000-000000000002", 1, 1776704062, null, 1776704062, null, "{ }", "fake-profile-002", "2026-02-01T00:00:00", "SERGEANT", "5678", "2026-04-19T00:00:00" ]
+  ]
+}

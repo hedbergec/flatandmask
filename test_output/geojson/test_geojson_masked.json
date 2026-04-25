@@ -1,0 +1,18 @@
+﻿[
+    {
+        "type":  "Feature",
+        "properties":  {
+                           "name":  "Alpha",
+                           "email":  "uuP+6bzfsEfk"
+                       },
+        "geometry":  null
+    },
+    {
+        "type":  "Feature",
+        "properties":  {
+                           "name":  "Beta",
+                           "email":  "aRyZa5hJ/DYx"
+                       },
+        "geometry":  null
+    }
+]

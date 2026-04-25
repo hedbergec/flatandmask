@@ -805,6 +805,87 @@ function Test-CsvScenario {
     }
 }
 
+function Invoke-RealToolScenario {
+    param(
+        [pscustomobject]$Scenario,
+        [string]$SecretKey,
+        [string]$OutputRoot
+    )
+
+    if (-not (Get-Command Invoke-Masking -ErrorAction SilentlyContinue)) {
+        $toolPath = Join-Path $repoRoot "DataMaskingTool.ps1"
+        $toolText = Get-Content -Path $toolPath -Raw
+        $marker = "# ==================== Main GUI ===================="
+        $markerIndex = $toolText.IndexOf($marker)
+        if ($markerIndex -lt 0) {
+            throw "Could not load DataMaskingTool.ps1 functions; GUI marker was not found."
+        }
+        Invoke-Expression $toolText.Substring(0, $markerIndex)
+    }
+
+    $scenarioOutput = Join-Path $OutputRoot $Scenario.Name
+    if (Test-Path $scenarioOutput) {
+        Remove-Item -LiteralPath $scenarioOutput -Recurse -Force
+    }
+    New-Item -ItemType Directory -Path $scenarioOutput -Force | Out-Null
+
+    $script:VerboseLogging = $false
+    $mainForm = $null
+    $progressBar = New-Object System.Windows.Forms.ProgressBar
+    $progressLabel = New-Object System.Windows.Forms.Label
+    $keyFile = Join-Path $scenarioOutput "masking_key.csv"
+
+    Invoke-Masking -InputFile $Scenario.InputFile -OutputFolder $scenarioOutput -KeyFile $keyFile -SecretKey $SecretKey -MaskFields $Scenario.MaskFields
+
+    if (-not (Test-Path $keyFile)) {
+        throw "[$($Scenario.Name)] Missing masking_key.csv."
+    }
+
+    $keyRows = @(Import-Csv -Path $keyFile)
+    if ($keyRows.Count -eq 0) {
+        throw "[$($Scenario.Name)] Expected masking_key.csv to contain at least one masked value."
+    }
+
+    foreach ($maskField in $Scenario.MaskFields) {
+        $normalized = Normalize-FieldName $maskField
+        if (-not @($keyRows | Where-Object { $_.Field -eq $normalized })) {
+            throw "[$($Scenario.Name)] masking_key.csv does not include expected field '$normalized'."
+        }
+    }
+
+    $dataCsv = Join-Path $scenarioOutput "data.csv"
+    if (-not (Test-Path $dataCsv)) {
+        throw "[$($Scenario.Name)] Missing data.csv."
+    }
+    if (@(Import-Csv -Path $dataCsv).Count -eq 0) {
+        throw "[$($Scenario.Name)] data.csv is empty."
+    }
+
+    $inputName = [System.IO.Path]::GetFileNameWithoutExtension($Scenario.InputFile)
+    $jsonPath = Join-Path $scenarioOutput "${inputName}_masked.json"
+    $ndjsonPath = Join-Path $scenarioOutput "${inputName}_masked.ndjson"
+    if ($Scenario.Type -eq "tool-json" -and -not (Test-Path $jsonPath) -and -not (Test-Path $ndjsonPath)) {
+        throw "[$($Scenario.Name)] Missing masked JSON/NDJSON output."
+    }
+
+    if ($Scenario.Name -eq "test-socrata-json") {
+        $maskedJson = Get-Content -Path $jsonPath -Raw | ConvertFrom-Json
+        if (@($maskedJson.data).Count -ne 2) {
+            throw "[$($Scenario.Name)] Expected 2 Socrata data rows."
+        }
+        if (@(@($maskedJson.data)[0]).Count -ne 13) {
+            throw "[$($Scenario.Name)] Expected Socrata row arrays to preserve 13 columns."
+        }
+    }
+
+    return [PSCustomObject]@{
+        Scenario = $Scenario.Name
+        Type     = $Scenario.Type
+        Output   = $scenarioOutput
+        Status   = "Passed"
+    }
+}
+
 function Invoke-Scenario {
     param(
         [pscustomobject]$Scenario,
@@ -812,6 +893,10 @@ function Invoke-Scenario {
         [string]$OutputRoot,
         [int]$MaxCsvRows
     )
+
+    if ($Scenario.Type -like "tool-*") {
+        return Invoke-RealToolScenario -Scenario $Scenario -SecretKey $SecretKey -OutputRoot $OutputRoot
+    }
 
     $scenarioOutput = Join-Path $OutputRoot $Scenario.Name
     $artifacts = Export-MaskingArtifacts -InputFile $Scenario.InputFile -OutputFolder $scenarioOutput -SecretKey $SecretKey -MaskFields $Scenario.MaskFields -MaxCsvRows $MaxCsvRows
@@ -882,6 +967,66 @@ $scenarios = @(
             "Falls within",
             "Location"
         )
+    },
+    [PSCustomObject]@{
+        Name       = "test-data-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_data.json")
+        MaskFields = @("root.ssn")
+    },
+    [PSCustomObject]@{
+        Name       = "test-ndjson"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_ndjson.json")
+        MaskFields = @("root.email")
+    },
+    [PSCustomObject]@{
+        Name       = "test-concatenated-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_concatenated.json")
+        MaskFields = @("root.email")
+    },
+    [PSCustomObject]@{
+        Name       = "test-envelope-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_envelope.json")
+        MaskFields = @("root.email")
+    },
+    [PSCustomObject]@{
+        Name       = "test-geojson"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_geojson.json")
+        MaskFields = @("root.properties.email")
+    },
+    [PSCustomObject]@{
+        Name       = "test-header-array-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_header_array.json")
+        MaskFields = @("root.email")
+    },
+    [PSCustomObject]@{
+        Name       = "test-socrata-json"
+        Type       = "tool-json"
+        InputFile  = (Join-Path $repoRoot "test_data\test_socrata.json")
+        MaskFields = @("root.PROFILE_ID", "root.SHIELD_NO")
+    },
+    [PSCustomObject]@{
+        Name       = "test-data-csv"
+        Type       = "tool-csv"
+        InputFile  = (Join-Path $repoRoot "test_data\test_data.csv")
+        MaskFields = @("root.Email", "root.Phone", "root.SSN")
+    },
+    [PSCustomObject]@{
+        Name       = "test-data-fewer-rows-csv"
+        Type       = "tool-csv"
+        InputFile  = (Join-Path $repoRoot "test_data\test_data_fewer_rows.csv")
+        MaskFields = @("root.Email", "root.Phone", "root.SSN")
+    },
+    [PSCustomObject]@{
+        Name       = "test-data-missing-values-csv"
+        Type       = "tool-csv"
+        InputFile  = (Join-Path $repoRoot "test_data\test_data_missing_values.csv")
+        MaskFields = @("root.Email", "root.Phone", "root.SSN")
     }
 )
 
