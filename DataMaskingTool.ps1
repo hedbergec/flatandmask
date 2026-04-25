@@ -2,7 +2,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.1.2"
+$script:AppVersion = "1.2.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@gmail.com"
@@ -21,6 +21,8 @@ $script:MaskedData = $null
 $script:InputWasJson = $false
 $script:TotalLines = 0
 $script:ProcessedLines = 0
+$script:ProgressRecordPath = "root"
+$script:ProgressRecordLabel = "Rows"
 $script:TablesProduced = 0
 $script:EstimatedFieldsToMask = 0
 $script:EstimatedTablesToProduce = 0
@@ -31,6 +33,8 @@ $script:VerboseLogging = $true  # Enable verbose logging by default
 $script:StatusPanelInitialized = $false
 $script:StatusPanelTop = 0
 $script:StatusLastUpdate = [DateTime]::MinValue
+$script:GuiLogMaxLines = 100
+$script:GuiLogLines = New-Object System.Collections.Generic.Queue[string]
 $script:StatusState = @{
     Mode     = "Ready"
     Phase    = "Idle"
@@ -57,6 +61,31 @@ function Format-StatusLine {
     }
 
     return $Text.PadRight($width)
+}
+
+function Add-GuiLogLine {
+    param([string]$Message)
+
+    if ([string]::IsNullOrWhiteSpace($Message)) { return }
+
+    while ($script:GuiLogLines.Count -ge $script:GuiLogMaxLines) {
+        $script:GuiLogLines.Dequeue() | Out-Null
+    }
+    $script:GuiLogLines.Enqueue("$(Get-Date -Format 'HH:mm:ss') $Message")
+
+    if (-not $mainForm -or -not $guiLogBox) { return }
+
+    $updateLog = [action]{
+        $guiLogBox.Lines = @($script:GuiLogLines.ToArray())
+        $guiLogBox.SelectionStart = $guiLogBox.TextLength
+        $guiLogBox.ScrollToCaret()
+    }
+
+    if ($mainForm.InvokeRequired) {
+        $mainForm.Invoke($updateLog)
+    } else {
+        $updateLog.Invoke()
+    }
 }
 
 function Write-StatusPanel {
@@ -120,6 +149,15 @@ function Write-StatusPanel {
     catch {
         Write-Host ($lines -join " | ") -ForegroundColor Cyan
     }
+
+    $logLine = "Mode=$($script:StatusState.Mode); Phase=$($script:StatusState.Phase); Progress=$($script:StatusState.Progress)"
+    if (-not [string]::IsNullOrWhiteSpace($script:StatusState.Detail)) {
+        $logLine += "; $($script:StatusState.Detail)"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($script:StatusState.Mask)) {
+        $logLine += "; $($script:StatusState.Mask)"
+    }
+    Add-GuiLogLine $logLine
 }
 
 function Write-VerboseLog {
@@ -251,6 +289,104 @@ function Write-MaskLog {
     }
 }
 
+function Set-GuiProgressStage {
+    param(
+        [System.Windows.Forms.ProgressBar]$Bar,
+        [int]$Current,
+        [int]$Total = 100,
+        [switch]$Force
+    )
+
+    if (-not $mainForm -or -not $Bar) { return }
+    if (-not $Force -and (($Current % 250) -ne 0) -and $Current -ne $Total) { return }
+
+    $mainForm.Invoke([action]{
+        $Bar.Maximum = [Math]::Max(1, $Total)
+        $Bar.Value = [Math]::Min([Math]::Max(0, $Current), $Bar.Maximum)
+        $mainForm.Refresh()
+    })
+}
+
+function Reset-GuiProgressStages {
+    if (-not $mainForm) { return }
+    $mainForm.Invoke([action]{
+        foreach ($bar in @($loadProgressBar, $progressBar, $normalizeProgressBar, $exportProgressBar)) {
+            if ($bar) {
+                $bar.Maximum = 100
+                $bar.Value = 0
+            }
+        }
+        $mainForm.Refresh()
+    })
+}
+
+function Complete-GuiProgressStages {
+    if (-not $mainForm) { return }
+    $mainForm.Invoke([action]{
+        foreach ($bar in @($loadProgressBar, $progressBar, $normalizeProgressBar, $exportProgressBar)) {
+            if ($bar) {
+                $bar.Value = $bar.Maximum
+            }
+        }
+        $mainForm.Refresh()
+    })
+}
+
+function Read-TextFileWithLoadProgress {
+    param(
+        [string]$Path,
+        [int]$StartPercent = 0,
+        [int]$EndPercent = 70
+    )
+
+    Set-GuiProgressStage -Bar $loadProgressBar -Current $StartPercent -Total 100 -Force
+    $fileInfo = Get-Item -LiteralPath $Path
+    if ($fileInfo.Length -le 0) {
+        Set-GuiProgressStage -Bar $loadProgressBar -Current $EndPercent -Total 100 -Force
+        return ""
+    }
+
+    $reader = $null
+    $builder = New-Object System.Text.StringBuilder
+    $buffer = New-Object char[] 65536
+    $lastPercent = -1
+
+    try {
+        $reader = New-Object System.IO.StreamReader($Path, [System.Text.Encoding]::UTF8, $true)
+        while (($charsRead = $reader.Read($buffer, 0, $buffer.Length)) -gt 0) {
+            $builder.Append($buffer, 0, $charsRead) | Out-Null
+            $fraction = [Math]::Min(1.0, $reader.BaseStream.Position / [double]$fileInfo.Length)
+            $percent = $StartPercent + [int][Math]::Floor(($EndPercent - $StartPercent) * $fraction)
+            if ($percent -ne $lastPercent) {
+                Set-GuiProgressStage -Bar $loadProgressBar -Current $percent -Total 100 -Force
+                $lastPercent = $percent
+            }
+        }
+    }
+    finally {
+        if ($reader) { $reader.Dispose() }
+    }
+
+    Set-GuiProgressStage -Bar $loadProgressBar -Current $EndPercent -Total 100 -Force
+    Write-Output -NoEnumerate $builder.ToString()
+}
+
+function Read-JsonFileWithLoadProgress {
+    param([string]$Path)
+
+    Write-StatusPanel -Phase "Loading" -Current 0 -Total 100 -Detail "Reading input file" -Force
+    $rawJson = [string](Read-TextFileWithLoadProgress -Path $Path -StartPercent 0 -EndPercent 70)
+    if ([string]::IsNullOrWhiteSpace($rawJson)) {
+        throw "Input file is empty or could not be read: $Path"
+    }
+
+    Write-StatusPanel -Phase "Parsing JSON" -Current 70 -Total 100 -Detail "Converting JSON text" -Force
+    Set-GuiProgressStage -Bar $loadProgressBar -Current 80 -Total 100 -Force
+    $json = ConvertFrom-Json -InputObject $rawJson
+    Set-GuiProgressStage -Bar $loadProgressBar -Current 90 -Total 100 -Force
+    return $json
+}
+
 function Update-ProcessingProgress {
     param(
         [int]$Current,
@@ -263,13 +399,7 @@ function Update-ProcessingProgress {
     $progressDetail = Get-JobProgressDetail -Detail $Detail
     Write-StatusPanel -Phase $Phase -Current $Current -Total $Total -Detail $progressDetail -Force:$Force
 
-    if ($mainForm -and $progressBar -and (($Current % 250) -eq 0 -or $Current -eq $Total -or $Force)) {
-        $mainForm.Invoke([action]{
-            $progressBar.Value = [Math]::Min($script:ProcessedLines, $progressBar.Maximum)
-            $progressLabel.Text = "Rows: $($script:ProcessedLines) / $($script:TotalLines) | Fields: $($script:MaskedFieldsProcessed) / ~$($script:EstimatedFieldsToMask) | Tables: $($script:TablesProduced) / ~$($script:EstimatedTablesToProduce)"
-            $mainForm.Refresh()
-        })
-    }
+    Set-GuiProgressStage -Bar $progressBar -Current $Current -Total $Total -Force:$Force
 }
 
 # ==================== Job Size Estimation ====================
@@ -279,6 +409,8 @@ function Reset-JobEstimate {
     $script:EstimatedWorkUnits = 0
     $script:EstimateMethod = ""
     $script:MaskedFieldsProcessed = 0
+    $script:ProgressRecordPath = "root"
+    $script:ProgressRecordLabel = "Rows"
 }
 
 function Set-JobEstimate {
@@ -294,6 +426,13 @@ function Set-JobEstimate {
     $script:EstimatedTablesToProduce = [Math]::Max(0, $Tables)
     $script:EstimatedWorkUnits = $script:TotalLines + $script:EstimatedFieldsToMask + $script:EstimatedTablesToProduce
     $script:EstimateMethod = $Method
+}
+
+function Sync-TableEstimateWithProduced {
+    if ($script:EstimatedTablesToProduce -le 0 -and $script:Tables -and $script:Tables.Keys.Count -gt 0) {
+        $script:EstimatedTablesToProduce = $script:Tables.Keys.Count
+        $script:EstimatedWorkUnits = $script:TotalLines + $script:EstimatedFieldsToMask + $script:EstimatedTablesToProduce
+    }
 }
 
 function Get-JobProgressDetail {
@@ -317,7 +456,7 @@ function Get-JobProgressDetail {
 function Write-JobEstimateStatus {
     param([string]$Mode = $null)
 
-    $detail = "rows $($script:TotalLines); fields ~$($script:EstimatedFieldsToMask); tables ~$($script:EstimatedTablesToProduce)"
+    $detail = "$($script:ProgressRecordLabel.ToLowerInvariant()) $($script:TotalLines); fields ~$($script:EstimatedFieldsToMask); tables ~$($script:EstimatedTablesToProduce)"
     if ($script:EstimatedWorkUnits -gt 0) {
         $detail += "; work units ~$($script:EstimatedWorkUnits)"
     }
@@ -325,6 +464,17 @@ function Write-JobEstimateStatus {
         $detail += "; $($script:EstimateMethod)"
     }
     Write-StatusPanel -Mode $Mode -Phase "Estimated" -Current 0 -Total $script:TotalLines -Detail $detail -Force
+    Set-GuiProgressStage -Bar $loadProgressBar -Current 100 -Total 100 -Force
+}
+
+function Set-ProgressRecordTarget {
+    param(
+        [string]$Path = "root",
+        [string]$Label = "Rows"
+    )
+
+    $script:ProgressRecordPath = if ([string]::IsNullOrWhiteSpace($Path)) { "root" } else { $Path }
+    $script:ProgressRecordLabel = if ([string]::IsNullOrWhiteSpace($Label)) { "Rows" } else { $Label }
 }
 
 function Get-SelectedFieldSet {
@@ -435,6 +585,101 @@ function Set-JsonRecordJobEstimate {
     }
     $method = if ($sampleSize -lt $rows) { "$ModeName estimate from $sampleSize/$rows records" } else { "$ModeName exact preflight" }
     Set-JobEstimate -Rows $rows -Fields $estimatedFields -Tables $tableNames.Count -Method $method
+    Set-ProgressRecordTarget -Path "root" -Label "Records"
+}
+
+function Add-JsonObjectArrayCounts {
+    param(
+        [AllowNull()]$Object,
+        [string]$Prefix = "root",
+        [hashtable]$Counts
+    )
+
+    if ($null -eq $Object) { return }
+
+    if ($Object -is [PSCustomObject]) {
+        $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
+        foreach ($prop in $properties) {
+            Add-JsonObjectArrayCounts -Object $prop.Value -Prefix "$Prefix.$($prop.Name)" -Counts $Counts
+        }
+        return
+    }
+
+    if ($Object -is [System.Collections.IEnumerable] -and $Object -isnot [string]) {
+        foreach ($item in $Object) {
+            if ($item -is [PSCustomObject]) {
+                if (-not $Counts.ContainsKey($Prefix)) {
+                    $Counts[$Prefix] = 0
+                }
+                $Counts[$Prefix]++
+                Add-JsonObjectArrayCounts -Object $item -Prefix $Prefix -Counts $Counts
+            }
+        }
+    }
+}
+
+function Get-JsonProgressTarget {
+    param(
+        [AllowNull()]$Json,
+        [string[]]$MaskFields
+    )
+
+    $counts = @{}
+    Add-JsonObjectArrayCounts -Object $Json -Prefix "root" -Counts $counts
+    if ($counts.Count -eq 0) {
+        return [PSCustomObject]@{
+            Path  = "root"
+            Count = 1
+            Label = "Objects"
+        }
+    }
+
+    $selectedFieldSet = @(Get-SelectedFieldSet -MaskFields $MaskFields).Keys
+    $candidates = @(
+        foreach ($path in $counts.Keys) {
+            $normalizedPath = Normalize-FieldName $path
+            $matchesSelection = $false
+            foreach ($field in $selectedFieldSet) {
+                if ($field -eq $normalizedPath -or $field.StartsWith("$normalizedPath.")) {
+                    $matchesSelection = $true
+                    break
+                }
+            }
+
+            [PSCustomObject]@{
+                Path             = $path
+                Count            = [int]$counts[$path]
+                MatchesSelection = $matchesSelection
+            }
+        }
+    )
+
+    $target = $candidates | Where-Object { $_.MatchesSelection } | Sort-Object Count -Descending | Select-Object -First 1
+    if (-not $target) {
+        $target = $candidates | Sort-Object Count -Descending | Select-Object -First 1
+    }
+
+    return [PSCustomObject]@{
+        Path  = $target.Path
+        Count = [Math]::Max(1, $target.Count)
+        Label = (($target.Path -split '\.')[-1])
+    }
+}
+
+function Set-JsonObjectJobEstimate {
+    param(
+        [AllowNull()]$Json,
+        [string[]]$MaskFields,
+        [string]$ModeName
+    )
+
+    $selectedFieldSet = Get-SelectedFieldSet -MaskFields $MaskFields
+    $fieldCount = Count-MaskableFieldsInObject -Object $Json -Prefix "root" -SelectedFieldSet $selectedFieldSet
+    $tableNames = @{}
+    Add-EstimatedTableNamesFromObject -Object $Json -TableName "root" -TableNames $tableNames
+    $target = Get-JsonProgressTarget -Json $Json -MaskFields $MaskFields
+    Set-JobEstimate -Rows $target.Count -Fields $fieldCount -Tables $tableNames.Count -Method "$ModeName exact preflight; progress by $($target.Path)"
+    Set-ProgressRecordTarget -Path $target.Path -Label $target.Label
 }
 
 function Set-CsvJobEstimate {
@@ -646,9 +891,9 @@ function Apply-Masking-ToObject {
     param($Object, [string]$Prefix = "root")
     
     if ($Object -is [PSCustomObject]) {
-        if ($Prefix -eq "root") {
+        if ($Prefix -eq $script:ProgressRecordPath) {
             $script:ProcessedLines++
-            Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking JSON" -Detail "Walking object fields"
+            Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking JSON" -Detail "$($script:ProgressRecordLabel) $($script:ProcessedLines) of $($script:TotalLines)"
         }
         
         $maskedObj = [PSCustomObject]@{}
@@ -1022,16 +1267,17 @@ function Invoke-JsonRecordsMasking {
 
     $maskedItems = New-Object System.Collections.ArrayList
     for ($i = 0; $i -lt $Records.Count; $i++) {
-        Update-ProcessingProgress -Current ($i + 1) -Total $script:TotalLines -Phase "Masking $ModeName" -Detail "Record $($i + 1) of $($Records.Count)"
         $maskedItems.Add((Apply-Masking-ToObject $Records[$i])) | Out-Null
     }
 
     $script:MaskedData = @($maskedItems)
     $script:Tables = @{}
     $script:TablesProduced = 0
+    Set-GuiProgressStage -Bar $normalizeProgressBar -Current 1 -Total 100 -Force
     foreach ($item in @($script:MaskedData)) {
         Process-MaskedObject -Object $item -TableName "root" -IdMap @{}
     }
+    Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
 
     $inputFileName = [System.IO.Path]::GetFileNameWithoutExtension($InputFile)
     if ($OutputFormat -eq "Ndjson") {
@@ -1075,20 +1321,31 @@ function Complete-MaskingOutputs {
         [switch]$SkipReplicationScript
     )
 
+    Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
+    $exportStep = 0
+    $exportTotal = [Math]::Max(1, $script:Tables.Keys.Count + 2)
+
     foreach ($tableName in $script:Tables.Keys) {
         $name = if ($tableName -eq "root") { "data" } else { $tableName.Replace("root_", "") }
         $path = Join-Path $OutputFolder "$name.csv"
         $rowCount = (Convert-RowsForCsvExport -Rows @($script:Tables[$tableName])).Count
         Write-StatusPanel -Phase "Exporting CSV" -Detail "Writing $name.csv ($rowCount rows)" -Force
         Convert-RowsForCsvExport -Rows @($script:Tables[$tableName]) | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
+        $exportStep++
+        Set-GuiProgressStage -Bar $exportProgressBar -Current $exportStep -Total $exportTotal -Force
     }
     
     Write-StatusPanel -Phase "Finalizing" -Detail "Writing masking key" -Force
     Export-MaskingKey -KeyFile $KeyFile
+    $exportStep++
+    Set-GuiProgressStage -Bar $exportProgressBar -Current $exportStep -Total $exportTotal -Force
     
     if (-not $SkipReplicationScript) {
         Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
     }
+    $exportStep++
+    Set-GuiProgressStage -Bar $exportProgressBar -Current $exportStep -Total $exportTotal -Force
+    Sync-TableEstimateWithProduced
     Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Tables: $($script:Tables.Keys.Count); unique masked values: $($script:Mapping.Count); fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
@@ -1226,6 +1483,9 @@ function Invoke-SocrataJsonMasking {
     }
 
     Export-MaskingKey -KeyFile $KeyFile
+    Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
+    Set-GuiProgressStage -Bar $exportProgressBar -Current 100 -Total 100 -Force
+    Sync-TableEstimateWithProduced
     Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv, masked JSON, and masking key; fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
@@ -1290,8 +1550,12 @@ function Invoke-CsvMaskingFast {
     }
 
     Write-StatusPanel -Phase "Finalizing" -Detail "Writing masking key" -Force
+    Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
+    Set-GuiProgressStage -Bar $exportProgressBar -Current 1 -Total 2 -Force
     Export-MaskingKey -KeyFile $KeyFile
     Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
+    Set-GuiProgressStage -Bar $exportProgressBar -Current 2 -Total 2 -Force
+    Sync-TableEstimateWithProduced
     Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv and masking key; fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
@@ -1323,6 +1587,7 @@ function Invoke-Masking {
     $script:TablesProduced = 0
     $script:InputWasJson = $false
     Reset-JobEstimate
+    Reset-GuiProgressStages
     
     $ext = [System.IO.Path]::GetExtension($InputFile).ToLower()
     
@@ -1331,7 +1596,7 @@ function Invoke-Masking {
         
         $json = $null
         try {
-            $json = Get-Content $InputFile -Raw | ConvertFrom-Json
+            $json = Read-JsonFileWithLoadProgress -Path $InputFile
         }
         catch {
             Write-StatusPanel -Mode "Loose JSON" -Phase "Parsing" -Current 0 -Total 0 -Detail "Trying NDJSON / loose object records" -Mask "" -Force
@@ -1371,26 +1636,23 @@ function Invoke-Masking {
         $isArray = $false
         if ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
             $isArray = $true
-            $script:TotalLines = @($json).Count
-            Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total $script:TotalLines -Detail "Array with $($script:TotalLines) elements" -Force
+            $jsonElementCount = @($json).Count
+            Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total $jsonElementCount -Detail "Array with $jsonElementCount elements" -Force
         } else {
-            $script:TotalLines = 1
             Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total 1 -Detail "Single object" -Force
         }
 
-        $recordsForEstimate = if ($isArray) { @($json) } else { @($json) }
-        Set-JsonRecordJobEstimate -Records $recordsForEstimate -MaskFields $MaskFields -ModeName "JSON"
+        Set-JsonObjectJobEstimate -Json $json -MaskFields $MaskFields -ModeName "JSON"
         Write-JobEstimateStatus -Mode "JSON"
 
-        $progressBar.Maximum = $script:TotalLines
+        if ($progressBar) {
+            $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
+        }
         
         if ($isArray) {
             # FIX: Collect all items into an array explicitly
             $maskedItems = @()
-            $itemCount = 0
             foreach ($item in $json) { 
-                $itemCount++
-                Update-ProcessingProgress -Current $itemCount -Total $script:TotalLines -Phase "Masking JSON" -Detail "Element $itemCount of $($script:TotalLines)"
                 $maskedItems += Apply-Masking-ToObject $item 
             }
             $script:MaskedData = $maskedItems
@@ -1400,6 +1662,7 @@ function Invoke-Masking {
         }
         
         Write-StatusPanel -Phase "Normalizing" -Detail "Generating CSV tables from masked JSON" -Force
+        Set-GuiProgressStage -Bar $normalizeProgressBar -Current 1 -Total 100 -Force
         
         if ($script:MaskedData -is [System.Collections.IEnumerable] -and $script:MaskedData -isnot [string]) {
             $maskedArray = @($script:MaskedData)
@@ -1408,10 +1671,12 @@ function Invoke-Masking {
             foreach ($item in $maskedArray) {
                 Process-MaskedObject -Object $item -TableName "root" -IdMap @{}
             }
+            Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
         } else {
             $script:Tables = @{}  # Reset tables
             $script:TablesProduced = 0  # Reset counter BEFORE processing
             Process-MaskedObject -Object $script:MaskedData -TableName "root" -IdMap @{}
+            Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
         }
         
         if (-not (Test-Path $OutputFolder)) {
@@ -1877,7 +2142,7 @@ function Show-TreeViewer {
 # ==================== Main GUI ====================
 $mainForm = New-Object System.Windows.Forms.Form
 $mainForm.Text = $script:AppTitle
-$mainForm.Size = New-Object System.Drawing.Size(700, 760)
+$mainForm.Size = New-Object System.Drawing.Size(700, 900)
 $mainForm.StartPosition = "CenterScreen"
 $mainForm.FormBorderStyle = "FixedDialog"
 $mainForm.MaximizeBox = $false
@@ -1962,26 +2227,41 @@ $fieldsLabel.Top = 290
 $fieldsLabel.BorderStyle = "FixedSingle"
 $fieldsLabel.BackColor = [System.Drawing.Color]::WhiteSmoke
 
-$progressLabel = New-Object System.Windows.Forms.Label
-$progressLabel.Text = "Processing: 0 lines"
-$progressLabel.AutoSize = $false
-$progressLabel.Width = 480
-$progressLabel.Height = 20
-$progressLabel.Left = 20
-$progressLabel.Top = 368
-$progressLabel.Font = New-Object System.Drawing.Font("Arial", 9)
+$loadProgressBar = New-Object System.Windows.Forms.ProgressBar
+$loadProgressBar.Left = 20
+$loadProgressBar.Top = 368
+$loadProgressBar.Width = 480
+$loadProgressBar.Height = 10
+$loadProgressBar.Value = 0
+$loadProgressBar.Maximum = 100
 
 $progressBar = New-Object System.Windows.Forms.ProgressBar
 $progressBar.Left = 20
-$progressBar.Top = 390
+$progressBar.Top = 382
 $progressBar.Width = 480
-$progressBar.Height = 25
+$progressBar.Height = 10
 $progressBar.Value = 0
 $progressBar.Maximum = 100
 
+$normalizeProgressBar = New-Object System.Windows.Forms.ProgressBar
+$normalizeProgressBar.Left = 20
+$normalizeProgressBar.Top = 396
+$normalizeProgressBar.Width = 480
+$normalizeProgressBar.Height = 10
+$normalizeProgressBar.Value = 0
+$normalizeProgressBar.Maximum = 100
+
+$exportProgressBar = New-Object System.Windows.Forms.ProgressBar
+$exportProgressBar.Left = 20
+$exportProgressBar.Top = 410
+$exportProgressBar.Width = 480
+$exportProgressBar.Height = 10
+$exportProgressBar.Value = 0
+$exportProgressBar.Maximum = 100
+
 $buttonPanel = New-Object System.Windows.Forms.Panel
 $buttonPanel.Left = 20
-$buttonPanel.Top = 425
+$buttonPanel.Top = 438
 $buttonPanel.Width = 480
 $buttonPanel.Height = 50
 
@@ -2014,8 +2294,19 @@ $statusLabel.AutoSize = $false
 $statusLabel.Width = 660
 $statusLabel.Height = 30
 $statusLabel.Left = 20
-$statusLabel.Top = 485
+$statusLabel.Top = 500
 $statusLabel.BorderStyle = "FixedSingle"
+
+$guiLogBox = New-Object System.Windows.Forms.RichTextBox
+$guiLogBox.ReadOnly = $true
+$guiLogBox.Width = 660
+$guiLogBox.Height = 150
+$guiLogBox.Left = 20
+$guiLogBox.Top = 540
+$guiLogBox.BorderStyle = "FixedSingle"
+$guiLogBox.BackColor = [System.Drawing.Color]::White
+$guiLogBox.Font = New-Object System.Drawing.Font("Consolas", 8)
+$guiLogBox.WordWrap = $false
 
 $footerLabel = New-Object System.Windows.Forms.Label
 $footerLabel.Text = "NO WARRANTY: This tool is provided as-is, without warranty of any kind.`r`nCheck the Git repo for source and updates: $($script:RepoUrl)`r`n$($script:AuthorName) <$($script:AuthorEmail)>"
@@ -2023,7 +2314,7 @@ $footerLabel.AutoSize = $false
 $footerLabel.Width = 500
 $footerLabel.Height = 70
 $footerLabel.Left = 20
-$footerLabel.Top = 535
+$footerLabel.Top = 715
 $footerLabel.Font = New-Object System.Drawing.Font("Arial", 11)
 
 $repoButton = New-Object System.Windows.Forms.Button
@@ -2031,14 +2322,14 @@ $repoButton.Text = "Open Repo"
 $repoButton.Width = 90
 $repoButton.Height = 28
 $repoButton.Left = 530
-$repoButton.Top = 535
+$repoButton.Top = 715
 
 $updateButton = New-Object System.Windows.Forms.Button
 $updateButton.Text = "Check for Update"
 $updateButton.Width = 130
 $updateButton.Height = 32
 $updateButton.Left = 530
-$updateButton.Top = 570
+$updateButton.Top = 750
 
 $inputButton.Add_Click({
     $dialog = New-Object System.Windows.Forms.OpenFileDialog
@@ -2284,9 +2575,9 @@ $runButton.Add_Click({
     try {
         $keyFile = Join-Path $script:LastOutputFolder "masking_key.csv"
         Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $script:LastOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields
-        $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) lines | Masked $($script:MaskedFieldsProcessed) fields | Generated $($script:TablesProduced) tables"
-        $progressBar.Value = $progressBar.Maximum
-        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`nLines processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+        $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) $($script:ProgressRecordLabel.ToLowerInvariant()) | Masked $($script:MaskedFieldsProcessed) fields | Generated $($script:TablesProduced) tables"
+        Complete-GuiProgressStages
+        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`n$($script:ProgressRecordLabel) processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
     }
     catch {
         $statusLabel.Text = "Error: $($_.Exception.Message)"
@@ -2302,8 +2593,7 @@ $resetButton.Add_Click({
     $outputTextBox.Text = ""
     $keyTextBox.Text = ""
     $fieldsLabel.Text = "Selected Fields: None"
-    $progressBar.Value = 0
-    $progressLabel.Text = "Processing: 0 lines"
+    Reset-GuiProgressStages
     $statusLabel.Text = "Ready"
     $script:LastInputFile = $null
     $script:LastOutputFolder = $null
@@ -2326,10 +2616,13 @@ $mainForm.Controls.Add($keyLabel)
 $mainForm.Controls.Add($keyTextBox)
 $mainForm.Controls.Add($selectFieldsButton)
 $mainForm.Controls.Add($fieldsLabel)
-$mainForm.Controls.Add($progressLabel)
+$mainForm.Controls.Add($loadProgressBar)
 $mainForm.Controls.Add($progressBar)
+$mainForm.Controls.Add($normalizeProgressBar)
+$mainForm.Controls.Add($exportProgressBar)
 $mainForm.Controls.Add($buttonPanel)
 $mainForm.Controls.Add($statusLabel)
+$mainForm.Controls.Add($guiLogBox)
 $mainForm.Controls.Add($footerLabel)
 $mainForm.Controls.Add($repoButton)
 $mainForm.Controls.Add($updateButton)

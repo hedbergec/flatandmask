@@ -100,10 +100,13 @@ foreach ($relativePath in $syntaxFiles) {
 if (-not $SkipTests) {
     Write-Step "Regression Tests"
     $testScript = Join-Path $repoRoot "testing scripts\run-all-tests.ps1"
-    $testArgs = @("-Version", $Version, "-MaxCsvRows", $MaxCsvRows)
-    if ($Clean) { $testArgs += "-Clean" }
+    $testArgs = @{
+        Version = $Version
+        MaxCsvRows = $MaxCsvRows
+    }
+    if ($Clean) { $testArgs.Clean = $true }
     if (-not [string]::IsNullOrWhiteSpace($CompareToRoot)) {
-        $testArgs += @("-CompareToRoot", $CompareToRoot)
+        $testArgs.CompareToRoot = $CompareToRoot
     }
 
     & $testScript @testArgs

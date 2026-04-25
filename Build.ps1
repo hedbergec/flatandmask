@@ -2,7 +2,7 @@
 param(
     [switch]$BuildEXE = $true,
     [string]$OutputPath = "$PSScriptRoot\build",
-    [string]$Version = "1.1.2",
+    [string]$Version = "1.2.0",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
     [switch]$SkipIcon = $false
 )
@@ -21,7 +21,7 @@ $repoUrl = "https://github.com/hedbergec/flatandmask"
 $warrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $repoUrl. Contact: $authorName <$authorEmail>."
 
 if ($Version -notmatch '^\d+\.\d+\.\d+(\.\d+)?$') {
-    throw "Version must be a numeric build version like 1.1.2 or 1.1.2.0. Current value: $Version"
+    throw "Version must be a numeric build version like 1.2.0 or 1.2.0.0. Current value: $Version"
 }
 
 # Create directories
