@@ -2,14 +2,14 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.0.3"
+$script:AppVersion = "1.1.0"
 $script:AppTitle = "Data Masking Tool"
 $script:LastInputFile = $null
 $script:LastOutputFolder = $null
 $script:SelectedFields = @()
 $script:SecretKey = ""
 $script:Mapping = @{}
-$script:MappingWithRows = @()
+$script:MappingWithRows = New-Object System.Collections.ArrayList
 $script:Tables = @{}
 $script:OriginalData = $null
 $script:MaskedData = $null
@@ -17,6 +17,130 @@ $script:InputWasJson = $false
 $script:TotalLines = 0
 $script:ProcessedLines = 0
 $script:TablesProduced = 0
+$script:VerboseLogging = $true  # Enable verbose logging by default
+$script:StatusPanelInitialized = $false
+$script:StatusPanelTop = 0
+$script:StatusLastUpdate = [DateTime]::MinValue
+$script:StatusState = @{
+    Mode     = "Ready"
+    Phase    = "Idle"
+    Progress = "0 / 0"
+    Detail   = ""
+    Mask     = ""
+}
+
+function Format-StatusLine {
+    param([string]$Text)
+
+    $width = 100
+    try {
+        if ([Console]::BufferWidth -gt 0) {
+            $width = [Math]::Max(40, [Console]::BufferWidth - 1)
+        }
+    } catch {}
+
+    if ($Text.Length -gt $width) {
+        return $Text.Substring(0, $width - 3) + "..."
+    }
+
+    return $Text.PadRight($width)
+}
+
+function Write-StatusPanel {
+    param(
+        [string]$Mode = $null,
+        [string]$Phase = $null,
+        [object]$Current = $null,
+        [object]$Total = $null,
+        [string]$Detail = $null,
+        [string]$Mask = $null,
+        [switch]$Force
+    )
+
+    if (-not $script:VerboseLogging) { return }
+
+    if ($PSBoundParameters.ContainsKey("Mode")) { $script:StatusState.Mode = $Mode }
+    if ($PSBoundParameters.ContainsKey("Phase")) { $script:StatusState.Phase = $Phase }
+    if ($PSBoundParameters.ContainsKey("Detail")) { $script:StatusState.Detail = $Detail }
+    if ($PSBoundParameters.ContainsKey("Mask")) { $script:StatusState.Mask = $Mask }
+    if ($PSBoundParameters.ContainsKey("Current") -or $PSBoundParameters.ContainsKey("Total")) {
+        $progressParts = $script:StatusState.Progress -split " / "
+        $currentText = if ($PSBoundParameters.ContainsKey("Current")) { [string]$Current } else { $progressParts[0] }
+        $totalText = if ($PSBoundParameters.ContainsKey("Total")) { [string]$Total } else { $progressParts[1] }
+        $currentNumber = 0
+        $totalNumber = 0
+        if ([int]::TryParse($currentText, [ref]$currentNumber) -and [int]::TryParse($totalText, [ref]$totalNumber) -and $currentNumber -gt $totalNumber) {
+            $totalText = $currentText
+        }
+        $script:StatusState.Progress = "$currentText / $totalText"
+    }
+
+    $now = Get-Date
+    if (-not $Force -and (($now - $script:StatusLastUpdate).TotalMilliseconds -lt 250)) {
+        return
+    }
+    $script:StatusLastUpdate = $now
+
+    $lines = @(
+        "Mode:     $($script:StatusState.Mode)",
+        "Phase:    $($script:StatusState.Phase)",
+        "Progress: $($script:StatusState.Progress)",
+        "Detail:   $($script:StatusState.Detail)",
+        "Mask:     $($script:StatusState.Mask)"
+    )
+
+    try {
+        if (-not $script:StatusPanelInitialized) {
+            $script:StatusPanelTop = [Console]::CursorTop
+            for ($i = 0; $i -lt 5; $i++) { Write-Host "" }
+            $script:StatusPanelInitialized = $true
+        }
+
+        $left = [Console]::CursorLeft
+        $top = [Console]::CursorTop
+        for ($i = 0; $i -lt 5; $i++) {
+            [Console]::SetCursorPosition(0, $script:StatusPanelTop + $i)
+            Write-Host (Format-StatusLine $lines[$i]) -NoNewline -ForegroundColor Cyan
+        }
+        [Console]::SetCursorPosition($left, [Math]::Max($top, $script:StatusPanelTop + 5))
+    }
+    catch {
+        Write-Host ($lines -join " | ") -ForegroundColor Cyan
+    }
+}
+
+function Write-VerboseLog {
+    param([string]$Message)
+    Write-StatusPanel -Detail $Message
+}
+
+function Write-MaskLog {
+    param([string]$Field, [string]$OriginalValue, [string]$MaskedValue)
+    if ($script:VerboseLogging -and $OriginalValue) {
+        $truncated = if ($OriginalValue.Length -gt 30) { $OriginalValue.Substring(0, 27) + "..." } else { $OriginalValue }
+        Write-StatusPanel -Mask "${Field}: $truncated -> $MaskedValue"
+    }
+}
+
+function Update-ProcessingProgress {
+    param(
+        [int]$Current,
+        [int]$Total,
+        [string]$Phase = "Processing",
+        [string]$Detail = $null,
+        [switch]$Force
+    )
+
+    Write-StatusPanel -Phase $Phase -Current $Current -Total $Total -Detail $Detail -Force:$Force
+
+    if ($mainForm -and $progressBar -and (($Current % 250) -eq 0 -or $Current -eq $Total -or $Force)) {
+        $mainForm.Invoke([action]{
+            $progressBar.Value = [Math]::Min($script:ProcessedLines, $progressBar.Maximum)
+            $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
+            $mainForm.Refresh()
+        })
+    }
+}
 
 # ==================== CSV Field Selector ====================
 function Get-CsvFields {
@@ -138,6 +262,23 @@ function Get-MaskedValue {
     return ([Convert]::ToBase64String($hash).Substring(0, 12))
 }
 
+function Add-MappingRow {
+    param($Original, $Masked, $Field, $RowIndex = $null)
+
+    $row = [PSCustomObject]@{
+        Original = $Original
+        Masked   = $Masked
+        Field    = $Field
+        RowIndex = $RowIndex
+    }
+
+    if ($script:MappingWithRows -is [System.Collections.IList]) {
+        $script:MappingWithRows.Add($row) | Out-Null
+    } else {
+        $script:MappingWithRows += $row
+    }
+}
+
 function Mask-IfNeeded {
     param($FieldName, $Value, $RowIndex = $null)
     if (Should-MaskField $FieldName) {
@@ -148,14 +289,10 @@ function Mask-IfNeeded {
                 Masked = Get-MaskedValue $strVal $script:SecretKey
                 Field = $normalizedField
             }
+            Write-MaskLog -Field $normalizedField -OriginalValue $strVal -MaskedValue $script:Mapping[$strVal].Masked
         }
         
-        $script:MappingWithRows += [PSCustomObject]@{
-            Original = $strVal
-            Masked   = $script:Mapping[$strVal].Masked
-            Field    = $normalizedField
-            RowIndex = $RowIndex
-        }
+        Add-MappingRow -Original $strVal -Masked $script:Mapping[$strVal].Masked -Field $normalizedField -RowIndex $RowIndex
         
         return $script:Mapping[$strVal].Masked
     }
@@ -167,13 +304,7 @@ function Apply-Masking-ToObject {
     
     if ($Object -is [PSCustomObject]) {
         $script:ProcessedLines++
-        if ($mainForm) {
-            $mainForm.Invoke([action]{
-                $progressBar.Value = [Math]::Min($script:ProcessedLines, $progressBar.Maximum)
-                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
-                $mainForm.Refresh()
-            })
-        }
+        Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking JSON" -Detail "Walking object fields"
         
         $maskedObj = [PSCustomObject]@{}
         $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
@@ -231,6 +362,8 @@ function Process-MaskedObject {
     $currentIdKey = "${tableSuffix}_id"
     $currentId = [guid]::NewGuid().ToString().Substring(0, 8)
     
+    Write-VerboseLog "Processing table: $TableName (ID: $currentId)"
+    
     $row = @{}
     foreach ($parentKey in $IdMap.Keys | Sort-Object) {
         $row[$parentKey] = $IdMap[$parentKey]
@@ -249,12 +382,17 @@ function Process-MaskedObject {
             Process-MaskedObject -Object $value -TableName "${TableName}_$name" -IdMap $newIdMap
         }
         elseif ($value -is [System.Collections.IEnumerable] -and $value -isnot [string]) {
+            $itemCount = 0
             foreach ($item in $value) {
                 if ($item -is [PSCustomObject]) {
+                    $itemCount++
                     $newIdMap = $IdMap.Clone()
                     $newIdMap[$currentIdKey] = $currentId
                     Process-MaskedObject -Object $item -TableName "${TableName}_$name" -IdMap $newIdMap
                 }
+            }
+            if ($itemCount -gt 0) {
+                Write-VerboseLog "  Found $itemCount nested objects in field: $name"
             }
         }
         else {
@@ -266,6 +404,7 @@ function Process-MaskedObject {
         if (-not $script:Tables.ContainsKey($TableName)) {
             $script:Tables[$TableName] = @()
             $script:TablesProduced++  # INCREMENT counter when new table is created
+            Write-VerboseLog "  Created new table: $TableName with $($row.Count) fields"
         }
         $script:Tables[$TableName] += [PSCustomObject]$row
     }
@@ -289,6 +428,510 @@ function Convert-RowsForCsvExport {
     return @($normalizedRows)
 }
 
+function Test-SocrataJson {
+    param($Json)
+    return (
+        $null -ne $Json -and
+        $null -ne $Json.PSObject.Properties["meta"] -and
+        $null -ne $Json.meta.PSObject.Properties["view"] -and
+        $null -ne $Json.meta.view.PSObject.Properties["columns"] -and
+        $null -ne $Json.PSObject.Properties["data"] -and
+        $Json.data -is [System.Collections.IEnumerable]
+    )
+}
+
+function Get-SocrataColumns {
+    param($Json)
+
+    $columns = @()
+    foreach ($column in @($Json.meta.view.columns)) {
+        $name = if ($column.PSObject.Properties["name"]) { [string]$column.name } else { $null }
+        if ([string]::IsNullOrWhiteSpace($name)) { continue }
+
+        $fieldName = if ($column.PSObject.Properties["fieldName"]) { [string]$column.fieldName } else { $name }
+        $columns += [PSCustomObject]@{
+            Name      = $name
+            FieldName = $fieldName
+        }
+    }
+
+    return @($columns)
+}
+
+function Get-SocrataJsonFields {
+    param([string]$FilePath)
+
+    try {
+        $json = Get-Content $FilePath -Raw | ConvertFrom-Json
+    }
+    catch {
+        return $null
+    }
+    if (-not (Test-SocrataJson $json)) { return $null }
+
+    return @(Get-SocrataColumns $json | ForEach-Object { "root.$($_.Name)" })
+}
+
+function Get-VisibleJsonProperties {
+    param($Object)
+
+    return @($Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" })
+}
+
+function Get-JsonRecordCollectionInfo {
+    param($Json)
+
+    if ($null -eq $Json -or $Json -isnot [PSCustomObject]) { return $null }
+
+    if ($Json.PSObject.Properties["type"] -and $Json.type -eq "FeatureCollection" -and $Json.PSObject.Properties["features"] -and $Json.features -is [System.Collections.IEnumerable]) {
+        return [PSCustomObject]@{
+            Format = "GeoJSON"
+            Path   = "features"
+            Records = @($Json.features)
+        }
+    }
+
+    foreach ($propertyName in @("data", "results", "items", "records")) {
+        $property = $Json.PSObject.Properties[$propertyName]
+        if ($null -ne $property -and $property.Value -is [System.Collections.IEnumerable] -and $property.Value -isnot [string]) {
+            $records = @($property.Value)
+            if ($records.Count -gt 0 -and $records[0] -is [PSCustomObject]) {
+                return [PSCustomObject]@{
+                    Format = "Envelope JSON"
+                    Path   = $propertyName
+                    Records = $records
+                }
+            }
+        }
+    }
+
+    return $null
+}
+
+function Test-HeaderArrayJson {
+    param($Json)
+
+    if ($Json -isnot [System.Collections.IEnumerable] -or $Json -is [string]) { return $false }
+    $rows = @($Json)
+    if ($rows.Count -lt 2) { return $false }
+    $header = @($rows[0])
+    if ($header.Count -eq 0) { return $false }
+
+    foreach ($value in $header) {
+        if ([string]::IsNullOrWhiteSpace([string]$value)) { return $false }
+    }
+
+    return ($rows[1] -is [System.Collections.IEnumerable] -and $rows[1] -isnot [string])
+}
+
+function Convert-HeaderArrayRowsToObjects {
+    param($Rows)
+
+    $rowArray = @($Rows)
+    if ($rowArray.Count -lt 2) { return @() }
+
+    $headers = @($rowArray[0] | ForEach-Object { [string]$_ })
+    $objects = New-Object System.Collections.ArrayList
+
+    for ($rowIndex = 1; $rowIndex -lt $rowArray.Count; $rowIndex++) {
+        $values = @($rowArray[$rowIndex])
+        $obj = [ordered]@{}
+        for ($i = 0; $i -lt $headers.Count; $i++) {
+            $obj[$headers[$i]] = if ($i -lt $values.Count) { $values[$i] } else { $null }
+        }
+        $objects.Add([PSCustomObject]$obj) | Out-Null
+    }
+
+    return @($objects)
+}
+
+function Read-LooseJsonRecords {
+    param([string]$FilePath)
+
+    $records = New-Object System.Collections.ArrayList
+    $lines = Get-Content -Path $FilePath
+    $nonEmptyLines = @($lines | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    if ($nonEmptyLines.Count -eq 0) { return @() }
+
+    $lineModeSucceeded = $true
+    foreach ($line in $nonEmptyLines) {
+        $trimmed = $line.Trim().TrimEnd(',')
+        if ([string]::IsNullOrWhiteSpace($trimmed)) { continue }
+        try {
+            $records.Add(($trimmed | ConvertFrom-Json)) | Out-Null
+        }
+        catch {
+            $lineModeSucceeded = $false
+            break
+        }
+    }
+
+    if ($lineModeSucceeded -and $records.Count -gt 0) {
+        return @($records)
+    }
+
+    $raw = Get-Content -Path $FilePath -Raw
+    foreach ($candidate in @("[$raw]", "[$($raw.Trim().Trim(','))]")) {
+        try {
+            $parsed = $candidate | ConvertFrom-Json
+            if ($parsed -is [System.Collections.IEnumerable] -and $parsed -isnot [string]) {
+                return @($parsed)
+            }
+            return @($parsed)
+        }
+        catch {}
+    }
+
+    $splitRecords = New-Object System.Collections.ArrayList
+    $depth = 0
+    $start = -1
+    $inString = $false
+    $escaped = $false
+
+    for ($i = 0; $i -lt $raw.Length; $i++) {
+        $ch = $raw[$i]
+
+        if ($inString) {
+            if ($escaped) {
+                $escaped = $false
+            }
+            elseif ($ch -eq '\') {
+                $escaped = $true
+            }
+            elseif ($ch -eq '"') {
+                $inString = $false
+            }
+            continue
+        }
+
+        if ($ch -eq '"') {
+            $inString = $true
+            continue
+        }
+
+        if ($ch -eq '{') {
+            if ($depth -eq 0) { $start = $i }
+            $depth++
+        }
+        elseif ($ch -eq '}') {
+            $depth--
+            if ($depth -eq 0 -and $start -ge 0) {
+                $jsonText = $raw.Substring($start, $i - $start + 1)
+                $splitRecords.Add(($jsonText | ConvertFrom-Json)) | Out-Null
+                $start = -1
+            }
+        }
+    }
+
+    if ($splitRecords.Count -gt 0) {
+        return @($splitRecords)
+    }
+
+    throw "JSON is not a supported loose record format. Expected NDJSON, comma-separated objects, or concatenated JSON objects."
+}
+
+function Invoke-JsonRecordsMasking {
+    param(
+        [object[]]$Records,
+        [string]$InputFile,
+        [string]$OutputFolder,
+        [string]$KeyFile,
+        [string]$ModeName,
+        [string]$OutputFormat = "JsonArray"
+    )
+
+    Write-StatusPanel -Mode $ModeName -Phase "Preparing" -Current 0 -Total $Records.Count -Detail "Detected record collection" -Mask "" -Force
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -ItemType Directory -Force -Path $OutputFolder | Out-Null
+    }
+
+    $script:TotalLines = $Records.Count
+    $script:ProcessedLines = 0
+    $script:InputWasJson = $true
+    if ($progressBar) {
+        $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
+    }
+
+    $maskedItems = New-Object System.Collections.ArrayList
+    for ($i = 0; $i -lt $Records.Count; $i++) {
+        Update-ProcessingProgress -Current ($i + 1) -Total $script:TotalLines -Phase "Masking $ModeName" -Detail "Record $($i + 1) of $($Records.Count)"
+        $maskedItems.Add((Apply-Masking-ToObject $Records[$i])) | Out-Null
+    }
+
+    $script:MaskedData = @($maskedItems)
+    $script:Tables = @{}
+    $script:TablesProduced = 0
+    foreach ($item in @($script:MaskedData)) {
+        Process-MaskedObject -Object $item -TableName "root" -IdMap @{}
+    }
+
+    $inputFileName = [System.IO.Path]::GetFileNameWithoutExtension($InputFile)
+    if ($OutputFormat -eq "Ndjson") {
+        $jsonOutputPath = Join-Path $OutputFolder "${inputFileName}_masked.ndjson"
+        $writer = $null
+        try {
+            $writer = New-Object System.IO.StreamWriter($jsonOutputPath, $false, (New-Object System.Text.UTF8Encoding($false)))
+            foreach ($item in @($script:MaskedData)) {
+                $writer.WriteLine((ConvertTo-Json -InputObject $item -Compress -Depth 100))
+            }
+        }
+        finally {
+            if ($writer) { $writer.Dispose() }
+        }
+    } else {
+        $jsonOutputPath = Join-Path $OutputFolder "${inputFileName}_masked.json"
+        ConvertTo-Json -InputObject @($script:MaskedData) -Depth 100 | Out-File -FilePath $jsonOutputPath -Encoding UTF8 -Force
+    }
+}
+
+function Invoke-HeaderArrayJsonMasking {
+    param(
+        $Json,
+        [string]$InputFile,
+        [string]$OutputFolder,
+        [string]$KeyFile,
+        [string[]]$MaskFields
+    )
+
+    $records = @(Convert-HeaderArrayRowsToObjects $Json)
+    Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Header Array JSON"
+}
+
+function Complete-MaskingOutputs {
+    param(
+        [string]$OutputFolder,
+        [string]$KeyFile,
+        [string]$InputFile,
+        [string]$SecretKey,
+        [string[]]$MaskFields,
+        [switch]$SkipReplicationScript
+    )
+
+    foreach ($tableName in $script:Tables.Keys) {
+        $name = if ($tableName -eq "root") { "data" } else { $tableName.Replace("root_", "") }
+        $path = Join-Path $OutputFolder "$name.csv"
+        $rowCount = (Convert-RowsForCsvExport -Rows @($script:Tables[$tableName])).Count
+        Write-StatusPanel -Phase "Exporting CSV" -Detail "Writing $name.csv ($rowCount rows)" -Force
+        Convert-RowsForCsvExport -Rows @($script:Tables[$tableName]) | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
+    }
+    
+    Write-StatusPanel -Phase "Finalizing" -Detail "Writing masking key" -Force
+    Export-MaskingKey -KeyFile $KeyFile
+    
+    if (-not $SkipReplicationScript) {
+        Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
+    }
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Tables: $($script:Tables.Keys.Count); unique masked values: $($script:Mapping.Count)" -Force
+}
+
+function Export-MaskingKey {
+    param([string]$KeyFile)
+
+    if ($script:MappingWithRows.Count -gt 0) {
+        $script:MappingWithRows | Select-Object Original, Masked, Field, RowIndex | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+    } elseif ($script:Mapping.Count -gt 0) {
+        $script:Mapping.GetEnumerator() | ForEach-Object {
+            [PSCustomObject]@{
+                Original = $_.Key
+                Masked   = $_.Value.Masked
+                Field    = $_.Value.Field
+            }
+        } | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+    } else {
+        @() | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+    }
+}
+
+function ConvertTo-CsvLine {
+    param([object[]]$Values)
+
+    $escaped = foreach ($value in $Values) {
+        if ($null -eq $value) {
+            '""'
+        } else {
+            '"' + ([string]$value).Replace('"', '""') + '"'
+        }
+    }
+
+    return ($escaped -join ',')
+}
+
+function Invoke-SocrataJsonMasking {
+    param(
+        $Json,
+        [string]$InputFile,
+        [string]$OutputFolder,
+        [string]$KeyFile,
+        [string[]]$MaskFields
+    )
+
+    Write-StatusPanel -Mode "Socrata JSON" -Phase "Preparing" -Current 0 -Total 0 -Detail "Detected indexed row-array JSON" -Mask "" -Force
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -ItemType Directory -Force -Path $OutputFolder | Out-Null
+    }
+
+    $columns = @(Get-SocrataColumns $Json)
+    $maskIndexes = @{}
+    for ($i = 0; $i -lt $columns.Count; $i++) {
+        $namePath = "root.$($columns[$i].Name)"
+        $fieldPath = "root.$($columns[$i].FieldName)"
+        foreach ($maskField in $MaskFields) {
+            $normalizedMask = Normalize-FieldName $maskField
+            if ((Normalize-FieldName $namePath) -eq $normalizedMask -or (Normalize-FieldName $fieldPath) -eq $normalizedMask) {
+                $maskIndexes[$i] = $namePath
+                break
+            }
+        }
+    }
+
+    $script:TotalLines = @($Json.data).Count
+    $script:ProcessedLines = 0
+    $script:TablesProduced = 1
+    $script:InputWasJson = $true
+    $script:MaskedData = $null
+    $script:OriginalData = $null
+
+    if ($progressBar) {
+        $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
+    }
+    Write-StatusPanel -Current 0 -Total $script:TotalLines -Detail "Opening output writers" -Force
+
+    $inputFileName = [System.IO.Path]::GetFileNameWithoutExtension($InputFile)
+    $jsonOutputPath = Join-Path $OutputFolder "${inputFileName}_masked.json"
+    $csvOutputPath = Join-Path $OutputFolder "data.csv"
+    $dataRows = @($Json.data)
+
+    $jsonWriter = $null
+    $csvWriter = $null
+    try {
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        $jsonWriter = New-Object System.IO.StreamWriter($jsonOutputPath, $false, $utf8NoBom)
+        $csvWriter = New-Object System.IO.StreamWriter($csvOutputPath, $false, $utf8NoBom)
+
+        $csvWriter.WriteLine((ConvertTo-CsvLine -Values $columns.Name))
+
+        $jsonWithoutData = $Json | Select-Object -Property * -ExcludeProperty data
+        $jsonPrefix = ($jsonWithoutData | ConvertTo-Json -Depth 100).TrimEnd()
+        if ($jsonPrefix.EndsWith("}")) {
+            $jsonPrefix = $jsonPrefix.Substring(0, $jsonPrefix.Length - 1).TrimEnd()
+        }
+        $jsonWriter.Write($jsonPrefix)
+        if (-not $jsonPrefix.EndsWith("{")) {
+            $jsonWriter.WriteLine(",")
+        }
+        $jsonWriter.WriteLine('  "data": [')
+
+        $firstRow = $true
+        $rowIndex = 0
+        foreach ($row in $dataRows) {
+            $rowValues = @($row)
+            for ($i = 0; $i -lt $rowValues.Count; $i++) {
+                if ($maskIndexes.ContainsKey($i)) {
+                    $rowValues[$i] = Mask-IfNeeded $maskIndexes[$i] $rowValues[$i] $rowIndex
+                }
+            }
+
+            if (-not $firstRow) {
+                $jsonWriter.WriteLine(",")
+            }
+            $jsonWriter.Write("    ")
+            $jsonWriter.Write((ConvertTo-Json -InputObject $rowValues -Compress -Depth 20))
+            $firstRow = $false
+
+            $csvWriter.WriteLine((ConvertTo-CsvLine -Values $rowValues))
+
+            $rowIndex++
+            $script:ProcessedLines = $rowIndex
+            Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking Socrata JSON" -Detail "Writing data.csv and masked JSON"
+        }
+
+        $jsonWriter.WriteLine()
+        $jsonWriter.WriteLine("  ]")
+        $jsonWriter.WriteLine("}")
+    }
+    finally {
+        if ($jsonWriter) { $jsonWriter.Dispose() }
+        if ($csvWriter) { $csvWriter.Dispose() }
+    }
+
+    Export-MaskingKey -KeyFile $KeyFile
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv, masked JSON, and masking key" -Force
+}
+
+function Invoke-CsvMaskingFast {
+    param(
+        [string]$InputFile,
+        [string]$OutputFolder,
+        [string]$KeyFile,
+        [string]$SecretKey,
+        [string[]]$MaskFields
+    )
+
+    Write-StatusPanel -Mode "CSV" -Phase "Loading" -Current 0 -Total 0 -Detail "Counting rows" -Mask "" -Force
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -ItemType Directory -Force -Path $OutputFolder | Out-Null
+    }
+
+    $lineCount = ([System.IO.File]::ReadLines($InputFile) | Measure-Object).Count
+    $script:TotalLines = [Math]::Max(0, $lineCount - 1)
+    $script:ProcessedLines = 0
+    $script:TablesProduced = 1
+    $script:MaskedData = $null
+    $script:OriginalData = $null
+    $script:Tables = @{}
+
+    if ($progressBar) {
+        $progressBar.Maximum = [Math]::Max(1, $script:TotalLines)
+    }
+
+    $csvOutputPath = Join-Path $OutputFolder "data.csv"
+    $writer = $null
+    $headers = $null
+
+    try {
+        $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+        $writer = New-Object System.IO.StreamWriter($csvOutputPath, $false, $utf8NoBom)
+
+        Import-Csv $InputFile -ErrorAction Stop | ForEach-Object {
+            if ($null -eq $headers) {
+                $headers = @($_.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" } | Select-Object -ExpandProperty Name)
+                $writer.WriteLine((ConvertTo-CsvLine -Values $headers))
+                Write-StatusPanel -Phase "Masking CSV" -Current 0 -Total $script:TotalLines -Detail "Writing data.csv" -Force
+            }
+
+            $rowValues = New-Object object[] $headers.Count
+            for ($i = 0; $i -lt $headers.Count; $i++) {
+                $name = $headers[$i]
+                $rowValues[$i] = Mask-IfNeeded "root.$name" $_.$name $script:ProcessedLines
+            }
+
+            $writer.WriteLine((ConvertTo-CsvLine -Values $rowValues))
+            $script:ProcessedLines++
+            Update-ProcessingProgress -Current $script:ProcessedLines -Total $script:TotalLines -Phase "Masking CSV" -Detail "Writing data.csv"
+        }
+    }
+    finally {
+        if ($writer) { $writer.Dispose() }
+    }
+
+    Write-StatusPanel -Phase "Finalizing" -Detail "Writing masking key" -Force
+    Export-MaskingKey -KeyFile $KeyFile
+    Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
+    Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv and masking key" -Force
+}
+
+function Write-SocrataReplicationNotice {
+    param([string]$OutputFolder)
+
+    $scriptPath = Join-Path $OutputFolder "replicate_masking.ps1"
+    @"
+throw "This output was produced with the optimized Socrata JSON processor. Re-run masking from DataMaskingTool.ps1 to reproduce it; the legacy standalone replication script does not support Socrata row-array JSON yet."
+"@ | Out-File -FilePath $scriptPath -Encoding UTF8 -Force
+}
+
 function Invoke-Masking {
     param(
         [string]$InputFile,
@@ -301,7 +944,7 @@ function Invoke-Masking {
     $script:SelectedFields = $MaskFields
     $script:SecretKey = $SecretKey
     $script:Mapping = @{}
-    $script:MappingWithRows = @()
+    $script:MappingWithRows = New-Object System.Collections.ArrayList
     $script:Tables = @{}
     $script:ProcessedLines = 0
     $script:TablesProduced = 0
@@ -310,24 +953,75 @@ function Invoke-Masking {
     $ext = [System.IO.Path]::GetExtension($InputFile).ToLower()
     
     if ($ext -eq ".json") {
-        $json = Get-Content $InputFile -Raw | ConvertFrom-Json
+        Write-StatusPanel -Mode "JSON" -Phase "Loading" -Current 0 -Total 0 -Detail "Reading input file" -Mask "" -Force
+        
+        $json = $null
+        try {
+            $json = Get-Content $InputFile -Raw | ConvertFrom-Json
+        }
+        catch {
+            Write-StatusPanel -Mode "Loose JSON" -Phase "Parsing" -Current 0 -Total 0 -Detail "Trying NDJSON / loose object records" -Mask "" -Force
+            $records = @(Read-LooseJsonRecords -FilePath $InputFile)
+            Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Loose JSON" -OutputFormat "Ndjson"
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
+            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            return
+        }
         $script:InputWasJson = $true
         $script:OriginalData = $json
+
+        if (Test-SocrataJson $json) {
+            Invoke-SocrataJsonMasking -Json $json -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -MaskFields $MaskFields
+            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            return
+        }
+
+        $recordCollection = Get-JsonRecordCollectionInfo $json
+
+        if (Test-HeaderArrayJson $json) {
+            Invoke-HeaderArrayJsonMasking -Json $json -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -MaskFields $MaskFields
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
+            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            return
+        }
+
+        $recordCollection = Get-JsonRecordCollectionInfo $json
+        if ($null -ne $recordCollection) {
+            Invoke-JsonRecordsMasking -Records @($recordCollection.Records) -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName $recordCollection.Format
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
+            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            return
+        }
         
+        # Detect if JSON is an array or a single object
+        $isArray = $false
         if ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
+            $isArray = $true
             $script:TotalLines = @($json).Count
-            $progressBar.Maximum = $script:TotalLines
+            Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total $script:TotalLines -Detail "Array with $($script:TotalLines) elements" -Force
+        } else {
+            $script:TotalLines = 1
+            Write-StatusPanel -Phase "Loaded JSON" -Current 0 -Total 1 -Detail "Single object" -Force
+        }
+        
+        $progressBar.Maximum = $script:TotalLines
+        
+        if ($isArray) {
             # FIX: Collect all items into an array explicitly
             $maskedItems = @()
+            $itemCount = 0
             foreach ($item in $json) { 
+                $itemCount++
+                Update-ProcessingProgress -Current $itemCount -Total $script:TotalLines -Phase "Masking JSON" -Detail "Element $itemCount of $($script:TotalLines)"
                 $maskedItems += Apply-Masking-ToObject $item 
             }
             $script:MaskedData = $maskedItems
         } else {
-            $script:TotalLines = 1
-            $progressBar.Maximum = 1
+            Write-StatusPanel -Phase "Masking JSON" -Current 0 -Total 1 -Detail "Processing single object" -Force
             $script:MaskedData = @(@(Apply-Masking-ToObject $json))
         }
+        
+        Write-StatusPanel -Phase "Normalizing" -Detail "Generating CSV tables from masked JSON" -Force
         
         if ($script:MaskedData -is [System.Collections.IEnumerable] -and $script:MaskedData -isnot [string]) {
             $maskedArray = @($script:MaskedData)
@@ -360,72 +1054,11 @@ function Invoke-Masking {
         $jsonText | Out-File -FilePath $jsonOutputPath -Encoding UTF8 -Force
     }
     elseif ($ext -eq ".csv") {
-        $data = Import-Csv $InputFile -ErrorAction Stop
-        $script:OriginalData = $data
-        $dataArray = @($data)
-        $script:TotalLines = $dataArray.Count
-        $progressBar.Maximum = $script:TotalLines
-        
-        $script:MaskedData = @($dataArray | ForEach-Object -Begin { $rowIdx = 0 } -Process {
-            $script:ProcessedLines++
-            $mainForm.Invoke([action]{
-                $progressBar.Value = $script:ProcessedLines
-                $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
-                $mainForm.Refresh()
-            })
-            
-            $maskedRow = [PSCustomObject]@{}
-            $_.PSObject.Properties | ForEach-Object {
-                if (-not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot") {
-                    $name = $_.Name
-                    $value = $_.Value
-                    $fieldPath = "root.$name"
-                    $maskedValue = Mask-IfNeeded $fieldPath $value $rowIdx
-                    $maskedRow | Add-Member -NotePropertyName $name -NotePropertyValue $maskedValue
-                }
-            }
-            $rowIdx++
-            $maskedRow
-        })
-        
-        if (-not (Test-Path $OutputFolder)) {
-            New-Item -ItemType Directory -Force -Path $OutputFolder | Out-Null
-        }
-        
-        if (-not $script:Tables.ContainsKey("root")) {
-            $script:Tables["root"] = @()
-            $script:TablesProduced++  # INCREMENT counter when root table is created
-        }
-        $script:Tables["root"] += $script:MaskedData
-        
-        # Update GUI to show final table count
-        $mainForm.Invoke([action]{
-            $progressLabel.Text = "Processing: $($script:ProcessedLines) lines"
-            $mainForm.Refresh()
-        })
+        Invoke-CsvMaskingFast -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -SecretKey $SecretKey -MaskFields $MaskFields
+        return
     }
     
-    foreach ($tableName in $script:Tables.Keys) {
-        $name = if ($tableName -eq "root") { "data" } else { $tableName.Replace("root_", "") }
-        $path = Join-Path $OutputFolder "$name.csv"
-        Convert-RowsForCsvExport -Rows @($script:Tables[$tableName]) | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
-    }
-    
-    if ($script:MappingWithRows.Count -gt 0) {
-        $script:MappingWithRows | Select-Object Original, Masked, Field, RowIndex | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
-    } elseif ($script:Mapping.Count -gt 0) {
-        $script:Mapping.GetEnumerator() | ForEach-Object {
-            [PSCustomObject]@{
-                Original = $_.Key
-                Masked   = $_.Value.Masked
-                Field    = $_.Value.Field
-            }
-        } | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
-    } else {
-        @() | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
-    }
-    
-    Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
+    Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
 }
 
 function Generate-ReplicationScript {
@@ -694,7 +1327,13 @@ Write-Host "Output: `$OutputFolder"
 function Show-TreeViewer {
     param([string]$JsonFilePath)
     try {
-        $json = Get-Content $JsonFilePath -Raw | ConvertFrom-Json
+        $json = $null
+        try {
+            $json = Get-Content $JsonFilePath -Raw | ConvertFrom-Json
+        }
+        catch {
+            $json = @(Read-LooseJsonRecords -FilePath $JsonFilePath)
+        }
         
         $form = New-Object System.Windows.Forms.Form
         $form.Text = "JSON Schema Tree"
@@ -749,7 +1388,22 @@ function Show-TreeViewer {
             }
         }
         
-        if ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
+        if (Test-HeaderArrayJson $json) {
+            foreach ($header in @(@($json)[0])) {
+                $path = "root.$([string]$header)"
+                $allPaths.Add($path) | Out-Null
+                $node = New-Object System.Windows.Forms.TreeNode
+                $node.Text = [string]$header
+                $node.Tag = $path
+                $tree.Nodes.Add($node) | Out-Null
+            }
+        }
+        elseif ($null -ne $recordCollection) {
+            if (@($recordCollection.Records).Count -gt 0) {
+                BuildTreeNode -Object @($recordCollection.Records)[0] -Prefix "root"
+            }
+        }
+        elseif ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
             $first = $json | Select-Object -First 1
             if ($null -ne $first) {
                 BuildTreeNode -Object $first -Prefix "root"
@@ -1022,7 +1676,7 @@ $selectFieldsButton.Add_Click({
         $fieldsLabel.Text = "Selected Fields:`r`n$displayText"
         $statusLabel.Text = "Selected $($script:SelectedFields.Count) fields"
         
-        Write-Host "Selected Fields: $($script:SelectedFields -join ', ')" -ForegroundColor Cyan
+        Write-StatusPanel -Mode "Ready" -Phase "Fields selected" -Current 0 -Total 0 -Detail "Selected $($script:SelectedFields.Count) fields" -Mask "" -Force
         
         # FIX: Enable Run button only when fields are selected
         if ($script:LastInputFile -and $script:LastOutputFolder -and $keyTextBox.Text -and $script:SelectedFields.Count -gt 0) {
@@ -1035,7 +1689,24 @@ $selectFieldsButton.Add_Click({
 
 function Get-JsonFields {
     param([string]$FilePath)
-    $json = Get-Content $FilePath -Raw | ConvertFrom-Json
+    $socrataFields = Get-SocrataJsonFields -FilePath $FilePath
+    if ($null -ne $socrataFields) {
+        return @($socrataFields | Sort-Object -Unique)
+    }
+
+    $json = $null
+    try {
+        $json = Get-Content $FilePath -Raw | ConvertFrom-Json
+    }
+    catch {
+        $records = @(Read-LooseJsonRecords -FilePath $FilePath)
+        if ($records.Count -gt 0) {
+            $json = @($records)
+        } else {
+            throw
+        }
+    }
+
     $treeLines = New-Object System.Collections.Generic.List[string]
     
     function BuildTree {
@@ -1057,7 +1728,16 @@ function Get-JsonFields {
         }
     }
     
-    if ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
+    if (Test-HeaderArrayJson $json) {
+        $headers = @(@($json)[0] | ForEach-Object { "root.$([string]$_)" })
+        return @($headers | Sort-Object -Unique)
+    }
+
+    $recordCollection = Get-JsonRecordCollectionInfo $json
+    if ($null -ne $recordCollection -and @($recordCollection.Records).Count -gt 0) {
+        BuildTree -Object @($recordCollection.Records)[0] -Prefix "root"
+    }
+    elseif ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
         $first = $json | Select-Object -First 1
         if ($null -ne $first) {
             BuildTree -Object $first -Prefix "root"
@@ -1144,22 +1824,7 @@ $runButton.Add_Click({
         return
     }
     
-    # DEBUG: Print what we're about to process
-    Write-Host "=== DEBUG INFO ===" -ForegroundColor Magenta
-    Write-Host "Input File: $($script:LastInputFile)" -ForegroundColor Magenta
-    Write-Host "Output Folder: $($script:LastOutputFolder)" -ForegroundColor Magenta
-    Write-Host "Selected Fields Count: $($script:SelectedFields.Count)" -ForegroundColor Magenta
-    Write-Host "Selected Fields: $($script:SelectedFields -join ', ')" -ForegroundColor Magenta
-    Write-Host "Secret Key Length: $($script:SecretKey.Length)" -ForegroundColor Magenta
-    
-    # Load original data to see what we're working with
-    $ext = [System.IO.Path]::GetExtension($script:LastInputFile).ToLower()
-    if ($ext -eq ".json") {
-        $testJson = Get-Content $script:LastInputFile -Raw | ConvertFrom-Json
-        $testCount = if ($testJson -is [System.Collections.IEnumerable]) { @($testJson).Count } else { 1 }
-        Write-Host "Original JSON object count: $testCount" -ForegroundColor Magenta
-    }
-    Write-Host "=================`n" -ForegroundColor Magenta
+    Write-StatusPanel -Mode "Starting" -Phase "Validating" -Current 0 -Total 0 -Detail "Input and settings ready" -Mask "" -Force
     
     $statusLabel.Text = "Processing..."
     $runButton.Enabled = $false

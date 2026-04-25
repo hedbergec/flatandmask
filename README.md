@@ -1,6 +1,6 @@
 # Data Masking Tool
 
-**Version 1.0.3**
+**Version 1.1.0**
 
 ## ⚠️ Disclaimer
 
@@ -21,13 +21,14 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 ### Key Features
 
 - **Deterministic Masking**: Same input = same masked value (using HMAC-SHA256)
-- **Multi-Format Support**: Process JSON and CSV files with identical interface
+- **Multi-Format Support**: Process CSV plus standard, loose, tabular, and envelope JSON formats with identical interface
 - **Interactive Field Selection**: Choose which columns/fields to mask via GUI
 - **JSON Schema Tree Viewer**: Searchable tree browser for complex nested JSON structures
 - **Complete Data Export**: All data exported; only selected fields are masked
 - **Audit Trail**: Generate masking key files mapping original → masked values
 - **Table Normalization**: Nested JSON automatically normalized into related CSV tables with foreign keys
 - **Deterministic IDs**: Parent-child relationships maintained for manual merging/joining
+- **Live Progress Panel**: Console output updates in-place with five status lines instead of verbose log spam
 - **Replication Scripts**: Auto-generated scripts to re-run masking on new data with consistent results
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
 
@@ -128,8 +129,18 @@ Click "Browse..." next to "Input File (JSON/CSV)" and choose your data file.
 
 **Supported Formats:**
 
-- `*.json` - JSON files with objects or arrays of objects
+- `*.json` - JSON objects, arrays of objects, Socrata exports, NDJSON/JSON Lines, loose or concatenated JSON objects, API envelopes, GeoJSON FeatureCollections, and header-row array JSON
 - `*.csv` - CSV files with headers
+
+Supported JSON shapes include:
+
+- Standard object or array-of-object JSON
+- Socrata exports with `meta.view.columns` and row-array `data`
+- NDJSON / JSON Lines with one object per line
+- Concatenated or comma-separated loose JSON objects
+- API envelopes where records are under `data`, `results`, `items`, or `records`
+- GeoJSON `FeatureCollection.features`
+- Top-level array-of-arrays where the first row contains column names
 
 #### 3. View JSON Schema (Optional)
 
@@ -142,6 +153,7 @@ Click "Select Fields to Mask" to open the field selection dialog.
 **For JSON Files:**
 
 - Shows all nested field paths (e.g., `root.user.email`, `root.address.city`)
+- Shows tabular JSON column paths for Socrata and header-row array files
 - PowerShell internal properties are auto-filtered
 - Check boxes for sensitive fields
 
@@ -220,6 +232,8 @@ Uses for this file:
 ### JSON Export (JSON Input Only)
 
 **<filename>_masked.json** - Full JSON with original structure preserved, only selected fields masked
+
+For NDJSON/loose JSON inputs, the masked record output is written as `<filename>_masked.ndjson`. Socrata JSON also produces a fast `data.csv` export using the source column names.
 
 ```json
 [
@@ -527,6 +541,7 @@ launch.bat                        # Batch launcher (optional)
 
 ## Version History
 
+- **v1.1.0** - Added optimized Socrata JSON processing, NDJSON/loose JSON, envelope JSON, GeoJSON, header-array JSON support, and a five-line live progress panel
 - **v1.0.3** - Updated release version
 - **v1.0.1** - Consolidated single file, JSON tree viewer, complete CSV masking, table normalization, deterministic IDs for merging
 - **v1.0.0** - Initial multi-file release

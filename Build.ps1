@@ -2,7 +2,7 @@
 param(
     [switch]$BuildEXE = $true,
     [string]$OutputPath = "$PSScriptRoot\build",
-    [string]$Version = "1.0.3",
+    [string]$Version = "1.1.0",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
     [switch]$SkipIcon = $false
 )

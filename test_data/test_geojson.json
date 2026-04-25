@@ -1,0 +1,15 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "name": "Alpha", "email": "alpha@example.com" },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "properties": { "name": "Beta", "email": "beta@example.com" },
+      "geometry": null
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-﻿# Data Masking Tool v1.0.3
+﻿# Data Masking Tool v1.1.0
 
 ## Quick Start
 Double-click launch.bat to launch the tool

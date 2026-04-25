@@ -1,0 +1,7 @@
+{
+  "total": 2,
+  "items": [
+    { "id": "1", "email": "one@example.com" },
+    { "id": "2", "email": "two@example.com" }
+  ]
+}
