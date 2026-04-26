@@ -4,7 +4,16 @@ param(
     [string]$OutputPath = "$PSScriptRoot\build",
     [string]$Version = "1.2.0",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
-    [switch]$SkipIcon = $false
+    [switch]$SkipIcon = $false,
+    [switch]$SignEXE = $false,
+    [string]$SignToolPath = "",
+    [string]$SigningDlibPath = "",
+    [string]$SigningMetadataPath = "",
+    [string]$SigningEndpoint = "https://wus2.codesigning.azure.net",
+    [string]$CodeSigningAccountName = "hedbergec",
+    [string]$CertificateProfileName = "DesignEffectsLLCPub",
+    [string]$SigningCorrelationId = "",
+    [switch]$SkipSignatureVerify = $false
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,6 +31,67 @@ $warrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warrant
 
 if ($Version -notmatch '^\d+\.\d+\.\d+(\.\d+)?$') {
     throw "Version must be a numeric build version like 1.2.0 or 1.2.0.0. Current value: $Version"
+}
+
+function Resolve-RequiredPath {
+    param(
+        [string]$Path,
+        [string]$Description
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Path)) {
+        throw "$Description path was not provided."
+    }
+    if (-not (Test-Path $Path)) {
+        throw "$Description not found: $Path"
+    }
+    return (Resolve-Path $Path).Path
+}
+
+function Resolve-SigningToolPath {
+    param(
+        [string]$ConfiguredPath,
+        [string[]]$CandidatePaths,
+        [string]$Description
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($ConfiguredPath)) {
+        return Resolve-RequiredPath -Path $ConfiguredPath -Description $Description
+    }
+
+    foreach ($candidate in $CandidatePaths) {
+        if (Test-Path $candidate) {
+            return (Resolve-Path $candidate).Path
+        }
+    }
+
+    throw "$Description was not found. Install signing tools under tools\signing or pass the path explicitly."
+}
+
+function New-SigningMetadataFile {
+    param(
+        [string]$Path,
+        [string]$Endpoint,
+        [string]$AccountName,
+        [string]$ProfileName,
+        [string]$CorrelationId
+    )
+
+    $metadata = [ordered]@{
+        Endpoint = $Endpoint
+        CodeSigningAccountName = $AccountName
+        CertificateProfileName = $ProfileName
+        CorrelationId = $CorrelationId
+    } | ConvertTo-Json
+
+    $metadataDirectory = Split-Path -Parent $Path
+    if (-not [string]::IsNullOrWhiteSpace($metadataDirectory) -and -not (Test-Path $metadataDirectory)) {
+        New-Item -ItemType Directory -Force -Path $metadataDirectory | Out-Null
+    }
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($Path, $metadata, $utf8NoBom)
+    return (Resolve-Path $Path).Path
 }
 
 # Create directories
@@ -206,6 +276,61 @@ if ($BuildEXE) {
     }
 
     Write-Host "Verified EXE version: $($exeVersionInfo.FileVersion)" -ForegroundColor Green
+
+    if ($SignEXE) {
+        Write-Host ""
+        Write-Host "Signing standalone EXE" -ForegroundColor Green
+
+        if ([string]::IsNullOrWhiteSpace($SigningCorrelationId)) {
+            $SigningCorrelationId = "flatandmask-$Version"
+        }
+
+        $defaultSignTool = Join-Path $projectRoot "tools\signing\Microsoft.Windows.SDK.BuildTools\bin\10.0.28000.0\x64\signtool.exe"
+        $defaultDlib = Join-Path $projectRoot "tools\signing\Microsoft.ArtifactSigning.Client\bin\x64\Azure.CodeSigning.Dlib.dll"
+        $resolvedSignTool = Resolve-SigningToolPath -ConfiguredPath $SignToolPath -CandidatePaths @($defaultSignTool) -Description "SignTool"
+        $resolvedDlib = Resolve-SigningToolPath -ConfiguredPath $SigningDlibPath -CandidatePaths @($defaultDlib) -Description "Azure Artifact Signing dlib"
+
+        if ([string]::IsNullOrWhiteSpace($SigningMetadataPath)) {
+            $SigningMetadataPath = Join-Path $logsDir "artifact-signing-metadata.json"
+        }
+
+        $resolvedMetadataPath = New-SigningMetadataFile -Path $SigningMetadataPath -Endpoint $SigningEndpoint -AccountName $CodeSigningAccountName -ProfileName $CertificateProfileName -CorrelationId $SigningCorrelationId
+
+        $env:PATH = "C:\Program Files\Microsoft SDKs\Azure\CLI2\wbin;C:\Program Files\dotnet;C:\Program Files\dotnet\x64;$($env:PATH)"
+        $signArgs = @(
+            "sign",
+            "/v",
+            "/debug",
+            "/fd", "SHA256",
+            "/tr", "http://timestamp.acs.microsoft.com",
+            "/td", "SHA256",
+            "/d", $appName,
+            "/du", $repoUrl,
+            "/dlib", $resolvedDlib,
+            "/dmdf", $resolvedMetadataPath,
+            $exePath
+        )
+
+        & $resolvedSignTool @signArgs
+        if ($LASTEXITCODE -ne 0) {
+            throw "SignTool signing failed with exit code $LASTEXITCODE"
+        }
+
+        if (-not $SkipSignatureVerify) {
+            Write-Host "Verifying EXE signature..." -ForegroundColor Cyan
+            & $resolvedSignTool verify /pa /v $exePath
+            if ($LASTEXITCODE -ne 0) {
+                throw "SignTool verification failed with exit code $LASTEXITCODE"
+            }
+
+            $signature = Get-AuthenticodeSignature -FilePath $exePath
+            if ($signature.Status -ne "Valid") {
+                throw "Authenticode signature status is $($signature.Status): $($signature.StatusMessage)"
+            }
+
+            Write-Host "Signature valid: $($signature.SignerCertificate.Subject)" -ForegroundColor Green
+        }
+    }
 }
 
 Write-Host ""
@@ -218,3 +343,4 @@ Write-Host ""
 Write-Host "Usage:"
 Write-Host "  .\Build.ps1           # Build with icon (if icon.ico exists)"
 Write-Host "  .\Build.ps1 -SkipIcon # Build without icon"
+Write-Host "  .\Build.ps1 -BuildEXE -SignEXE # Build and sign with Azure Artifact Signing defaults"

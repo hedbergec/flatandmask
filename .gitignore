@@ -4,3 +4,4 @@ build-executable.sh
 build-executable.ps1
 test_output/regression/
 tools/
+build/logs/
