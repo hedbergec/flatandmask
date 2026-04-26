@@ -16,7 +16,7 @@ $distDir = Join-Path $OutputPath "dist"
 $exeDir = Join-Path $OutputPath "exe"
 $logsDir = Join-Path $OutputPath "logs"
 $authorName = "Eric Hedberg"
-$authorEmail = "hedbergec@gmail.com"
+$authorEmail = "hedbergec@outlook.com"
 $repoUrl = "https://github.com/hedbergec/flatandmask"
 $warrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $repoUrl. Contact: $authorName <$authorEmail>."
 

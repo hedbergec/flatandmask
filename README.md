@@ -2,6 +2,8 @@
 
 **Version 1.2.0**
 
+Copyright (c) 2026 Design Effects, LLC
+
 ## ⚠️ Disclaimer
 
 This tool was developed through rapid prototyping and intuitive development (vibe coded). While functional and tested, it comes with **limited liability**. Users are responsible for:
@@ -29,7 +31,7 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 - **Table Normalization**: Nested JSON automatically normalized into related CSV tables with foreign keys
 - **Synthetic Relationship IDs**: Parent-child relationships maintained for manual merging/joining without exposing original IDs
 - **Live Progress**: Terminal status panel plus staged GUI progress bars and capped GUI log mirror
-- **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and Eric Hedberg contact info; the GUI can check GitHub for newer releases or tags
+- **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and contact info; the GUI can check GitHub for newer releases or tags
 - **Replication Scripts**: Auto-generated scripts to re-run masking on new data with consistent results
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
 

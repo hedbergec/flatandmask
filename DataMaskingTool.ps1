@@ -5,7 +5,7 @@ Add-Type -AssemblyName System.Drawing
 $script:AppVersion = "1.2.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
-$script:AuthorEmail = "hedbergec@gmail.com"
+$script:AuthorEmail = "hedbergec@outlook.com"
 $script:RepoUrl = "https://github.com/hedbergec/flatandmask"
 $script:WarrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $($script:RepoUrl). Contact: $($script:AuthorName) <$($script:AuthorEmail)>."
 $script:LastInputFile = $null
