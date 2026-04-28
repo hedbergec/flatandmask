@@ -3,6 +3,9 @@ param(
     [string]$SecretKey = "testkey123",
     [string]$OutputRoot,
     [int]$MaxCsvRows = 250,
+    [string[]]$ScenarioName,
+    [switch]$ListScenarios,
+    [switch]$SkipReplicationTests,
     [switch]$Clean
 )
 
@@ -805,11 +808,100 @@ function Test-CsvScenario {
     }
 }
 
+function Get-ComparableReplicationFiles {
+    param([string]$Folder)
+
+    $extensions = @(".csv", ".json", ".ndjson")
+    return @(
+        Get-ChildItem -Path $Folder -File |
+            Where-Object { $extensions -contains $_.Extension.ToLowerInvariant() } |
+            Sort-Object Name
+    )
+}
+
+function Test-ReplicationScript {
+    param(
+        [pscustomobject]$Scenario,
+        [string]$OutputFolder
+    )
+
+    $replicationScript = Join-Path $OutputFolder "replicate_masking.ps1"
+    $toolCopy = Join-Path $OutputFolder "DataMaskingTool.ps1"
+
+    if (-not (Test-Path -LiteralPath $replicationScript)) {
+        throw "[$($Scenario.Name)] Missing replicate_masking.ps1."
+    }
+    if (-not (Test-Path -LiteralPath $toolCopy)) {
+        throw "[$($Scenario.Name)] Missing DataMaskingTool.ps1 beside replicate_masking.ps1."
+    }
+
+    $replicationText = Get-Content -LiteralPath $replicationScript -Raw
+    if ($replicationText -notmatch [regex]::Escape($Scenario.InputFile)) {
+        throw "[$($Scenario.Name)] replicate_masking.ps1 does not remember the original input path."
+    }
+    if ($replicationText -notmatch "Invoke-Masking") {
+        throw "[$($Scenario.Name)] replicate_masking.ps1 does not call Invoke-Masking."
+    }
+
+    $toolText = Get-Content -LiteralPath $toolCopy -Raw
+    if ($toolText -notmatch "github.com/hedbergec/flatandmask") {
+        throw "[$($Scenario.Name)] DataMaskingTool.ps1 copy is missing the Git source reference."
+    }
+    if ($toolText -notmatch "NO WARRANTY") {
+        throw "[$($Scenario.Name)] DataMaskingTool.ps1 copy is missing the warranty disclaimer."
+    }
+
+    $replayOutput = Join-Path $OutputFolder "_replication_replay"
+    if (Test-Path -LiteralPath $replayOutput) {
+        Remove-Item -LiteralPath $replayOutput -Recurse -Force
+    }
+
+    $replayLog = Join-Path $OutputFolder "replication_replay.log"
+    try {
+        & $replicationScript -OutputFolder $replayOutput *> $replayLog
+        if (-not $?) {
+            throw "replicate_masking.ps1 returned an unsuccessful status."
+        }
+    }
+    catch {
+        $tail = ""
+        if (Test-Path -LiteralPath $replayLog) {
+            $tail = (Get-Content -LiteralPath $replayLog -Tail 25) -join "`n"
+        }
+        throw "[$($Scenario.Name)] replicate_masking.ps1 failed. $($_.Exception.Message)`nReplay log tail:`n$tail"
+    }
+
+    $sourceFiles = @(Get-ComparableReplicationFiles -Folder $OutputFolder)
+    $replayFiles = @(Get-ComparableReplicationFiles -Folder $replayOutput)
+    $sourceNames = @($sourceFiles | Select-Object -ExpandProperty Name)
+    $replayNames = @($replayFiles | Select-Object -ExpandProperty Name)
+
+    $missing = @($sourceNames | Where-Object { $_ -notin $replayNames })
+    if ($missing.Count -gt 0) {
+        throw "[$($Scenario.Name)] Replication replay is missing output files: $($missing -join ', ')."
+    }
+
+    $extra = @($replayNames | Where-Object { $_ -notin $sourceNames })
+    if ($extra.Count -gt 0) {
+        throw "[$($Scenario.Name)] Replication replay produced unexpected output files: $($extra -join ', ')."
+    }
+
+    foreach ($sourceFile in $sourceFiles) {
+        $replayFile = Join-Path $replayOutput $sourceFile.Name
+        $sourceHash = (Get-FileHash -LiteralPath $sourceFile.FullName -Algorithm SHA256).Hash
+        $replayHash = (Get-FileHash -LiteralPath $replayFile -Algorithm SHA256).Hash
+        if ($sourceHash -ne $replayHash) {
+            throw "[$($Scenario.Name)] Replication replay output '$($sourceFile.Name)' does not match the original run."
+        }
+    }
+}
+
 function Invoke-RealToolScenario {
     param(
         [pscustomobject]$Scenario,
         [string]$SecretKey,
-        [string]$OutputRoot
+        [string]$OutputRoot,
+        [switch]$SkipReplicationTests
     )
 
     if (-not (Get-Command Invoke-Masking -ErrorAction SilentlyContinue)) {
@@ -878,6 +970,10 @@ function Invoke-RealToolScenario {
         }
     }
 
+    if (-not $SkipReplicationTests) {
+        Test-ReplicationScript -Scenario $Scenario -OutputFolder $scenarioOutput
+    }
+
     return [PSCustomObject]@{
         Scenario = $Scenario.Name
         Type     = $Scenario.Type
@@ -891,11 +987,12 @@ function Invoke-Scenario {
         [pscustomobject]$Scenario,
         [string]$SecretKey,
         [string]$OutputRoot,
-        [int]$MaxCsvRows
+        [int]$MaxCsvRows,
+        [switch]$SkipReplicationTests
     )
 
     if ($Scenario.Type -like "tool-*") {
-        return Invoke-RealToolScenario -Scenario $Scenario -SecretKey $SecretKey -OutputRoot $OutputRoot
+        return Invoke-RealToolScenario -Scenario $Scenario -SecretKey $SecretKey -OutputRoot $OutputRoot -SkipReplicationTests:$SkipReplicationTests
     }
 
     $scenarioOutput = Join-Path $OutputRoot $Scenario.Name
@@ -919,7 +1016,7 @@ function Invoke-Scenario {
 $scenarios = @(
     [PSCustomObject]@{
         Name       = "sample-json-basic"
-        Type       = "json"
+        Type       = "tool-json"
         InputFile  = (Join-Path $repoRoot "example data\sample.json")
         MaskFields = @(
             "name",
@@ -928,7 +1025,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "complex-json-sensitive"
-        Type       = "json"
+        Type       = "tool-json"
         InputFile  = (Join-Path $repoRoot "example data\complex3.json")
         MaskFields = @(
             "firstName",
@@ -950,7 +1047,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "complex1-json-sensitive"
-        Type       = "json"
+        Type       = "tool-json"
         InputFile  = (Join-Path $repoRoot "example data\complex1.json")
         MaskFields = @(
             "name",
@@ -963,7 +1060,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "complex2-json-sensitive"
-        Type       = "json"
+        Type       = "tool-json"
         InputFile  = (Join-Path $repoRoot "example data\complex2.json")
         MaskFields = @(
             "name",
@@ -1003,7 +1100,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "city-of-london-street"
-        Type       = "csv"
+        Type       = "tool-csv"
         InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-street.csv")
         MaskFields = @(
             "Reported by",
@@ -1013,7 +1110,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "city-of-london-stop-and-search"
-        Type       = "csv"
+        Type       = "tool-csv"
         InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-stop-and-search.csv")
         MaskFields = @(
             "Gender",
@@ -1024,7 +1121,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "city-of-london-outcomes"
-        Type       = "csv"
+        Type       = "tool-csv"
         InputFile  = (Join-Path $repoRoot "example data\2026-02-city-of-london-outcomes.csv")
         MaskFields = @(
             "Reported by",
@@ -1034,7 +1131,7 @@ $scenarios = @(
     },
     [PSCustomObject]@{
         Name       = "nypd-officer-profile-csv"
-        Type       = "csv"
+        Type       = "tool-csv"
         InputFile  = (Join-Path $repoRoot "example data\NYPD_Officer_Profile_-_Title_Shield_History.csv")
         MaskFields = @(
             "PROFILE_ID",
@@ -1112,6 +1209,40 @@ $scenarios = @(
     }
 )
 
+if ($ListScenarios) {
+    $scenarios | Select-Object Name, Type, InputFile | Format-Table -AutoSize
+    return
+}
+
+if ($ScenarioName -and $ScenarioName.Count -gt 0) {
+    $requestedScenarios = @($ScenarioName | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    $selectedScenarios = @(
+        foreach ($scenario in $scenarios) {
+            foreach ($requestedScenario in $requestedScenarios) {
+                if ($scenario.Name -like $requestedScenario) {
+                    $scenario
+                    break
+                }
+            }
+        }
+    )
+
+    $matchedScenarioNames = @($selectedScenarios | Select-Object -ExpandProperty Name -Unique)
+    $missingScenarios = @(
+        foreach ($requestedScenario in $requestedScenarios) {
+            if (-not @($scenarios | Where-Object { $_.Name -like $requestedScenario })) {
+                $requestedScenario
+            }
+        }
+    )
+    if ($missingScenarios.Count -gt 0) {
+        throw "Unknown scenario name(s): $($missingScenarios -join ', '). Use -ListScenarios to see available data-specific tests."
+    }
+
+    $scenarios = @($selectedScenarios | Where-Object { $_.Name -in $matchedScenarioNames })
+    Write-Host "Filtered scenarios: $($matchedScenarioNames -join ', ')" -ForegroundColor Cyan
+}
+
 if ($Clean -and (Test-Path $OutputRoot)) {
     Remove-Item -LiteralPath $OutputRoot -Recurse -Force
 }
@@ -1120,6 +1251,7 @@ New-Item -ItemType Directory -Path $OutputRoot -Force | Out-Null
 
 $results = New-Object System.Collections.Generic.List[object]
 $failures = New-Object System.Collections.Generic.List[object]
+$testStart = Get-Date
 
 foreach ($scenario in $scenarios) {
     Write-Host ""
@@ -1127,7 +1259,7 @@ foreach ($scenario in $scenarios) {
     Write-Host "Input: $($scenario.InputFile)" -ForegroundColor DarkCyan
 
     try {
-        $result = Invoke-Scenario -Scenario $scenario -SecretKey $SecretKey -OutputRoot $OutputRoot -MaxCsvRows $MaxCsvRows
+        $result = Invoke-Scenario -Scenario $scenario -SecretKey $SecretKey -OutputRoot $OutputRoot -MaxCsvRows $MaxCsvRows -SkipReplicationTests:$SkipReplicationTests
         $results.Add($result)
         Write-Host "Passed: $($scenario.Name)" -ForegroundColor Green
     }
@@ -1151,12 +1283,35 @@ Write-Host "Regression Summary" -ForegroundColor Cyan
 Write-Host "==================" -ForegroundColor Cyan
 $results | Select-Object Scenario, Type, Status, Output | Format-Table -AutoSize
 
-if ($failures.Count -gt 0) {
+$testEnd = Get-Date
+$resultsPath = Join-Path $OutputRoot "test-results.json"
+$resultsStatus = if ($failures.Count -gt 0) { "Failed" } else { "Passed" }
+$resultArray = @($results.ToArray())
+$scenarioCount = @($scenarios).Count
+$passedCount = @($resultArray | Where-Object { $_.Status -eq "Passed" }).Count
+$failedCount = $failures.Count
+$resultsReceipt = [PSCustomObject]@{
+    StartedAt            = $testStart.ToString("o")
+    FinishedAt           = $testEnd.ToString("o")
+    DurationSeconds      = [Math]::Round(($testEnd - $testStart).TotalSeconds, 3)
+    OutputRoot           = $OutputRoot
+    MaxCsvRows           = $MaxCsvRows
+    SkipReplicationTests = [bool]$SkipReplicationTests
+    ScenarioCount        = $scenarioCount
+    PassedCount          = $passedCount
+    FailedCount          = $failedCount
+    Status               = $resultsStatus
+    Results              = $resultArray
+}
+$resultsReceipt | ConvertTo-Json -Depth 6 | Out-File -FilePath $resultsPath -Encoding UTF8 -Force
+Write-Host "Wrote test results: $resultsPath" -ForegroundColor Green
+
+if ($failedCount -gt 0) {
     Write-Host ""
     Write-Host "Failures" -ForegroundColor Red
     Write-Host "--------" -ForegroundColor Red
     $failures | Select-Object Scenario, Error | Format-Table -Wrap -AutoSize
-    exit 1
+    throw "$failedCount masking regression scenario(s) failed. See $resultsPath for details."
 }
 
 Write-Host ""

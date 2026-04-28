@@ -1,6 +1,6 @@
 # Data Masking Tool
 
-**Version 1.2.0**
+**Version 1.2.1**
 
 Copyright (c) 2026 Design Effects, LLC
 
@@ -32,7 +32,7 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 - **Synthetic Relationship IDs**: Parent-child relationships maintained for manual merging/joining without exposing original IDs
 - **Live Progress**: Terminal status panel plus staged GUI progress bars and capped GUI log mirror
 - **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and contact info; the GUI can check GitHub for newer releases or tags
-- **Replication Scripts**: Auto-generated scripts to re-run masking on new data with consistent results
+- **Replication Bundle**: Auto-generated replay script plus matching `DataMaskingTool.ps1` source copy for consistent reruns
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
 
 ## System Requirements
@@ -258,18 +258,37 @@ For NDJSON/loose JSON inputs, the masked record output is written as `<filename>
 
 ### Replication Script
 
-**replicate_masking.ps1** - Auto-generated script containing all masking logic and settings
+**replicate_masking.ps1** - Auto-generated replay wrapper for the masking run
+
+Each masking run writes two replication files into the output folder:
+
+- `replicate_masking.ps1` - Small wrapper script that stores the selected fields, secret key, original input path, and output defaults
+- `DataMaskingTool.ps1` - Matching tool source exported by the app/EXE so the wrapper can reuse the same masking implementation
+
+The wrapper loads the local `DataMaskingTool.ps1` copy without opening the GUI, then calls `Invoke-Masking`. This avoids maintaining duplicate masking logic inside the replication script.
 
 Usage:
 
 ```powershell
+# Replay the original input path saved by the GUI run
+.\replicate_masking.ps1
+
+# Replay against a moved or replacement input file
 .\replicate_masking.ps1 -InputFile "new_data.json"
 
 # Or with custom parameters:
 .\replicate_masking.ps1 -InputFile ".\data.csv" -OutputFolder ".\masked-output" -SecretKey "MyKey"
 ```
 
-Ensures new data is masked with identical values and table structure.
+The output folder is self-contained for replay as long as `replicate_masking.ps1` and `DataMaskingTool.ps1` stay together. If the remembered original input file has moved, pass `-InputFile` with the new path.
+
+The generated scripts include no-warranty, copyright, and GitHub source-reference comments. `DataMaskingTool.ps1` can also be found at:
+
+```text
+https://github.com/hedbergec/flatandmask/blob/main/DataMaskingTool.ps1
+```
+
+This process ensures new data is masked with identical values and table structure.
 
 ## Regression Testing
 
@@ -279,13 +298,21 @@ Run the full local regression suite with:
 .\testing scripts\run-all-tests.ps1 -Clean
 ```
 
+The full end-to-end run can take a long time, especially when replication replay is enabled for the larger bundled JSON datasets. For release checks, expect the complete suite to run well over an hour on some machines. When resuming after a timeout or working on one data fixture, run only the affected data-specific scenarios:
+
+```powershell
+.\testing scripts\run-all-tests.ps1 -ScenarioName nypd-officer-profile-json
+.\testing scripts\run-all-tests.ps1 -ScenarioName test-data-json,test-ndjson
+.\testing scripts\run-all-tests.ps1 -ListScenarios
+```
+
 The all-tests runner uses a fixed regression key, reads the current version from `Build.ps1`, and writes artifacts under:
 
 ```text
 test_output\regression\<version>\
 ```
 
-For the current build, outputs are saved under `test_output\regression\1.2.0\`.
+For the current build, outputs are saved under `test_output\regression\1.2.1\`.
 
 This test flow masks all bundled example data plus core synthetic fixtures, including:
 
@@ -347,15 +374,16 @@ CSV data is processed through normalization logic:
 
 - Flat CSV stays as single table: `data.csv`
 - Generates `masking_key.csv` with all original→masked mappings
-- Generates replication script with identical masking logic
+- Generates `replicate_masking.ps1` plus the matching `DataMaskingTool.ps1` replay dependency
 
 ### Replication for CSV
 
-Auto-generated `replicate_masking.ps1` can re-run same masking on new CSV files:
+Auto-generated `replicate_masking.ps1` can re-run the same masking on the original CSV path or on a replacement CSV file:
 
 - Uses same secret key for consistent values
 - Applies same field selections
 - Outputs same structure
+- Uses the local `DataMaskingTool.ps1` copy saved in the output folder
 
 ### Merging Masked CSVs
 
@@ -458,6 +486,9 @@ After initial masking with secret key `TestMask_2024`:
 ```powershell
 # Run on new data with same key = same masked values
 .\replicate_masking.ps1 -InputFile "new_customers.csv" -SecretKey "TestMask_2024"
+
+# Or replay the original input path remembered by the generated script
+.\replicate_masking.ps1
 ```
 
 Results:
@@ -578,6 +609,7 @@ launch.bat                        # Batch launcher (optional)
 
 ## Change Log
 
+- **v1.2.1** - Simplified replication scripts into wrapper scripts that reuse the matching `DataMaskingTool.ps1`, automatically export that source copy beside each replay script, remember the original input path for no-argument replay, improve replication error messages, and make build signing conditional on version increases
 - **v1.2.0** - Added staged GUI progress bars, a capped 100-line GUI log mirror, chunked JSON load progress, more accurate nested JSON progress and table estimates, and documentation for synthetic relationship IDs that preserve joins without exposing original IDs
 - **v1.1.2** - Added no-warranty/repository/contact notice to the GUI and terminal startup, GUI buttons to open the repo and check GitHub for updates, deterministic table row IDs, and expanded regression coverage
 - **v1.1.0** - Added optimized Socrata JSON processing, NDJSON/loose JSON, envelope JSON, GeoJSON, header-array JSON support, and a five-line live progress panel

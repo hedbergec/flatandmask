@@ -1,13 +1,31 @@
 
+# Flat & Mask / Data Masking Tool
+#
+# Git reference:
+# - Repository: https://github.com/hedbergec/flatandmask
+# - Source file: https://github.com/hedbergec/flatandmask/blob/main/DataMaskingTool.ps1
+#
+# License and disclaimers:
+# - MIT License, Copyright (c) 2026 Design Effects, LLC.
+# - NO WARRANTY: This tool is provided as-is, without warranty of any kind.
+# - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# - IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+#   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+#   USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.2.0"
+$script:AppVersion = "1.2.1"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
 $script:RepoUrl = "https://github.com/hedbergec/flatandmask"
 $script:WarrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $($script:RepoUrl). Contact: $($script:AuthorName) <$($script:AuthorEmail)>."
+$script:BundledSourceGzipBase64 = ""
 $script:LastInputFile = $null
 $script:LastOutputFolder = $null
 $script:SelectedFields = @()
@@ -1367,6 +1385,62 @@ function Export-MaskingKey {
     }
 }
 
+function Get-ReplicationToolSourceText {
+    if (-not [string]::IsNullOrWhiteSpace($script:BundledSourceGzipBase64)) {
+        $compressedBytes = [Convert]::FromBase64String($script:BundledSourceGzipBase64)
+        $inputStream = New-Object System.IO.MemoryStream(,$compressedBytes)
+        $gzipStream = $null
+        $reader = $null
+        try {
+            $gzipStream = New-Object System.IO.Compression.GZipStream($inputStream, [System.IO.Compression.CompressionMode]::Decompress)
+            $reader = New-Object System.IO.StreamReader($gzipStream, [System.Text.Encoding]::UTF8)
+            return $reader.ReadToEnd()
+        }
+        finally {
+            if ($reader) { $reader.Dispose() }
+            elseif ($gzipStream) { $gzipStream.Dispose() }
+            if ($inputStream) { $inputStream.Dispose() }
+        }
+    }
+
+    $candidatePaths = @()
+    if (-not [string]::IsNullOrWhiteSpace($PSCommandPath)) {
+        $candidatePaths += $PSCommandPath
+    }
+    if ($MyInvocation.MyCommand.Path) {
+        $candidatePaths += $MyInvocation.MyCommand.Path
+    }
+    if (-not [string]::IsNullOrWhiteSpace($PSScriptRoot)) {
+        $candidatePaths += (Join-Path $PSScriptRoot "DataMaskingTool.ps1")
+    }
+    $candidatePaths += (Join-Path (Get-Location) "DataMaskingTool.ps1")
+
+    foreach ($candidate in @($candidatePaths | Select-Object -Unique)) {
+        if (
+            -not [string]::IsNullOrWhiteSpace($candidate) -and
+            (Test-Path -LiteralPath $candidate) -and
+            ([System.IO.Path]::GetExtension($candidate) -ieq ".ps1")
+        ) {
+            return Get-Content -LiteralPath $candidate -Raw -ErrorAction Stop
+        }
+    }
+
+    throw "Unable to locate or decode DataMaskingTool.ps1 for replication output."
+}
+
+function Export-ReplicationToolSource {
+    param([string]$OutputFolder)
+
+    if (-not (Test-Path $OutputFolder)) {
+        New-Item -ItemType Directory -Force -Path $OutputFolder | Out-Null
+    }
+
+    $sourceText = Get-ReplicationToolSourceText
+    $sourcePath = Join-Path $OutputFolder "DataMaskingTool.ps1"
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    [System.IO.File]::WriteAllText($sourcePath, $sourceText, $utf8NoBom)
+}
+
 function ConvertTo-CsvLine {
     param([object[]]$Values)
 
@@ -1559,15 +1633,6 @@ function Invoke-CsvMaskingFast {
     Write-StatusPanel -Phase "Complete" -Current $script:ProcessedLines -Total $script:TotalLines -Detail "Wrote data.csv and masking key; fields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))" -Force
 }
 
-function Write-SocrataReplicationNotice {
-    param([string]$OutputFolder)
-
-    $scriptPath = Join-Path $OutputFolder "replicate_masking.ps1"
-    @"
-throw "This output was produced with the optimized Socrata JSON processor. Re-run masking from DataMaskingTool.ps1 to reproduce it; the legacy standalone replication script does not support Socrata row-array JSON yet."
-"@ | Out-File -FilePath $scriptPath -Encoding UTF8 -Force
-}
-
 function Invoke-Masking {
     param(
         [string]$InputFile,
@@ -1602,8 +1667,7 @@ function Invoke-Masking {
             Write-StatusPanel -Mode "Loose JSON" -Phase "Parsing" -Current 0 -Total 0 -Detail "Trying NDJSON / loose object records" -Mask "" -Force
             $records = @(Read-LooseJsonRecords -FilePath $InputFile)
             Invoke-JsonRecordsMasking -Records $records -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName "Loose JSON" -MaskFields $MaskFields -OutputFormat "Ndjson"
-            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
-            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
             return
         }
         $script:InputWasJson = $true
@@ -1611,7 +1675,7 @@ function Invoke-Masking {
 
         if (Test-SocrataJson $json) {
             Invoke-SocrataJsonMasking -Json $json -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -MaskFields $MaskFields
-            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            Generate-ReplicationScript -OutputFolder $OutputFolder -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
             return
         }
 
@@ -1619,16 +1683,14 @@ function Invoke-Masking {
 
         if (Test-HeaderArrayJson $json) {
             Invoke-HeaderArrayJsonMasking -Json $json -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -MaskFields $MaskFields
-            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
-            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
             return
         }
 
         $recordCollection = Get-JsonRecordCollectionInfo $json
         if ($null -ne $recordCollection) {
             Invoke-JsonRecordsMasking -Records @($recordCollection.Records) -InputFile $InputFile -OutputFolder $OutputFolder -KeyFile $KeyFile -ModeName $recordCollection.Format -MaskFields $MaskFields
-            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields -SkipReplicationScript
-            Write-SocrataReplicationNotice -OutputFolder $OutputFolder
+            Complete-MaskingOutputs -OutputFolder $OutputFolder -KeyFile $KeyFile -InputFile $InputFile -SecretKey $SecretKey -MaskFields $MaskFields
             return
         }
         
@@ -1712,274 +1774,85 @@ function Generate-ReplicationScript {
         [string[]]$MaskFields
     )
     
+    Export-ReplicationToolSource -OutputFolder $OutputFolder
+
     $maskFieldsList = @()
     foreach ($field in $MaskFields) {
-        $maskFieldsList += "`"$field`""
+        $maskFieldsList += "'" + ([string]$field).Replace("'", "''") + "'"
     }
     $maskFieldsForScript = $maskFieldsList -join ','
+    $inputFileForScript = "'" + ([string]$InputFile).Replace("'", "''") + "'"
+    $secretKeyForScript = "'" + ([string]$SecretKey).Replace("'", "''") + "'"
     
 $scriptContent = @"
+# Replicate a Flat & Mask masking run.
+#
+# IMPORTANT:
+# - This script is intentionally a thin wrapper around DataMaskingTool.ps1.
+# - Put DataMaskingTool.ps1 in the same directory as this replicate_masking.ps1 file.
+# - The wrapper loads DataMaskingTool.ps1 without opening the GUI, then calls Invoke-Masking.
+# - This avoids maintaining a second masking implementation inside this generated script.
+#
+# Git reference for DataMaskingTool.ps1:
+# - Repository: $($script:RepoUrl)
+# - Source file: $($script:RepoUrl)/blob/main/DataMaskingTool.ps1
+#
+# License and disclaimers:
+# - MIT License, Copyright (c) 2026 Design Effects, LLC.
+# - NO WARRANTY: This tool is provided as-is, without warranty of any kind.
+# - THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+# - IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+#   DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+#   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+#   USE OR OTHER DEALINGS IN THE SOFTWARE.
+#
+# Example:
+#   powershell -ExecutionPolicy Bypass -File .\replicate_masking.ps1 -InputFile .\input.json -OutputFolder .\masked_output
+
 param(
-    [string]`$InputFile = "",
+    [string]`$InputFile = $inputFileForScript,
     [string]`$OutputFolder = "`$PSScriptRoot",
-    [string]`$SecretKey = "$SecretKey"
+    [string]`$SecretKey = $secretKeyForScript
 )
 
 if ([string]::IsNullOrWhiteSpace(`$InputFile)) {
-    throw "Provide -InputFile when running replicate_masking.ps1."
+    throw "Provide -InputFile when running replicate_masking.ps1. Example: powershell -ExecutionPolicy Bypass -File .\replicate_masking.ps1 -InputFile .\input.json"
+}
+
+if (-not (Test-Path -LiteralPath `$InputFile)) {
+    throw "The input file could not be found: `$InputFile. If the original file moved, rerun with -InputFile pointing to the current file path."
 }
 
 `$MaskFields = @($maskFieldsForScript)
-`$Mapping = @{}
-`$MappingWithRows = @()
-`$Tables = @{}
-`$TableIdCounters = @{}
-
-function Normalize-FieldName {
-    param([string]`$FieldPath)
-    if (`$FieldPath.StartsWith("root.")) {
-        return `$FieldPath.Substring(5)
-    }
-    return `$FieldPath
-}
-
-function Should-MaskField {
-    param([string]`$FieldPath)
-    `$normalized = Normalize-FieldName `$FieldPath
-    foreach (`$maskField in `$MaskFields) {
-        `$normalizedMask = Normalize-FieldName `$maskField
-        if (`$normalized -eq `$normalizedMask) {
-            return `$true
-        }
-    }
-    return `$false
-}
-
-function Get-MaskedValue {
-    param(`$Value, `$Key)
-    if ([string]::IsNullOrEmpty(`$Value)) { return `$Value }
-    `$hmac = New-Object System.Security.Cryptography.HMACSHA256
-    `$hmac.Key = [Text.Encoding]::UTF8.GetBytes(`$Key)
-    `$bytes = [Text.Encoding]::UTF8.GetBytes([string]`$Value)
-    `$hash = `$hmac.ComputeHash(`$bytes)
-    return ([Convert]::ToBase64String(`$hash).Substring(0, 12))
-}
-
-function Mask-IfNeeded {
-    param(`$FieldName, `$Value, `$RowIndex = `$null)
-    if (Should-MaskField `$FieldName) {
-        `$strVal = [string]`$Value
-        `$normalizedField = Normalize-FieldName `$FieldName
-        if (-not `$Mapping.ContainsKey(`$strVal)) {
-            `$Mapping[`$strVal] = @{
-                Masked = Get-MaskedValue `$strVal `$SecretKey
-                Field = `$normalizedField
-            }
-        }
-        
-        `$MappingWithRows += [PSCustomObject]@{
-            Original = `$strVal
-            Masked   = `$Mapping[`$strVal].Masked
-            Field    = `$normalizedField
-            RowIndex = `$RowIndex
-        }
-        
-        return `$Mapping[`$strVal].Masked
-    }
-    return `$Value
-}
-
-function Apply-Masking-ToObject {
-    param(`$Object, [string]`$Prefix = "root")
-    
-    if (`$Object -is [PSCustomObject]) {
-        `$maskedObj = [PSCustomObject]@{}
-        `$properties = `$Object.PSObject.Properties | Where-Object { -not (`$_.Name -like "PS*") -and `$_.Name -ne "SyncRoot" }
-        
-        foreach (`$prop in `$properties) {
-            `$name = `$prop.Name
-            `$value = `$prop.Value
-            `$fieldPath = "`$Prefix.`$name"
-            
-            if (`$value -is [PSCustomObject]) {
-                `$maskedObj | Add-Member -NotePropertyName `$name -NotePropertyValue (Apply-Masking-ToObject `$value `$fieldPath)
-            }
-            elseif (`$value -is [System.Collections.IEnumerable] -and `$value -isnot [string]) {
-                `$maskedArray = foreach (`$item in `$value) {
-                    if (`$item -is [PSCustomObject]) {
-                        Apply-Masking-ToObject `$item `$fieldPath
-                    } else {
-                        Mask-IfNeeded `$fieldPath `$item
-                    }
-                }
-                `$maskedObj | Add-Member -NotePropertyName `$name -NotePropertyValue @(`$maskedArray)
-            }
-            else {
-                `$maskedObj | Add-Member -NotePropertyName `$name -NotePropertyValue (Mask-IfNeeded `$fieldPath `$value)
-            }
-        }
-        return `$maskedObj
-    }
-    elseif (`$Object -is [System.Collections.IEnumerable] -and `$Object -isnot [string]) {
-        return foreach (`$item in `$Object) { 
-            Apply-Masking-ToObject `$item `$Prefix 
-        }
-    }
-    else {
-        return Mask-IfNeeded `$Prefix `$Object
-    }
-}
-
-function Get-TableNameFromPath {
-    param([string]`$Path)
-    `$parts = `$Path -split "_"
-    return `$parts[-1]
-}
-
-function New-TableRowId {
-    param([string]`$TableName)
-
-    if (-not `$TableIdCounters.ContainsKey(`$TableName)) {
-        `$TableIdCounters[`$TableName] = 0
-    }
-    `$TableIdCounters[`$TableName]++
-
-    `$idSource = "`$TableName|`$(`$TableIdCounters[`$TableName])"
-    `$sha = [System.Security.Cryptography.SHA256]::Create()
-    try {
-        `$hash = `$sha.ComputeHash([Text.Encoding]::UTF8.GetBytes(`$idSource))
-        return ((`$hash | ForEach-Object { `$_.ToString("x2") }) -join "").Substring(0, 8)
-    }
-    finally {
-        `$sha.Dispose()
-    }
-}
-
-function Process-MaskedObject {
-    param(`$Object, [string]`$TableName = "root", [hashtable]`$IdMap = @{})
-    if (`$null -eq `$Object) { return }
-    
-    `$tableSuffix = Get-TableNameFromPath `$TableName
-    `$currentIdKey = "`${tableSuffix}_id"
-    `$currentId = New-TableRowId -TableName `$TableName
-    
-    `$row = @{}
-    foreach (`$parentKey in `$IdMap.Keys | Sort-Object) {
-        `$row[`$parentKey] = `$IdMap[`$parentKey]
-    }
-    `$row[`$currentIdKey] = `$currentId
-    
-    `$properties = `$Object.PSObject.Properties | Where-Object { -not (`$_.Name -like "PS*") -and `$_.Name -ne "SyncRoot" }
-    
-    foreach (`$prop in `$properties) {
-        `$name = `$prop.Name
-        `$value = `$prop.Value
-        
-        if (`$value -is [PSCustomObject]) {
-            `$newIdMap = `$IdMap.Clone()
-            `$newIdMap[`$currentIdKey] = `$currentId
-            Process-MaskedObject -Object `$value -TableName "`${TableName}_`$name" -IdMap `$newIdMap
-        }
-        elseif (`$value -is [System.Collections.IEnumerable] -and `$value -isnot [string]) {
-            foreach (`$item in `$value) {
-                if (`$item -is [PSCustomObject]) {
-                    `$newIdMap = `$IdMap.Clone()
-                    `$newIdMap[`$currentIdKey] = `$currentId
-                    Process-MaskedObject -Object `$item -TableName "`${TableName}_`$name" -IdMap `$newIdMap
-                }
-            }
-        }
-        else {
-            `$row[`$name] = `$value
-        }
-    }
-    
-    if (`$row.Count -gt 0) {
-        if (-not `$Tables.ContainsKey(`$TableName)) {
-            `$Tables[`$TableName] = @()
-        }
-        `$Tables[`$TableName] += [PSCustomObject]`$row
-    }
-}
+`$replicationInputFile = `$InputFile
+`$replicationOutputFolder = `$OutputFolder
+`$replicationSecretKey = `$SecretKey
 
 Write-Host "Replicating masking operation..."
-Write-Host "Input: `$InputFile"
-Write-Host "Output: `$OutputFolder"
+Write-Host "Input: `$replicationInputFile"
+Write-Host "Output: `$replicationOutputFolder"
 
-if (-not (Test-Path `$OutputFolder)) {
-    New-Item -ItemType Directory -Force -Path `$OutputFolder | Out-Null
+`$toolPath = Join-Path `$PSScriptRoot "DataMaskingTool.ps1"
+if (-not (Test-Path -LiteralPath `$toolPath)) {
+    throw "DataMaskingTool.ps1 must be in the same directory as replicate_masking.ps1. Download it from $($script:RepoUrl)/blob/main/DataMaskingTool.ps1."
 }
 
-`$ext = [System.IO.Path]::GetExtension(`$InputFile).ToLower()
-
-if (`$ext -eq ".json") {
-    `$json = Get-Content `$InputFile -Raw | ConvertFrom-Json
-    if (`$json -is [System.Collections.IEnumerable] -and `$json -isnot [string]) {
-        `$maskedData = foreach (`$item in `$json) { 
-            Apply-Masking-ToObject `$item 
-        }
-    } else {
-        `$maskedData = Apply-Masking-ToObject `$json
-    }
-    
-    if (`$maskedData -is [System.Collections.IEnumerable] -and `$maskedData -isnot [string]) {
-        foreach (`$item in `$maskedData) {
-            Process-MaskedObject -Object `$item -TableName "root" -IdMap @{}
-        }
-    } else {
-        Process-MaskedObject -Object `$maskedData -TableName "root" -IdMap @{}
-    }
-    
-    `$inputFileName = [System.IO.Path]::GetFileNameWithoutExtension(`$InputFile)
-    `$jsonOutputPath = Join-Path `$OutputFolder "`${inputFileName}_masked.json"
-    `$jsonOutput = @(`$maskedData)
-    `$jsonOutput | ConvertTo-Json -Depth 100 | Out-File -FilePath `$jsonOutputPath -Encoding UTF8 -Force
-}
-elseif (`$ext -eq ".csv") {
-    `$data = Import-Csv `$InputFile
-    `$maskedData = @(`$data | ForEach-Object -Begin { `$rowIdx = 0 } -Process {
-        `$maskedRow = [PSCustomObject]@{}
-        `$_.PSObject.Properties | ForEach-Object {
-            if (-not (`$_.Name -like "PS*") -and `$_.Name -ne "SyncRoot") {
-                `$name = `$_.Name
-                `$value = `$_.Value
-                `$fieldPath = "root.`$name"
-                `$maskedValue = Mask-IfNeeded `$fieldPath `$value `$rowIdx
-                `$maskedRow | Add-Member -NotePropertyName `$name -NotePropertyValue `$maskedValue
-            }
-        }
-        `$rowIdx++
-        `$maskedRow
-    })
-    if (-not `$Tables.ContainsKey("root")) {
-        `$Tables["root"] = @()
-    }
-    `$Tables["root"] += `$maskedData
+`$toolText = Get-Content -LiteralPath `$toolPath -Raw -ErrorAction Stop
+`$guiMarker = '# ====================' + ' Main GUI ' + '===================='
+`$markerIndex = `$toolText.IndexOf(`$guiMarker)
+if (`$markerIndex -lt 0) {
+    throw "Unable to find the GUI marker in DataMaskingTool.ps1. Make sure this script is paired with the matching Flat & Mask source file."
 }
 
-foreach (`$tableName in `$Tables.Keys) {
-    `$name = if (`$tableName -eq "root") { "data" } else { `$tableName.Replace("root_", "") }
-    `$path = Join-Path `$OutputFolder "`$name.csv"
-    `$Tables[`$tableName] | Export-Csv -NoTypeInformation -Path `$path -Force -Encoding UTF8
-}
+Invoke-Expression `$toolText.Substring(0, `$markerIndex)
 
-`$keyFile = Join-Path `$OutputFolder "masking_key.csv"
-if (`$MappingWithRows.Count -gt 0) {
-    `$MappingWithRows | Select-Object Original, Masked, Field, RowIndex | Export-Csv -NoTypeInformation -Path `$keyFile -Force -Encoding UTF8
-} elseif (`$Mapping.Count -gt 0) {
-    `$Mapping.GetEnumerator() | ForEach-Object {
-        [PSCustomObject]@{
-            Original = `$_.Key
-            Masked   = `$_.Value.Masked
-            Field    = `$_.Value.Field
-        }
-    } | Export-Csv -NoTypeInformation -Path `$keyFile -Force -Encoding UTF8
-} else {
-    @() | Export-Csv -NoTypeInformation -Path `$keyFile -Force -Encoding UTF8
-}
+`$keyFile = Join-Path `$replicationOutputFolder "masking_key.csv"
+Invoke-Masking -InputFile `$replicationInputFile -OutputFolder `$replicationOutputFolder -KeyFile `$keyFile -SecretKey `$replicationSecretKey -MaskFields `$MaskFields
 
 Write-Host "Replication complete!" -ForegroundColor Green
-Write-Host "Output: `$OutputFolder"
+Write-Host "Output: `$replicationOutputFolder"
 "@
     
     $scriptPath = Join-Path $OutputFolder "replicate_masking.ps1"

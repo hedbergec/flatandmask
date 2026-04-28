@@ -2,7 +2,7 @@
 param(
     [switch]$BuildEXE = $true,
     [string]$OutputPath = "$PSScriptRoot\build",
-    [string]$Version = "1.2.0",
+    [string]$Version = "1.2.1",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
     [switch]$SkipIcon = $false,
     [switch]$SignEXE = $false,
@@ -94,6 +94,55 @@ function New-SigningMetadataFile {
     return (Resolve-Path $Path).Path
 }
 
+function ConvertTo-GzipBase64 {
+    param([string]$Text)
+
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes($Text)
+    $outputStream = New-Object System.IO.MemoryStream
+    $gzipStream = $null
+    try {
+        $gzipStream = New-Object System.IO.Compression.GZipStream($outputStream, [System.IO.Compression.CompressionMode]::Compress)
+        $gzipStream.Write($bytes, 0, $bytes.Length)
+    }
+    finally {
+        if ($gzipStream) { $gzipStream.Dispose() }
+    }
+
+    return [Convert]::ToBase64String($outputStream.ToArray())
+}
+
+function ConvertTo-VersionParts {
+    param([string]$VersionText)
+
+    if ($VersionText -notmatch '^\d+\.\d+\.\d+(\.\d+)?$') {
+        throw "Invalid version value: $VersionText"
+    }
+
+    $parts = @($VersionText.Split('.') | ForEach-Object { [int]$_ })
+    while ($parts.Count -lt 4) {
+        $parts += 0
+    }
+
+    return $parts
+}
+
+function Compare-BuildVersion {
+    param(
+        [string]$Left,
+        [string]$Right
+    )
+
+    $leftParts = @(ConvertTo-VersionParts -VersionText $Left)
+    $rightParts = @(ConvertTo-VersionParts -VersionText $Right)
+
+    for ($i = 0; $i -lt 4; $i++) {
+        if ($leftParts[$i] -gt $rightParts[$i]) { return 1 }
+        if ($leftParts[$i] -lt $rightParts[$i]) { return -1 }
+    }
+
+    return 0
+}
+
 # Create directories
 foreach ($dir in @($OutputPath, $distDir, $exeDir, $logsDir)) {
     if (-not (Test-Path $dir)) {
@@ -101,10 +150,35 @@ foreach ($dir in @($OutputPath, $distDir, $exeDir, $logsDir)) {
     }
 }
 
+$previousVersion = $null
+$previousVersionPath = Join-Path $distDir "VERSION.json"
+if (Test-Path $previousVersionPath) {
+    try {
+        $previousVersion = (Get-Content -Path $previousVersionPath -Raw | ConvertFrom-Json).Version
+    }
+    catch {
+        Write-Host "Could not read previous build version from $previousVersionPath; signing will be allowed if requested." -ForegroundColor Yellow
+    }
+}
+
+$versionIncreased = $true
+if (-not [string]::IsNullOrWhiteSpace($previousVersion)) {
+    $versionComparison = Compare-BuildVersion -Left $Version -Right $previousVersion
+    $versionIncreased = ($versionComparison -gt 0)
+}
+
 Write-Host $warrantyDisclaimer -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Build Environment initialized" -ForegroundColor Green
 Write-Host "Version: $Version" -ForegroundColor Green
+if (-not [string]::IsNullOrWhiteSpace($previousVersion)) {
+    Write-Host "Previous build version: $previousVersion" -ForegroundColor Green
+    if ($versionIncreased) {
+        Write-Host "Version increased; signing is allowed when -SignEXE is used." -ForegroundColor Green
+    } else {
+        Write-Host "Version did not increase; signing will be skipped even if -SignEXE is used." -ForegroundColor Yellow
+    }
+}
 Write-Host ""
 
 # Check for required file
@@ -170,6 +244,16 @@ if ($appVersionStamped) {
     throw "Could not find script AppVersion to stamp in $distScriptPath"
 }
 
+$distScriptTextForBundle = Get-Content -Path $distScriptPath -Raw
+$bundledSource = ConvertTo-GzipBase64 -Text $distScriptTextForBundle
+$distScriptTextForExe = $distScriptTextForBundle -replace '(?m)^\$script:BundledSourceGzipBase64\s*=.*$', ('$script:BundledSourceGzipBase64 = "' + $bundledSource + '"')
+if ($distScriptTextForExe -eq $distScriptTextForBundle) {
+    throw "Could not find BundledSourceGzipBase64 placeholder to stamp in $distScriptPath"
+}
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText($distScriptPath, $distScriptTextForExe, $utf8NoBom)
+Write-Host "Embedded matching DataMaskingTool.ps1 source for EXE replication outputs" -ForegroundColor Green
+
 # Create launch batch
 Write-Host "Creating launch.bat" -ForegroundColor Green
 $batch = "@echo off`npowershell.exe -NoProfile -ExecutionPolicy Bypass -File `"%~dp0DataMaskingTool.ps1`""
@@ -177,7 +261,7 @@ $batch | Out-File -FilePath (Join-Path $distDir "launch.bat") -Encoding ASCII -F
 
 # Create README
 Write-Host "Creating README.md" -ForegroundColor Green
-$readme = "# Data Masking Tool v$Version`n`n## Notice`n$warrantyDisclaimer`n`n## Quick Start`nDouble-click launch.bat to launch the tool`n`n## Features`n- HMAC-SHA256 deterministic masking`n- CSV and JSON file support`n- Interactive field selection`n- JSON schema tree viewer`n- Masking key audit trail`n- Replication scripts`n- Table normalization with deterministic IDs"
+$readme = "# Data Masking Tool v$Version`n`n## Notice`n$warrantyDisclaimer`n`n## Quick Start`nDouble-click launch.bat to launch the tool`n`n## Features`n- HMAC-SHA256 deterministic masking`n- CSV and JSON file support`n- Interactive field selection`n- JSON schema tree viewer`n- Masking key audit trail`n- Replication scripts`n- Table normalization with deterministic IDs`n`n## Replication Scripts`nEach masking run writes replicate_masking.ps1 and DataMaskingTool.ps1 into the output folder. The replication script is a thin wrapper that loads the local DataMaskingTool.ps1 copy and calls Invoke-Masking with the same selected fields, secret key, and original input path. Run replicate_masking.ps1 with no arguments to replay against the original input, or pass -InputFile to use a moved or replacement file."
 $readme | Out-File -FilePath (Join-Path $distDir "README.md") -Encoding UTF8 -Force
 
 # Create version file
@@ -277,7 +361,11 @@ if ($BuildEXE) {
 
     Write-Host "Verified EXE version: $($exeVersionInfo.FileVersion)" -ForegroundColor Green
 
-    if ($SignEXE) {
+    if ($SignEXE -and -not $versionIncreased) {
+        Write-Host ""
+        Write-Host "Skipping EXE signing because version $Version is not greater than previous build version $previousVersion." -ForegroundColor Yellow
+    }
+    elseif ($SignEXE) {
         Write-Host ""
         Write-Host "Signing standalone EXE" -ForegroundColor Green
 
@@ -343,4 +431,4 @@ Write-Host ""
 Write-Host "Usage:"
 Write-Host "  .\Build.ps1           # Build with icon (if icon.ico exists)"
 Write-Host "  .\Build.ps1 -SkipIcon # Build without icon"
-Write-Host "  .\Build.ps1 -BuildEXE -SignEXE # Build and sign with Azure Artifact Signing defaults"
+Write-Host "  .\Build.ps1 -BuildEXE -SignEXE # Build and sign only when -Version is greater than the previous build"

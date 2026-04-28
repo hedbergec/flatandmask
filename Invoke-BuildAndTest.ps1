@@ -2,6 +2,7 @@
 param(
     [string]$Version,
     [int]$MaxCsvRows = 250,
+    [string[]]$ScenarioName,
     [string]$CompareToRoot,
     [switch]$Clean,
     [switch]$SkipTests,
@@ -78,6 +79,9 @@ Write-Step "Context"
 Write-Host "Repo: $repoRoot"
 Write-Host "Version: $Version"
 Write-Host "Max CSV rows in regression tests: $MaxCsvRows"
+if ($ScenarioName -and $ScenarioName.Count -gt 0) {
+    Write-Host "Scenario filter: $($ScenarioName -join ', ')"
+}
 
 if (-not $SkipGitStatus) {
     Write-Step "Git Status"
@@ -107,6 +111,9 @@ if (-not $SkipTests) {
     if ($Clean) { $testArgs.Clean = $true }
     if (-not [string]::IsNullOrWhiteSpace($CompareToRoot)) {
         $testArgs.CompareToRoot = $CompareToRoot
+    }
+    if ($ScenarioName -and $ScenarioName.Count -gt 0) {
+        $testArgs.ScenarioName = $ScenarioName
     }
 
     & $testScript @testArgs

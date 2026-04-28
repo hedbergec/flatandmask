@@ -1,0 +1,6 @@
+{
+    "Endpoint":  "https://wus2.codesigning.azure.net",
+    "CodeSigningAccountName":  "hedbergec",
+    "CertificateProfileName":  "DesignEffectsLLCPub",
+    "CorrelationId":  "flatandmask-1.2.1"
+}
