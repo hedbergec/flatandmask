@@ -1023,6 +1023,13 @@ $scenarios = @(
             "email"
         )
     },
+    # NOTE for PowerShell fixture maintenance:
+    # Existing checked-in outputs for complex-json-sensitive have one inconsistent
+    # masking-key row for Original="Robert Chen", Field="paymentMethods.accountHolderName".
+    # The stored masked value in both example output\complex-json-sensitive\masking_key.csv
+    # and test_output\regression\complex-json-sensitive\masking_key.csv does not match
+    # the HMAC produced from that row's scenario secret. Re-run and inspect this fixture
+    # before using those checked-in masking_key.csv files as byte-for-byte truth.
     [PSCustomObject]@{
         Name       = "complex-json-sensitive"
         Type       = "tool-json"

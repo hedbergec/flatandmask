@@ -78,6 +78,65 @@ Avoids manual execution policy configuration.
 
 No PowerShell, installation, or configuration needed.
 
+### Option 4: R Package (`JsonCSVMaskr`)
+
+The repository also includes an R package in `Rpackage/` that mirrors the PowerShell masking engine and provides both scripted and Shiny GUI workflows.
+
+**R requirements:**
+
+- R 4.x
+- Packages: `digest`, `jsonlite`, `shiny`
+- `roxygen2` is only needed when regenerating help files
+
+Install from the local package directory:
+
+```r
+install.packages("Rpackage", repos = NULL, type = "source")
+```
+
+Or build and check from the repository root:
+
+```bash
+R CMD build Rpackage
+R CMD check JsonCSVMaskr_0.1.0.tar.gz --no-manual --no-build-vignettes
+```
+
+Scripted masking uses `datamaskr()`:
+
+```r
+library(JsonCSVMaskr)
+
+datamaskr(
+  input_file = "example data/sample.json",
+  output_folder = "example output/r-sample-json",
+  secret_key = "examplekey123",
+  mask_fields = c("name", "email")
+)
+```
+
+`invoke_masking()` remains available as a compatibility alias for the PowerShell-style function name.
+
+Launch the R Shiny interface:
+
+```r
+library(JsonCSVMaskr)
+run_datamaskr()
+```
+
+The Shiny app follows the same workflow as the PowerShell GUI: choose a JSON/CSV input, select fields, enter a secret key, run masking, and watch load/mask/normalize/export progress with console-style feedback.
+
+The package includes roxygen-generated help files. Useful entry points:
+
+```r
+?datamaskr
+?get_json_fields
+?get_csv_fields
+?run_datamaskr
+?masking_helpers
+?json_helpers
+?pipeline_helpers
+```
+
 _Note: Screenshots below are from earlier builds and do not exactly match the current version, but the core functionality and UI flow remain consistent._
 
 ![DataMaskingTool.exe in Windows Explorer](screenshots/theexecutable.png)
@@ -346,6 +405,27 @@ For a smaller focused regression pass, run:
 .\testing scripts\run-test-masking.ps1 -Clean -MaxCsvRows 250
 ```
 
+### R Package Fixture Validation
+
+The R package has a fixture validation script that runs `datamaskr()` against the bundled example and test data, then compares the R outputs with the checked-in PowerShell example, smoke, and regression outputs.
+
+From the repository root:
+
+```bash
+R CMD INSTALL --library=/tmp/jsoncsvmaskr-lib Rpackage
+R_LIBS=/tmp/jsoncsvmaskr-lib Rscript Rpackage/tools/validate-fixtures.R . /tmp/jsoncsvmaskr-fixtures
+```
+
+The validation covers CSV, ordinary JSON, loose/NDJSON, concatenated JSON, envelope JSON, GeoJSON, header-array JSON, Socrata JSON, large HR JSON, City of London CSV examples, and NYPD CSV/Socrata examples.
+
+The script accepts an optional scenario-name regular expression as the fourth argument for focused runs:
+
+```bash
+R_LIBS=/tmp/jsoncsvmaskr-lib Rscript Rpackage/tools/validate-fixtures.R . /tmp/jsoncsvmaskr-fixtures testkey123 'socrata|nypd'
+```
+
+Note: the validator reports and skips one known stale fixture row for `Original="Robert Chen"` / `Field="paymentMethods.accountHolderName"` in `complex-json-sensitive`; that checked-in PowerShell masking-key value does not match the scenario secret's HMAC. A note is also recorded in `testing scripts/test-masking-tool.ps1`.
+
 ## CSV-Specific Functionality
 
 ### Field Selection
@@ -590,6 +670,31 @@ Outputs:
 
 - `build/dist/` - PowerShell portable version
 - `build/exe/` - Standalone EXE (fully portable)
+
+### Build the R Package
+
+On Windows with R installed and available on `PATH`, build the `JsonCSVMaskr` R package artifacts with:
+
+```powershell
+.\Build.ps1 -BuildRPackage
+```
+
+That writes R package artifacts under:
+
+```text
+build\Rpackage\
+```
+
+Expected files:
+
+- `JsonCSVMaskr_<version>.tar.gz` - R source package
+- `JsonCSVMaskr_<version>.zip` - Windows binary package produced by `R CMD INSTALL --build`
+
+To build only the R package artifacts and skip the EXE step:
+
+```powershell
+.\Build.ps1 -BuildEXE:$false -BuildRPackage
+```
 
 
 ## Files Structure

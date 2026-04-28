@@ -1,0 +1,15 @@
+Package: JsonCSVMaskr
+Title: Deterministic Masking for JSON and CSV Data
+Version: 0.1.0
+Authors@R: person("Eric", "Hedberg", email = "hedbergec@outlook.com", role = c("aut", "cre"))
+Author: Eric Hedberg [aut, cre]
+Maintainer: Eric Hedberg <hedbergec@outlook.com>
+Description: Masks selected fields in CSV and JSON files using deterministic
+    HMAC-SHA256 values, exports masking keys, normalizes JSON to CSV tables,
+    and provides a Shiny GUI similar to the original PowerShell Data Masking Tool.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: digest, jsonlite, shiny, tools, utils
+Built: R 4.4.1; ; 2026-04-28 02:45:48 UTC; unix

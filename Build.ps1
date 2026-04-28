@@ -1,8 +1,10 @@
 
 param(
     [switch]$BuildEXE = $true,
+    [switch]$BuildRPackage = $false,
     [string]$OutputPath = "$PSScriptRoot\build",
     [string]$Version = "1.2.1",
+    [string]$RPackagePath = "$PSScriptRoot\Rpackage",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
     [switch]$SkipIcon = $false,
     [switch]$SignEXE = $false,
@@ -23,6 +25,7 @@ $exeName = "DataMaskingTool.exe"
 $projectRoot = $PSScriptRoot
 $distDir = Join-Path $OutputPath "dist"
 $exeDir = Join-Path $OutputPath "exe"
+$rPackageBuildDir = Join-Path $OutputPath "Rpackage"
 $logsDir = Join-Path $OutputPath "logs"
 $authorName = "Eric Hedberg"
 $authorEmail = "hedbergec@outlook.com"
@@ -143,8 +146,36 @@ function Compare-BuildVersion {
     return 0
 }
 
+function Get-RDescriptionValue {
+    param(
+        [string]$DescriptionPath,
+        [string]$Field
+    )
+
+    $match = Get-Content -Path $DescriptionPath | Where-Object { $_ -match "^$([regex]::Escape($Field)):\s*(.+)$" } | Select-Object -First 1
+    if (-not $match) {
+        throw "Could not find '$Field' in $DescriptionPath"
+    }
+
+    return ([regex]::Match($match, "^$([regex]::Escape($Field)):\s*(.+)$")).Groups[1].Value.Trim()
+}
+
+function Invoke-CheckedCommand {
+    param(
+        [string]$FilePath,
+        [string[]]$Arguments,
+        [string]$Description
+    )
+
+    Write-Host $Description -ForegroundColor Cyan
+    & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "$Description failed with exit code $LASTEXITCODE"
+    }
+}
+
 # Create directories
-foreach ($dir in @($OutputPath, $distDir, $exeDir, $logsDir)) {
+foreach ($dir in @($OutputPath, $distDir, $exeDir, $rPackageBuildDir, $logsDir)) {
     if (-not (Test-Path $dir)) {
         New-Item -ItemType Directory -Path $dir -Force | Out-Null
     }
@@ -218,6 +249,15 @@ foreach ($path in @(
 )) {
     if (Test-Path $path) {
         Remove-Item -Path $path -Force
+    }
+}
+
+if ($BuildRPackage) {
+    foreach ($path in @(
+        (Join-Path $rPackageBuildDir "JsonCSVMaskr_*.tar.gz"),
+        (Join-Path $rPackageBuildDir "JsonCSVMaskr_*.zip")
+    )) {
+        Get-ChildItem -Path $path -ErrorAction SilentlyContinue | Remove-Item -Force
     }
 }
 
@@ -421,14 +461,75 @@ if ($BuildEXE) {
     }
 }
 
+if ($BuildRPackage) {
+    Write-Host ""
+    Write-Host "Building R package" -ForegroundColor Green
+
+    if (-not (Test-Path $RPackagePath)) {
+        throw "R package directory not found: $RPackagePath"
+    }
+
+    $descriptionPath = Join-Path $RPackagePath "DESCRIPTION"
+    if (-not (Test-Path $descriptionPath)) {
+        throw "R package DESCRIPTION file not found: $descriptionPath"
+    }
+
+    $rCommand = Get-Command R -ErrorAction SilentlyContinue
+    if (-not $rCommand) {
+        throw "R was not found on PATH. Install R for Windows and make sure R.exe is available on PATH, or run from an R-enabled shell."
+    }
+
+    $rPackageName = Get-RDescriptionValue -DescriptionPath $descriptionPath -Field "Package"
+    $rPackageVersion = Get-RDescriptionValue -DescriptionPath $descriptionPath -Field "Version"
+    $sourceArchiveName = "${rPackageName}_${rPackageVersion}.tar.gz"
+    $windowsArchiveName = "${rPackageName}_${rPackageVersion}.zip"
+    $sourceArchiveRoot = Join-Path $projectRoot $sourceArchiveName
+    $windowsArchiveRoot = Join-Path $projectRoot $windowsArchiveName
+    $sourceArchiveOut = Join-Path $rPackageBuildDir $sourceArchiveName
+    $windowsArchiveOut = Join-Path $rPackageBuildDir $windowsArchiveName
+
+    foreach ($path in @($sourceArchiveRoot, $windowsArchiveRoot, $sourceArchiveOut, $windowsArchiveOut)) {
+        if (Test-Path $path) {
+            Remove-Item -Path $path -Force
+        }
+    }
+
+    Push-Location $projectRoot
+    try {
+        Invoke-CheckedCommand -FilePath $rCommand.Source -Arguments @("CMD", "build", $RPackagePath) -Description "Running R CMD build for $rPackageName"
+        if (-not (Test-Path $sourceArchiveRoot)) {
+            throw "R CMD build completed but did not create $sourceArchiveRoot"
+        }
+        Move-Item -Path $sourceArchiveRoot -Destination $sourceArchiveOut -Force
+        Write-Host "Created: $sourceArchiveOut" -ForegroundColor Green
+
+        Invoke-CheckedCommand -FilePath $rCommand.Source -Arguments @("CMD", "INSTALL", "--build", $RPackagePath) -Description "Running R CMD INSTALL --build for Windows package zip"
+        if (Test-Path $windowsArchiveRoot) {
+            Move-Item -Path $windowsArchiveRoot -Destination $windowsArchiveOut -Force
+            Write-Host "Created: $windowsArchiveOut" -ForegroundColor Green
+        }
+        else {
+            Write-Host "R CMD INSTALL --build did not create $windowsArchiveName in $projectRoot." -ForegroundColor Yellow
+            Write-Host "On non-Windows platforms this may produce a platform-specific tarball instead of a Windows binary zip. Run this step on Windows to create the .zip artifact." -ForegroundColor Yellow
+        }
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 Write-Host ""
 Write-Host "Build Complete" -ForegroundColor Green
 Write-Host "Portable (PS1): $distDir" -ForegroundColor Green
 if ($BuildEXE) {
     Write-Host "Standalone (EXE): $exeDir" -ForegroundColor Green
 }
+if ($BuildRPackage) {
+    Write-Host "R package artifacts: $rPackageBuildDir" -ForegroundColor Green
+}
 Write-Host ""
 Write-Host "Usage:"
 Write-Host "  .\Build.ps1           # Build with icon (if icon.ico exists)"
 Write-Host "  .\Build.ps1 -SkipIcon # Build without icon"
 Write-Host "  .\Build.ps1 -BuildEXE -SignEXE # Build and sign only when -Version is greater than the previous build"
+Write-Host "  .\Build.ps1 -BuildRPackage # Build JsonCSVMaskr source tar.gz and Windows zip package artifacts"

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head><title>R: Deterministic Masking for JSON and CSV Data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body><div class="container">
+<h1> Deterministic Masking for JSON and CSV Data
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;JsonCSVMaskr&rsquo; version 0.1.0</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<table style="width: 100%;">
+<tr><td style="width: 25%;"><a href="json_helpers.html">add_estimated_table_names_from_object</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">add_gui_log_line</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">add_json_object_array_counts</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">add_mapping_row</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">apply_masking_to_object</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">complete_masking_outputs</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">convert_header_array_rows_to_objects</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">convert_rows_for_csv_export</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">convert_to_app_version</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="csv_helpers.html">convert_to_csv_line</a></td>
+<td>CSV helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">count_maskable_fields_in_object</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="csv_helpers.html">csv_helpers</a></td>
+<td>CSV helpers</td></tr>
+<tr><td style="width: 25%;"><a href="datamaskr.html">datamaskr</a></td>
+<td>Run a complete masking job</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">export_helpers</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">export_masking_key</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">export_replication_tool_source</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">format_status_line</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">generate_replication_script</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="csv_helpers.html">get_csv_fields</a></td>
+<td>CSV helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">get_job_progress_detail</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_json_fields</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_json_progress_target</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_json_record_collection_info</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">get_masked_value</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">get_replication_tool_source_text</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">get_selected_field_set</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_socrata_columns</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_socrata_json_fields</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">get_table_name_from_path</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="export_helpers.html">get_tool_update_status</a></td>
+<td>Output and replication helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">get_visible_json_properties</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="pipeline_helpers.html">invoke_csv_masking_fast</a></td>
+<td>Masking pipeline functions</td></tr>
+<tr><td style="width: 25%;"><a href="pipeline_helpers.html">invoke_header_array_json_masking</a></td>
+<td>Masking pipeline functions</td></tr>
+<tr><td style="width: 25%;"><a href="pipeline_helpers.html">invoke_json_records_masking</a></td>
+<td>Masking pipeline functions</td></tr>
+<tr><td style="width: 25%;"><a href="datamaskr.html">invoke_masking</a></td>
+<td>Run a complete masking job</td></tr>
+<tr><td style="width: 25%;"><a href="pipeline_helpers.html">invoke_socrata_json_masking</a></td>
+<td>Masking pipeline functions</td></tr>
+<tr><td style="width: 25%;"><a href="shiny_app.html">jsoncsvmaskr_app</a></td>
+<td>Shiny application</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">json_helpers</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">masking_helpers</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">mask_if_needed</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">new_table_row_id</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">normalize_field_name</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="pipeline_helpers.html">pipeline_helpers</a></td>
+<td>Masking pipeline functions</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">process_masked_object</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">progress_helpers</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">read_json_file_with_load_progress</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">read_loose_json_records</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">read_text_file_with_load_progress</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">reset_job_estimate</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="shiny_app.html">run_app</a></td>
+<td>Shiny application</td></tr>
+<tr><td style="width: 25%;"><a href="shiny_app.html">run_datamaskr</a></td>
+<td>Shiny application</td></tr>
+<tr><td style="width: 25%;"><a href="csv_helpers.html">set_csv_job_estimate</a></td>
+<td>CSV helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">set_job_estimate</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">set_json_object_job_estimate</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">set_json_record_job_estimate</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">set_progress_record_target</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="shiny_app.html">shiny_app</a></td>
+<td>Shiny application</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">should_mask_field</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">sync_table_estimate_with_produced</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="masking_helpers.html">test_estimate_field_match</a></td>
+<td>Deterministic masking primitives</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">test_header_array_json</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="json_helpers.html">test_socrata_json</a></td>
+<td>JSON parsing, discovery, and shape detection helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">update_processing_progress</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">write_job_estimate_status</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">write_mask_log</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">write_status_panel</a></td>
+<td>Progress and status helpers</td></tr>
+<tr><td style="width: 25%;"><a href="progress_helpers.html">write_verbose_log</a></td>
+<td>Progress and status helpers</td></tr>
+</table>
+</div></body></html>
