@@ -3,7 +3,7 @@ param(
     [switch]$BuildEXE = $true,
     [switch]$BuildRPackage = $false,
     [string]$OutputPath = "$PSScriptRoot\build",
-    [string]$Version = "1.2.1",
+    [string]$Version = "1.2.2",
     [string]$RPackagePath = "$PSScriptRoot\Rpackage",
     [string]$IconPath = "$PSScriptRoot\icon.ico",
     [switch]$SkipIcon = $false,
@@ -243,12 +243,21 @@ foreach ($path in @(
     (Join-Path $distDir "DataMaskingTool.ps1"),
     (Join-Path $distDir "launch.bat"),
     (Join-Path $distDir "README.md"),
-    (Join-Path $distDir "VERSION.json"),
-    (Join-Path $exeDir $exeName),
-    (Join-Path $exeDir "DataMaskingTool.tmp.exe")
+    (Join-Path $distDir "VERSION.json")
 )) {
     if (Test-Path $path) {
         Remove-Item -Path $path -Force
+    }
+}
+
+if ($BuildEXE) {
+    foreach ($path in @(
+        (Join-Path $exeDir $exeName),
+        (Join-Path $exeDir "DataMaskingTool.tmp.exe")
+    )) {
+        if (Test-Path $path) {
+            Remove-Item -Path $path -Force
+        }
     }
 }
 
@@ -474,9 +483,13 @@ if ($BuildRPackage) {
         throw "R package DESCRIPTION file not found: $descriptionPath"
     }
 
-    $rCommand = Get-Command R -ErrorAction SilentlyContinue
+    $rCommand = Get-Command R.exe -ErrorAction SilentlyContinue
     if (-not $rCommand) {
         throw "R was not found on PATH. Install R for Windows and make sure R.exe is available on PATH, or run from an R-enabled shell."
+    }
+    $rExePath = if ($rCommand.Path) { $rCommand.Path } else { $rCommand.Source }
+    if ([string]::IsNullOrWhiteSpace($rExePath)) {
+        throw "R.exe was found but its executable path could not be resolved."
     }
 
     $rPackageName = Get-RDescriptionValue -DescriptionPath $descriptionPath -Field "Package"
@@ -496,14 +509,14 @@ if ($BuildRPackage) {
 
     Push-Location $projectRoot
     try {
-        Invoke-CheckedCommand -FilePath $rCommand.Source -Arguments @("CMD", "build", $RPackagePath) -Description "Running R CMD build for $rPackageName"
+        Invoke-CheckedCommand -FilePath $rExePath -Arguments @("CMD", "build", $RPackagePath) -Description "Running R CMD build for $rPackageName"
         if (-not (Test-Path $sourceArchiveRoot)) {
             throw "R CMD build completed but did not create $sourceArchiveRoot"
         }
         Move-Item -Path $sourceArchiveRoot -Destination $sourceArchiveOut -Force
         Write-Host "Created: $sourceArchiveOut" -ForegroundColor Green
 
-        Invoke-CheckedCommand -FilePath $rCommand.Source -Arguments @("CMD", "INSTALL", "--build", $RPackagePath) -Description "Running R CMD INSTALL --build for Windows package zip"
+        Invoke-CheckedCommand -FilePath $rExePath -Arguments @("CMD", "INSTALL", "--build", $RPackagePath) -Description "Running R CMD INSTALL --build for Windows package zip"
         if (Test-Path $windowsArchiveRoot) {
             Move-Item -Path $windowsArchiveRoot -Destination $windowsArchiveOut -Force
             Write-Host "Created: $windowsArchiveOut" -ForegroundColor Green

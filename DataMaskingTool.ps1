@@ -19,21 +19,26 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.2.1"
+$script:AppVersion = "1.2.2"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
 $script:RepoUrl = "https://github.com/hedbergec/flatandmask"
 $script:WarrantyDisclaimer = "NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: $($script:RepoUrl). Contact: $($script:AuthorName) <$($script:AuthorEmail)>."
 $script:BundledSourceGzipBase64 = ""
+
+function New-OrdinalHashtable {
+    return [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
+}
+
 $script:LastInputFile = $null
 $script:LastOutputFolder = $null
 $script:SelectedFields = @()
 $script:SecretKey = ""
-$script:Mapping = @{}
+$script:Mapping = New-OrdinalHashtable
 $script:MappingWithRows = New-Object System.Collections.ArrayList
-$script:Tables = @{}
-$script:TableIdCounters = @{}
+$script:Tables = New-OrdinalHashtable
+$script:TableIdCounters = New-OrdinalHashtable
 $script:OriginalData = $null
 $script:MaskedData = $null
 $script:InputWasJson = $false
@@ -498,7 +503,7 @@ function Set-ProgressRecordTarget {
 function Get-SelectedFieldSet {
     param([string[]]$MaskFields)
 
-    $set = @{}
+    $set = New-OrdinalHashtable
     foreach ($field in @($MaskFields)) {
         if (-not [string]::IsNullOrWhiteSpace($field)) {
             $set[(Normalize-FieldName $field)] = $true
@@ -850,7 +855,7 @@ function Should-MaskField {
     $normalized = Normalize-FieldName $FieldPath
     foreach ($maskField in $script:SelectedFields) {
         $normalizedMask = Normalize-FieldName $maskField
-        if ($normalized -eq $normalizedMask) {
+        if ($normalized -ceq $normalizedMask) {
             return $true
         }
     }
@@ -1289,7 +1294,7 @@ function Invoke-JsonRecordsMasking {
     }
 
     $script:MaskedData = @($maskedItems)
-    $script:Tables = @{}
+    $script:Tables = New-OrdinalHashtable
     $script:TablesProduced = 0
     Set-GuiProgressStage -Bar $normalizeProgressBar -Current 1 -Total 100 -Force
     foreach ($item in @($script:MaskedData)) {
@@ -1584,7 +1589,7 @@ function Invoke-CsvMaskingFast {
     $script:TablesProduced = 1
     $script:MaskedData = $null
     $script:OriginalData = $null
-    $script:Tables = @{}
+    $script:Tables = New-OrdinalHashtable
 
     Set-CsvJobEstimate -InputFile $InputFile -MaskFields $MaskFields -RowCount $script:TotalLines
     Write-JobEstimateStatus -Mode "CSV"
@@ -1644,10 +1649,10 @@ function Invoke-Masking {
     
     $script:SelectedFields = $MaskFields
     $script:SecretKey = $SecretKey
-    $script:Mapping = @{}
+    $script:Mapping = New-OrdinalHashtable
     $script:MappingWithRows = New-Object System.Collections.ArrayList
-    $script:Tables = @{}
-    $script:TableIdCounters = @{}
+    $script:Tables = New-OrdinalHashtable
+    $script:TableIdCounters = New-OrdinalHashtable
     $script:ProcessedLines = 0
     $script:TablesProduced = 0
     $script:InputWasJson = $false
@@ -1728,14 +1733,14 @@ function Invoke-Masking {
         
         if ($script:MaskedData -is [System.Collections.IEnumerable] -and $script:MaskedData -isnot [string]) {
             $maskedArray = @($script:MaskedData)
-            $script:Tables = @{}  # Reset tables
+            $script:Tables = New-OrdinalHashtable  # Reset tables
             $script:TablesProduced = 0  # Reset counter BEFORE processing
             foreach ($item in $maskedArray) {
                 Process-MaskedObject -Object $item -TableName "root" -IdMap @{}
             }
             Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force
         } else {
-            $script:Tables = @{}  # Reset tables
+            $script:Tables = New-OrdinalHashtable  # Reset tables
             $script:TablesProduced = 0  # Reset counter BEFORE processing
             Process-MaskedObject -Object $script:MaskedData -TableName "root" -IdMap @{}
             Set-GuiProgressStage -Bar $normalizeProgressBar -Current 100 -Total 100 -Force

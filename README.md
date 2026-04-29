@@ -1,6 +1,6 @@
 # Data Masking Tool
 
-**Version 1.2.1**
+**Version 1.2.2**
 
 Copyright (c) 2026 Design Effects, LLC
 
@@ -371,7 +371,7 @@ The all-tests runner uses a fixed regression key, reads the current version from
 test_output\regression\<version>\
 ```
 
-For the current build, outputs are saved under `test_output\regression\1.2.1\`.
+For the current build, outputs are saved under `test_output\regression\1.2.2\`.
 
 This test flow masks all bundled example data plus core synthetic fixtures, including:
 
@@ -416,7 +416,7 @@ R CMD INSTALL --library=/tmp/jsoncsvmaskr-lib Rpackage
 R_LIBS=/tmp/jsoncsvmaskr-lib Rscript Rpackage/tools/validate-fixtures.R . /tmp/jsoncsvmaskr-fixtures
 ```
 
-The validation covers CSV, ordinary JSON, loose/NDJSON, concatenated JSON, envelope JSON, GeoJSON, header-array JSON, Socrata JSON, large HR JSON, City of London CSV examples, and NYPD CSV/Socrata examples.
+The validation covers CSV, ordinary JSON, loose/NDJSON, concatenated JSON, envelope JSON, GeoJSON, header-array JSON, Socrata JSON, large HR JSON, City of London CSV examples, NYPD CSV/Socrata examples, and a case-sensitive value fixture.
 
 The script accepts an optional scenario-name regular expression as the fourth argument for focused runs:
 
@@ -424,7 +424,12 @@ The script accepts an optional scenario-name regular expression as the fourth ar
 R_LIBS=/tmp/jsoncsvmaskr-lib Rscript Rpackage/tools/validate-fixtures.R . /tmp/jsoncsvmaskr-fixtures testkey123 'socrata|nypd'
 ```
 
-Note: the validator reports and skips one known stale fixture row for `Original="Robert Chen"` / `Field="paymentMethods.accountHolderName"` in `complex-json-sensitive`; that checked-in PowerShell masking-key value does not match the scenario secret's HMAC. A note is also recorded in `testing scripts/test-masking-tool.ps1`.
+For release correspondence checks, first generate fresh PowerShell outputs, then pass that output root as the fifth validator argument. The validator requires a matching PowerShell scenario output in that mode and uses the supplied secret for all compared scenarios:
+
+```powershell
+.\testing scripts\test-masking-tool.ps1 -OutputRoot .\test_output\ps_correspondence_probe -SkipReplicationTests -Clean
+Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_probe testkey123 '.*' .\test_output\ps_correspondence_probe
+```
 
 ## CSV-Specific Functionality
 
@@ -679,6 +684,13 @@ On Windows with R installed and available on `PATH`, build the `JsonCSVMaskr` R 
 .\Build.ps1 -BuildRPackage
 ```
 
+If R is installed but not on `PATH`, temporarily prepend its `bin\x64` folder before running the build:
+
+```powershell
+$env:PATH = "C:\Program Files (x86)\R\R-4.6.0\bin\x64;$env:PATH"
+.\Build.ps1 -BuildRPackage
+```
+
 That writes R package artifacts under:
 
 ```text
@@ -714,6 +726,7 @@ launch.bat                        # Batch launcher (optional)
 
 ## Change Log
 
+- **v1.2.2** - Fixed PowerShell masking to preserve exact case-sensitive value identity in line with the R package, added a case-sensitive regression fixture, tightened masking-key HMAC assertions, and confirmed R/PowerShell correspondence across all bundled test and example data
 - **v1.2.1** - Simplified replication scripts into wrapper scripts that reuse the matching `DataMaskingTool.ps1`, automatically export that source copy beside each replay script, remember the original input path for no-argument replay, improve replication error messages, and make build signing conditional on version increases
 - **v1.2.0** - Added staged GUI progress bars, a capped 100-line GUI log mirror, chunked JSON load progress, more accurate nested JSON progress and table estimates, and documentation for synthetic relationship IDs that preserve joins without exposing original IDs
 - **v1.1.2** - Added no-warranty/repository/contact notice to the GUI and terminal startup, GUI buttons to open the repo and check GitHub for updates, deterministic table row IDs, and expanded regression coverage

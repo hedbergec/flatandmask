@@ -24,6 +24,10 @@ function Normalize-FieldName {
     return $FieldPath
 }
 
+function New-OrdinalHashtable {
+    return [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
+}
+
 function Should-MaskField {
     param(
         [string]$FieldPath,
@@ -32,7 +36,7 @@ function Should-MaskField {
 
     $normalized = Normalize-FieldName $FieldPath
     foreach ($maskField in $MaskFields) {
-        if ($normalized -eq (Normalize-FieldName $maskField)) {
+        if ($normalized -ceq (Normalize-FieldName $maskField)) {
             return $true
         }
     }
@@ -58,10 +62,10 @@ function Get-MaskedValue {
 
 function New-MaskingState {
     return @{
-        Mapping         = @{}
+        Mapping         = New-OrdinalHashtable
         MappingWithRows = New-Object System.Collections.Generic.List[object]
-        Tables          = @{}
-        TableCounters   = @{}
+        Tables          = New-OrdinalHashtable
+        TableCounters   = New-OrdinalHashtable
     }
 }
 
@@ -464,11 +468,11 @@ function Resolve-KeyMaskedValue {
     $normalizedField = Normalize-FieldName $FieldPath
     $matches = @(
         $KeyRows | Where-Object {
-            $_.Original -eq $originalString -and
-            (Normalize-FieldName $_.Field) -eq $normalizedField -and
+            $_.Original -ceq $originalString -and
+            (Normalize-FieldName $_.Field) -ceq $normalizedField -and
             (
                 ((Is-Blank $_.RowIndex) -and (Is-Blank $RowIndex)) -or
-                ([string]$_.RowIndex -eq [string]$RowIndex)
+                ([string]$_.RowIndex -ceq [string]$RowIndex)
             )
         }
     )
@@ -685,23 +689,17 @@ function Test-MaskingKeyFile {
         throw "[$ScenarioName] masking_key.csv row count mismatch. Expected $expectedCount, got $($KeyRows.Count)."
     }
 
-    $byOriginal = @{}
-    $firstSeenByOriginalIgnoringCase = @{}
+    $byOriginal = New-OrdinalHashtable
     foreach ($row in $KeyRows) {
         if (-not $byOriginal.ContainsKey($row.Original)) {
             $byOriginal[$row.Original] = $row.Masked
         }
-        elseif ($byOriginal[$row.Original] -ne $row.Masked) {
+        elseif ($byOriginal[$row.Original] -cne $row.Masked) {
             throw "[$ScenarioName] Original value '$($row.Original)' maps to more than one masked value."
         }
 
-        $caseInsensitiveOriginal = $row.Original.ToLowerInvariant()
-        if (-not $firstSeenByOriginalIgnoringCase.ContainsKey($caseInsensitiveOriginal)) {
-            $firstSeenByOriginalIgnoringCase[$caseInsensitiveOriginal] = $row.Original
-        }
-
-        $expectedMask = Get-MaskedValue -Value $firstSeenByOriginalIgnoringCase[$caseInsensitiveOriginal] -Key $SecretKey
-        if ($row.Masked -ne $expectedMask) {
+        $expectedMask = Get-MaskedValue -Value $row.Original -Key $SecretKey
+        if ($row.Masked -cne $expectedMask) {
             throw "[$ScenarioName] masking_key.csv contains an unexpected mask for '$($row.Original)'."
         }
 
@@ -940,8 +938,22 @@ function Invoke-RealToolScenario {
 
     foreach ($maskField in $Scenario.MaskFields) {
         $normalized = Normalize-FieldName $maskField
-        if (-not @($keyRows | Where-Object { $_.Field -eq $normalized })) {
+        if (-not @($keyRows | Where-Object { $_.Field -ceq $normalized })) {
             throw "[$($Scenario.Name)] masking_key.csv does not include expected field '$normalized'."
+        }
+    }
+
+    $byOriginal = New-OrdinalHashtable
+    foreach ($row in $keyRows) {
+        $expectedMask = Get-MaskedValue -Value $row.Original -Key $SecretKey
+        if ($row.Masked -cne $expectedMask) {
+            throw "[$($Scenario.Name)] masking_key.csv contains an unexpected mask for '$($row.Original)'."
+        }
+        if (-not $byOriginal.ContainsKey($row.Original)) {
+            $byOriginal[$row.Original] = $row.Masked
+        }
+        elseif ($byOriginal[$row.Original] -cne $row.Masked) {
+            throw "[$($Scenario.Name)] Original value '$($row.Original)' maps to more than one masked value."
         }
     }
 
@@ -1013,6 +1025,30 @@ function Invoke-Scenario {
     }
 }
 
+function Test-CaseSensitiveMaskingSemantics {
+    $secret = "case-sensitive-test-key"
+    $state = New-MaskingState
+    $maskFields = @("root.Value")
+
+    $upper = Mask-IfNeeded -State $state -FieldName "root.Value" -Value "CaseValue" -RowIndex 0 -SecretKey $secret -MaskFields $maskFields
+    $lower = Mask-IfNeeded -State $state -FieldName "root.Value" -Value "casevalue" -RowIndex 1 -SecretKey $secret -MaskFields $maskFields
+
+    if ($upper -ceq $lower) {
+        throw "[case-sensitive-masking] Case-only distinct original values produced the same mask."
+    }
+    if ($upper -cne (Get-MaskedValue -Value "CaseValue" -Key $secret)) {
+        throw "[case-sensitive-masking] Upper-case variant did not match exact-string HMAC."
+    }
+    if ($lower -cne (Get-MaskedValue -Value "casevalue" -Key $secret)) {
+        throw "[case-sensitive-masking] Lower-case variant did not match exact-string HMAC."
+    }
+    if ($state.Mapping.Count -ne 2 -or $state.MappingWithRows.Count -ne 2) {
+        throw "[case-sensitive-masking] Mapping state collapsed case-only distinct values."
+    }
+}
+
+Test-CaseSensitiveMaskingSemantics
+
 $scenarios = @(
     [PSCustomObject]@{
         Name       = "sample-json-basic"
@@ -1021,6 +1057,14 @@ $scenarios = @(
         MaskFields = @(
             "name",
             "email"
+        )
+    },
+    [PSCustomObject]@{
+        Name       = "case-sensitive-values-csv"
+        Type       = "tool-csv"
+        InputFile  = (Join-Path $repoRoot "test_data\test_case_sensitive_values.csv")
+        MaskFields = @(
+            "root.Value"
         )
     },
     # NOTE for PowerShell fixture maintenance:
