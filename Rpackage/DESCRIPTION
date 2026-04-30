@@ -15,5 +15,9 @@ Imports:
     digest,
     jsonlite,
     shiny,
+    shinyFiles,
     tools,
     utils
+Suggests:
+    dplyr,
+    readr

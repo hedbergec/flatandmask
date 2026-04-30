@@ -30,7 +30,7 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 - **Audit Trail**: Generate masking key files mapping original → masked values
 - **Table Normalization**: Nested JSON automatically normalized into related CSV tables with foreign keys
 - **Synthetic Relationship IDs**: Parent-child relationships maintained for manual merging/joining without exposing original IDs
-- **Live Progress**: Terminal status panel plus staged GUI progress bars and capped GUI log mirror
+- **Live Status Logging**: Terminal status panel plus capped GUI console log mirror
 - **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and contact info; the GUI can check GitHub for newer releases or tags
 - **Replication Bundle**: Auto-generated replay script plus matching `DataMaskingTool.ps1` source copy for consistent reruns
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
@@ -80,41 +80,48 @@ No PowerShell, installation, or configuration needed.
 
 ### Option 4: R Package (`JsonCSVMaskr`)
 
-The repository also includes an R package in `Rpackage/` that mirrors the PowerShell masking engine and provides both scripted and Shiny GUI workflows.
+The repository also includes an R package in `Rpackage/` that mirrors the PowerShell masking engine and provides both scripted and Shiny GUI workflows on Windows, macOS, and Linux.
 
 **R requirements:**
 
 - R 4.x
-- Packages: `digest`, `jsonlite`, `shiny`
+- Packages: `digest`, `jsonlite`, `shiny`, `shinyFiles`
 - `roxygen2` is only needed when regenerating help files
 
-Install from the local package directory:
+Install from GitHub with `remotes`:
+
+```r
+install.packages("remotes")
+remotes::install_github("hedbergec/flatandmask", subdir = "Rpackage", dependencies = TRUE)
+```
+
+Or install with `devtools`:
+
+```r
+install.packages("devtools")
+devtools::install_github("hedbergec/flatandmask", subdir = "Rpackage", dependencies = TRUE)
+```
+
+On Windows, install Rtools from `https://cran.r-project.org/bin/windows/Rtools/` if R asks for build tools. The package is pure R, so most users will receive binary dependencies and will not need a compiler.
+
+Install from a local checkout:
 
 ```r
 install.packages("Rpackage", repos = NULL, type = "source")
 ```
 
-Or build and check from the repository root:
+Or from a terminal in the repository root:
+
+```bash
+R CMD INSTALL Rpackage
+```
+
+Build and check from the repository root:
 
 ```bash
 R CMD build Rpackage
-R CMD check JsonCSVMaskr_0.1.0.tar.gz --no-manual --no-build-vignettes
+R CMD check JsonCSVMaskr_0.1.0.tar.gz --no-manual
 ```
-
-Scripted masking uses `datamaskr()`:
-
-```r
-library(JsonCSVMaskr)
-
-datamaskr(
-  input_file = "example data/sample.json",
-  output_folder = "example output/r-sample-json",
-  secret_key = "examplekey123",
-  mask_fields = c("name", "email")
-)
-```
-
-`invoke_masking()` remains available as a compatibility alias for the PowerShell-style function name.
 
 Launch the R Shiny interface:
 
@@ -123,7 +130,88 @@ library(JsonCSVMaskr)
 run_datamaskr()
 ```
 
-The Shiny app follows the same workflow as the PowerShell GUI: choose a JSON/CSV input, select fields, enter a secret key, run masking, and watch load/mask/normalize/export progress with console-style feedback.
+When the package loads, it prints the same no-warranty, repository, and contact notice shown in the GUI.
+
+The Shiny app opens in a browser. The default output folder is `~/Documents/MASKED`, which resolves to the current user's Documents folder on Windows, macOS, and Linux. The GUI uses local filesystem Browse dialogs when run locally, so generated R replication scripts remember real input/output paths rather than Shiny upload temp paths.
+
+R GUI workflow:
+
+1. On `Setup`, browse to a JSON or CSV input file.
+2. Leave the output folder as `~/Documents/MASKED` or choose another folder.
+3. Enter a secret key.
+4. Go to `Fields` and select fields to mask.
+5. Go to `Run` and click `Run Masking`.
+6. Review status, console log, and output file list.
+
+Scripted masking uses `datamaskr()`:
+
+```r
+library(JsonCSVMaskr)
+
+# JSON example
+datamaskr(
+  input_file = "your-data.json",
+  output_folder = "~/Documents/MASKED/json-results",
+  secret_key = "your-secret-key",
+  mask_fields = c("root.name", "root.email")
+)
+
+# CSV example
+datamaskr(
+  input_file = "your-data.csv",
+  output_folder = "~/Documents/MASKED/csv-results",
+  secret_key = "your-secret-key",
+  mask_fields = c("Name", "Email")
+)
+```
+
+List fields before choosing what to mask:
+
+```r
+get_json_fields("your-data.json")
+get_csv_fields("your-data.csv")
+```
+
+For examples using the bundled data in this repository:
+
+```r
+# Using repository example data
+datamaskr(
+  input_file = "example data/sample.json",
+  output_folder = "example output/r-sample-json",
+  secret_key = "example-key",
+  mask_fields = c("root.name", "root.email")
+)
+
+get_json_fields("example data/sample.json")
+```
+
+`invoke_masking()` remains available as a compatibility alias for the PowerShell-style function name:
+
+```r
+invoke_masking(
+  input_file = "your-data.csv",
+  output_folder = "~/Documents/MASKED/invoke-results",
+  secret_key = "your-secret-key",
+  mask_fields = c("Name")
+)
+```
+
+Each R run writes `replicate_masking.R` beside the outputs. Open it in R and run it, or run:
+
+```bash
+Rscript path/to/replicate_masking.R
+```
+
+The generated script loads `JsonCSVMaskr`, remembers the original input/output paths, secret key, and selected fields, and can be edited to point at a moved or replacement input file.
+
+The R package includes a LaTeX/Sweave vignette rendered from the bundled sample JSON data:
+
+```r
+vignette("jsoncsvmaskr-usage", package = "JsonCSVMaskr")
+```
+
+In this repository, the source is `Rpackage/vignettes/jsoncsvmaskr-usage.Rnw` and the rendered PDF is `Rpackage/inst/doc/jsoncsvmaskr-usage.pdf`.
 
 The package includes roxygen-generated help files. Useful entry points:
 
@@ -728,7 +816,7 @@ launch.bat                        # Batch launcher (optional)
 
 - **v1.2.2** - Fixed PowerShell masking to preserve exact case-sensitive value identity in line with the R package, added a case-sensitive regression fixture, tightened masking-key HMAC assertions, and confirmed R/PowerShell correspondence across all bundled test and example data
 - **v1.2.1** - Simplified replication scripts into wrapper scripts that reuse the matching `DataMaskingTool.ps1`, automatically export that source copy beside each replay script, remember the original input path for no-argument replay, improve replication error messages, and make build signing conditional on version increases
-- **v1.2.0** - Added staged GUI progress bars, a capped 100-line GUI log mirror, chunked JSON load progress, more accurate nested JSON progress and table estimates, and documentation for synthetic relationship IDs that preserve joins without exposing original IDs
+- **v1.2.0** - Added staged GUI progress/status reporting, a capped 100-line GUI log mirror, chunked JSON load progress, more accurate nested JSON progress and table estimates, and documentation for synthetic relationship IDs that preserve joins without exposing original IDs
 - **v1.1.2** - Added no-warranty/repository/contact notice to the GUI and terminal startup, GUI buttons to open the repo and check GitHub for updates, deterministic table row IDs, and expanded regression coverage
 - **v1.1.0** - Added optimized Socrata JSON processing, NDJSON/loose JSON, envelope JSON, GeoJSON, header-array JSON support, and a five-line live progress panel
 - **v1.0.3** - Updated release version
