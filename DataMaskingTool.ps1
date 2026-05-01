@@ -19,7 +19,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.2.2"
+$script:AppVersion = "1.2.3"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
@@ -2451,11 +2451,16 @@ $runButton.Add_Click({
     $mainForm.Refresh()
     
     try {
-        $keyFile = Join-Path $script:LastOutputFolder "masking_key.csv"
-        Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $script:LastOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields
+        # Create timestamped subfolder for GUI runs
+        $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
+        $guiOutputFolder = Join-Path $script:LastOutputFolder "Masked_Data_GUI_$timestamp"
+        New-Item -ItemType Directory -Force -Path $guiOutputFolder | Out-Null
+        
+        $keyFile = Join-Path $guiOutputFolder "masking_key.csv"
+        Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $guiOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields
         $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) $($script:ProgressRecordLabel.ToLowerInvariant()) | Masked $($script:MaskedFieldsProcessed) fields | Generated $($script:TablesProduced) tables"
         Complete-GuiProgressStages
-        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`n$($script:ProgressRecordLabel) processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
+        [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`n$($script:ProgressRecordLabel) processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))`n`nOutput saved to: $guiOutputFolder", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)
     }
     catch {
         $statusLabel.Text = "Error: $($_.Exception.Message)"

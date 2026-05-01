@@ -1,6 +1,5 @@
 jsoncsvmaskr_app <- function() {
   default_output_dir <- file.path(path.expand("~/Documents"), "MASKED")
-  dir.create(default_output_dir, recursive = TRUE, showWarnings = FALSE)
   has_shiny_files <- requireNamespace("shinyFiles", quietly = TRUE)
   icon_src <- get_shiny_icon_src()
 
@@ -296,12 +295,17 @@ jsoncsvmaskr_app <- function() {
         send_progress_message(session, line = line, status = status_text())
       }
       tryCatch({
-        key_file <- file.path(output_dir(), "masking_key.csv")
-        invoke_masking(run_input_path, output_dir(), key_file, input$secret_key, selected_fields(), callback)
+        # Create timestamped subfolder for GUI runs
+        timestamp <- format(Sys.time(), "%Y-%m-%d_%H-%M-%S")
+        gui_output_dir <- file.path(output_dir(), paste0("Masked_Data_GUI_", timestamp))
+        dir.create(gui_output_dir, recursive = TRUE, showWarnings = FALSE)
+        
+        key_file <- file.path(gui_output_dir, "masking_key.csv")
+        invoke_masking(run_input_path, gui_output_dir, key_file, input$secret_key, selected_fields(), callback)
         state <- .state()
-        status_text(sprintf("Complete! Processed %d %s | Masked %d fields | Generated %d tables",
+        status_text(sprintf("Complete! Processed %d %s | Masked %d fields | Generated %d tables\nOutput saved to: %s",
                             state$processed_lines, tolower(state$progress_record_label),
-                            state$masked_fields_processed, state$tables_produced))
+                            state$masked_fields_processed, state$tables_produced, gui_output_dir))
         send_progress_message(session, status = status_text())
       }, error = function(e) {
         status_text(paste("Error:", conditionMessage(e)))

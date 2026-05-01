@@ -1,4 +1,4 @@
-﻿# Data Masking Tool v1.2.2
+﻿# Data Masking Tool v1.2.3
 
 ## Notice
 NO WARRANTY: This tool is provided as-is, without warranty of any kind. Check the Git repo for updates and source: https://github.com/hedbergec/flatandmask. Contact: Eric Hedberg <hedbergec@outlook.com>.
