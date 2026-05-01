@@ -1,0 +1,44 @@
+[
+  {
+    "org_id": "ORG-001",
+    "org_name": "Northwind Lab",
+    "owner": {
+      "name": "Avery Stone",
+      "email": "avery.stone@example.com"
+    },
+    "projects": [
+      {
+        "project_code": "P-100",
+        "project_name": "Customer Portal",
+        "tasks": [
+          { "task_id": "T-1", "assignee_email": "dev.one@example.com", "status": "open" },
+          { "task_id": "T-2", "assignee_email": "dev.two@example.com", "status": "done" }
+        ]
+      },
+      {
+        "project_code": "P-200",
+        "project_name": "Data Cleanup",
+        "tasks": [
+          { "task_id": "T-3", "assignee_email": "analyst@example.com", "status": "open" }
+        ]
+      }
+    ]
+  },
+  {
+    "org_id": "ORG-002",
+    "org_name": "Contoso Health",
+    "owner": {
+      "name": "Morgan Lee",
+      "email": "morgan.lee@example.com"
+    },
+    "projects": [
+      {
+        "project_code": "P-300",
+        "project_name": "Records Review",
+        "tasks": [
+          { "task_id": "T-4", "assignee_email": "reviewer@example.com", "status": "done" }
+        ]
+      }
+    ]
+  }
+]
