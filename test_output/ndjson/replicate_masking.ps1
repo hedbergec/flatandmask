@@ -1,1 +1,0 @@
-﻿throw "This output was produced with the optimized Socrata JSON processor. Re-run masking from DataMaskingTool.ps1 to reproduce it; the legacy standalone replication script does not support Socrata row-array JSON yet."

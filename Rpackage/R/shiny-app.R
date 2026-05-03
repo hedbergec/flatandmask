@@ -1,5 +1,5 @@
 jsoncsvmaskr_app <- function() {
-  default_output_dir <- file.path(path.expand("~/Documents"), "MASKED")
+  default_output_dir <- ""
   has_shiny_files <- requireNamespace("shinyFiles", quietly = TRUE)
   icon_src <- get_shiny_icon_src()
 
@@ -15,7 +15,6 @@ jsoncsvmaskr_app <- function() {
         ".jcm-status { border: 1px solid #cbd5e1; padding: 8px; min-height: 38px; background: #f8fafc; }",
         ".jcm-selected { white-space: pre-wrap; border: 1px solid #cbd5e1; padding: 8px; min-height: 70px; background: #f8fafc; }",
         ".jcm-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }",
-        ".jcm-file-list { max-height: 180px; overflow: auto; }",
         ".jcm-muted { color: #64748b; font-size: 12px; }",
         ".jcm-step-message { color: #9a3412; font-size: 12px; margin: 4px 0 10px; }",
         ".jcm-disclaimer { border: 1px solid #f59e0b; background: #fffbeb; padding: 10px; margin: 8px 0 14px; }"
@@ -60,7 +59,7 @@ jsoncsvmaskr_app <- function() {
               shiny::fileInput("input_file", NULL, accept = c(".json", ".csv"))
             },
             shiny::uiOutput("input_step_message"),
-            shiny::textInput("output_folder", "Output Folder", value = default_output_dir),
+            shiny::textInput("output_folder", "Output Folder", value = ""),
             if (has_shiny_files) {
               shinyFiles::shinyDirButton("browse_output_folder", "Browse...", "Select output folder")
             } else {
@@ -128,9 +127,7 @@ jsoncsvmaskr_app <- function() {
           shiny::column(
             width = 6,
             shiny::h4("Console"),
-            shiny::tags$div(id = "jcm-live-log", class = "jcm-log", ""),
-            shiny::h4("Output Files"),
-            shiny::uiOutput("output_files_ui")
+            shiny::tags$div(id = "jcm-live-log", class = "jcm-log", "")
           )
         )
       ),
@@ -146,14 +143,18 @@ jsoncsvmaskr_app <- function() {
   server <- function(input, output, session) {
     log_lines <- shiny::reactiveVal(character())
     selected_fields <- shiny::reactiveVal(character())
-    output_dir <- shiny::reactiveVal(default_output_dir)
+    output_dir <- shiny::reactiveVal("")
     input_path <- shiny::reactiveVal("")
     available_fields <- shiny::reactiveVal(character())
+    asked_matching_fields <- shiny::reactiveVal(character())
+    pending_matching_fields <- shiny::reactiveVal(character())
+    suppress_matching_prompt <- shiny::reactiveVal(FALSE)
     status_text <- shiny::reactiveVal("Ready")
     is_running <- shiny::reactiveVal(FALSE)
 
     if (has_shiny_files) {
       volumes <- get_shiny_file_roots()
+      default_browser_root <- get_default_shiny_root_name(volumes)
       shinyFiles::shinyFileChoose(
         input,
         "browse_input_file",
@@ -171,24 +172,37 @@ jsoncsvmaskr_app <- function() {
         }
       })
 
-      shinyFiles::shinyDirChoose(input, "browse_output_folder", roots = volumes, session = session)
+      shinyFiles::shinyDirChoose(
+        input,
+        "browse_output_folder",
+        roots = volumes,
+        session = session,
+        defaultRoot = default_browser_root,
+        defaultPath = ""
+      )
       observeEvent(input$browse_output_folder, {
-        parsed <- shinyFiles::parseDirPath(volumes, input$browse_output_folder)
-        if (length(parsed) > 0L && isTRUE(nzchar(parsed[[1]]))) {
-          output_dir(parsed[[1]])
-          shiny::updateTextInput(session, "output_folder", value = parsed[[1]])
+        parsed <- tryCatch(shinyFiles::parseDirPath(volumes, input$browse_output_folder), error = function(e) character())
+        if (length(parsed) > 0L && isTRUE(nzchar(parsed[[1]])) && dir.exists(parsed[[1]])) {
+          selected_folder <- normalizePath(parsed[[1]], winslash = "/", mustWork = FALSE)
+          output_dir(selected_folder)
+          shiny::updateTextInput(session, "output_folder", value = selected_folder)
           status_text("Output folder selected")
+        } else if (length(parsed) > 0L && isTRUE(nzchar(parsed[[1]]))) {
+          status_text("The selected output folder does not exist.")
         }
       })
     }
 
     refresh_available_fields <- function(path) {
       selected_fields(character())
+      asked_matching_fields(character())
+      pending_matching_fields(character())
+      suppress_matching_prompt(FALSE)
+      shiny::updateTextInput(session, "field_search", value = "")
       fields <- get_input_fields(path)
       available_fields(fields)
       if (length(fields) > 0L) {
         status_text(sprintf("Input file selected; %d fields found", length(fields)))
-        shiny::updateTabsetPanel(session, "main_tabs", selected = "Fields")
       } else {
         status_text("Input file selected; no fields found")
       }
@@ -201,7 +215,7 @@ jsoncsvmaskr_app <- function() {
     }, ignoreNULL = FALSE)
 
     observe({
-      if (nzchar(input$output_folder %||% "")) output_dir(input$output_folder)
+      output_dir(trimws(input$output_folder %||% ""))
     })
 
     observeEvent(input$input_file, {
@@ -214,6 +228,7 @@ jsoncsvmaskr_app <- function() {
     output$fields_ui <- shiny::renderUI({
       fields <- selected_fields()
       all_fields <- available_fields()
+      visible_fields <- filter_fields_by_query(all_fields, input$field_search %||% "")
       if (!nzchar(input_path())) {
         return(shiny::tags$div(class = "jcm-field-list", "(choose an input file on the Setup tab)"))
       }
@@ -221,8 +236,15 @@ jsoncsvmaskr_app <- function() {
         return(shiny::tags$div(class = "jcm-field-list", "(no fields found)"))
       }
       shiny::tags$div(
-        class = "jcm-field-list",
-        shiny::checkboxGroupInput("mask_fields", "Select Fields to Mask", choices = all_fields, selected = fields)
+        shiny::textInput("field_search", "Search fields", value = input$field_search %||% "", placeholder = "Type part of a field name"),
+        shiny::tags$div(
+          class = "jcm-field-list",
+          if (length(visible_fields) == 0L) {
+            shiny::tags$div("(no matching fields)")
+          } else {
+            shiny::checkboxGroupInput("mask_fields", "Select Fields to Mask", choices = visible_fields, selected = intersect(fields, visible_fields))
+          }
+        )
       )
     })
 
@@ -235,18 +257,72 @@ jsoncsvmaskr_app <- function() {
     })
 
     observeEvent(input$mask_fields, {
-      selected_fields(input$mask_fields %||% character())
+      visible_fields <- filter_fields_by_query(available_fields(), input$field_search %||% "")
+      previous <- selected_fields()
+      current <- unique(c(setdiff(previous, visible_fields), input$mask_fields %||% character()))
+      selected_fields(current)
+
+      if (isTRUE(suppress_matching_prompt())) {
+        suppress_matching_prompt(FALSE)
+        status_text(sprintf("Selected %d fields", length(selected_fields())))
+        return()
+      }
+
+      newly_selected <- setdiff(current, previous)
+      asked <- asked_matching_fields()
+      for (field in newly_selected) {
+        leaf <- get_field_leaf_name(field)
+        if (!nzchar(leaf) || leaf %in% asked) next
+
+        matches <- find_matching_leaf_fields(field, available_fields())
+        matches_to_add <- setdiff(matches, current)
+        if (length(matches_to_add) == 0L) next
+
+        asked <- unique(c(asked, leaf))
+        asked_matching_fields(asked)
+        pending_matching_fields(unique(c(current, matches_to_add)))
+        shiny::showModal(shiny::modalDialog(
+          title = "Select matching fields?",
+          sprintf(
+            "The field '%s' also appears in %d other place(s). Select all matching '%s' fields?",
+            leaf,
+            length(matches_to_add),
+            leaf
+          ),
+          footer = shiny::tagList(
+            shiny::modalButton("No"),
+            shiny::actionButton("select_matching_leaf_fields", "Yes")
+          ),
+          easyClose = TRUE
+        ))
+        break
+      }
+
       status_text(sprintf("Selected %d fields", length(selected_fields())))
     }, ignoreNULL = FALSE)
+
+    observeEvent(input$select_matching_leaf_fields, {
+      fields <- pending_matching_fields()
+      shiny::removeModal()
+      if (length(fields) > 0L) {
+        selected_fields(fields)
+        suppress_matching_prompt(TRUE)
+        shiny::updateCheckboxGroupInput(session, "mask_fields", selected = fields)
+        status_text(sprintf("Selected %d fields", length(fields)))
+      }
+      pending_matching_fields(character())
+    })
 
     observeEvent(input$select_all_fields, {
       fields <- available_fields()
       selected_fields(fields)
-      shiny::updateCheckboxGroupInput(session, "mask_fields", selected = fields)
+      suppress_matching_prompt(TRUE)
+      shiny::updateCheckboxGroupInput(session, "mask_fields", selected = intersect(fields, filter_fields_by_query(fields, input$field_search %||% "")))
     })
 
     observeEvent(input$clear_fields, {
       selected_fields(character())
+      suppress_matching_prompt(TRUE)
       shiny::updateCheckboxGroupInput(session, "mask_fields", selected = character())
     })
 
@@ -257,13 +333,17 @@ jsoncsvmaskr_app <- function() {
     reset_app <- function() {
       selected_fields(character())
       available_fields(character())
+      asked_matching_fields(character())
+      pending_matching_fields(character())
+      suppress_matching_prompt(FALSE)
       log_lines(character())
       status_text("Ready")
       is_running(FALSE)
       input_path("")
       shiny::updateTextInput(session, "input_path", value = "")
-      shiny::updateTextInput(session, "output_folder", value = default_output_dir)
-      output_dir(default_output_dir)
+      shiny::updateTextInput(session, "field_search", value = "")
+      shiny::updateTextInput(session, "output_folder", value = "")
+      output_dir("")
       send_progress_message(session, status = "Ready", clear_log = TRUE)
     }
 
@@ -326,16 +406,6 @@ jsoncsvmaskr_app <- function() {
     output$run_step_message <- render_step_message(function() {
       get_run_step_message(input_path(), output_dir(), input$secret_key, selected_fields())
     })
-    output$output_files_ui <- shiny::renderUI({
-      folder <- output_dir()
-      if (!dir.exists(folder)) return(shiny::tags$div(class = "jcm-file-list", "(output folder does not exist yet)"))
-      files <- list.files(folder, all.files = FALSE, full.names = FALSE, no.. = TRUE)
-      if (length(files) == 0L) return(shiny::tags$div(class = "jcm-file-list", "(no output files yet)"))
-      shiny::tags$div(
-        class = "jcm-file-list",
-        shiny::tags$ul(lapply(files, function(name) shiny::tags$li(name)))
-      )
-    })
   }
 
   shiny::shinyApp(ui, server)
@@ -361,6 +431,25 @@ get_input_fields <- function(input_path) {
 format_selected_fields <- function(fields) {
   if (length(fields) == 0L) return("(none)")
   paste(fields, collapse = "\n")
+}
+
+get_field_leaf_name <- function(field) {
+  if (is.null(field) || length(field) == 0L || !nzchar(field[[1]] %||% "")) return("")
+  parts <- strsplit(field[[1]], ".", fixed = TRUE)[[1]]
+  parts[[length(parts)]]
+}
+
+find_matching_leaf_fields <- function(field, fields) {
+  leaf <- get_field_leaf_name(field)
+  if (!nzchar(leaf) || length(fields) == 0L) return(character())
+  field_leaves <- vapply(fields, get_field_leaf_name, character(1))
+  setdiff(fields[field_leaves == leaf], field)
+}
+
+filter_fields_by_query <- function(fields, query) {
+  query <- trimws(query %||% "")
+  if (length(fields) == 0L || !nzchar(query)) return(fields)
+  fields[grepl(tolower(query), tolower(fields), fixed = TRUE)]
 }
 
 render_step_message <- function(message_callback) {
@@ -418,19 +507,49 @@ get_run_step_message <- function(input_path, output_folder, secret_key, selected
 }
 
 get_shiny_file_roots <- function() {
-  documents <- file.path(path.expand("~"), "Documents")
-  roots <- c(Home = path.expand("~"), Documents = documents, Temp = tempdir())
+  first_existing_path <- function(paths) {
+    paths <- unique(paths[nzchar(paths %||% "")])
+    paths <- paths[dir.exists(paths)]
+    if (length(paths) == 0L) return("")
+    normalizePath(paths[[1]], winslash = "/", mustWork = FALSE)
+  }
+
+  home <- first_existing_path(c(Sys.getenv("USERPROFILE"), Sys.getenv("HOME"), path.expand("~")))
+  documents_candidates <- c(path.expand("~/Documents"))
+  if (nzchar(home) && !identical(tolower(basename(home)), "documents")) {
+    documents_candidates <- c(file.path(home, "Documents"), documents_candidates)
+  }
+  documents <- first_existing_path(documents_candidates)
+  temp <- first_existing_path(tempdir())
+
+  roots <- character()
+  if (nzchar(home)) roots <- c(roots, Home = home)
+  if (nzchar(documents) && !documents %in% unname(roots)) roots <- c(roots, Documents = documents)
+  if (nzchar(temp)) roots <- c(roots, Temp = temp)
+
   if (.Platform$OS.type == "windows") {
     drives <- paste0(LETTERS, ":/")
     drives <- drives[dir.exists(drives)]
-    if (length(drives) > 0L) roots <- c(roots, stats::setNames(drives, drives))
+    if (length(drives) > 0L) {
+      drive_names <- paste0(substr(drives, 1L, 1L), " Drive")
+      roots <- c(roots, stats::setNames(drives, drive_names))
+    }
   } else {
     roots <- c(roots, Root = "/")
     volumes <- "/Volumes"
     if (dir.exists(volumes)) roots <- c(roots, Volumes = volumes)
   }
   roots <- roots[!duplicated(unname(roots))]
+  roots <- roots[dir.exists(unname(roots))]
   stats::setNames(unname(roots), names(roots))
+}
+
+get_default_shiny_root_name <- function(roots) {
+  if (length(roots) == 0L) return(NULL)
+  preferred <- c("Documents", "Home")
+  match <- preferred[preferred %in% names(roots)]
+  if (length(match) > 0L) return(match[[1]])
+  names(roots)[[1]]
 }
 
 send_progress_message <- function(session, line = NULL, status = NULL, clear_log = FALSE) {

@@ -1,6 +1,8 @@
 # Data Masking Tool
 
-**Version 1.2.3**
+<img src="icon.svg" width="64" height="64" alt="Data Masking Tool logo">
+
+**Version 1.3.0**
 
 Copyright (c) 2026 Design Effects, LLC
 
@@ -16,8 +18,54 @@ This tool was developed through rapid prototyping and intuitive development (vib
 
 **Use at your own risk.**
 
+## New to GitHub? Download and Start Here
+
+You do not need to know Git to use this tool. GitHub is just the website where the project files are stored.
+
+### Download the Files
+
+1. Open the project page in your web browser: `https://github.com/hedbergec/flatandmask`
+2. Click the green **Code** button near the top of the page.
+3. Click **Download ZIP**.
+4. Unzip the downloaded file somewhere easy to find, such as your Desktop or Downloads folder.
+5. Open the unzipped `flatandmask` folder.
+
+### Windows Users
+
+For most Windows users, the easiest option is the Windows program:
+
+1. Open the unzipped project folder.
+2. Go to `build/exe/`.
+3. Double-click `DataMaskingTool.exe`.
+
+If Windows blocks the program because it came from the internet, choose **More info** and then **Run anyway** only if you downloaded it from the official project page above.
+
+You can also run the PowerShell script directly:
+
+1. Open the unzipped project folder.
+2. Right-click `launch.bat`.
+3. Choose **Open** or **Run as administrator** if your computer requires it.
+
+### Mac Users
+
+The Windows PowerShell GUI and `.exe` file are for Windows. On macOS, use the R version instead:
+
+1. Install R from `https://cran.r-project.org/`.
+2. Open the Terminal app.
+3. In Terminal, go to the unzipped project folder.
+4. Run:
+
+   ```bash
+   Rscript -e "install.packages(c('digest', 'jsonlite', 'shiny', 'shinyFiles'))"
+   R CMD INSTALL Rpackage
+   Rscript -e "JsonCSVMaskr::shiny_app()"
+   ```
+
+This opens the R Shiny version of the tool in your browser.
+
 ## Table of Contents
 
+- [New to GitHub? Download and Start Here](#new-to-github-download-and-start-here)
 - [Overview](#overview)
 - [GUI Output Folder Behavior](#gui-output-folder-behavior)
 - [Windows Program Requirements](#windows-program-requirements)
@@ -148,10 +196,6 @@ Avoids manual execution policy configuration.
 
 No PowerShell, installation, or configuration needed.
 
-_Note: Screenshots below are from earlier builds and do not exactly match the current version, but the core functionality and UI flow remain consistent._
-
-![DataMaskingTool.exe in Windows Explorer](screenshots/theexecutable.png)
-
 ## Windows Usage
 
 ### Basic Workflow
@@ -194,10 +238,6 @@ launch.bat
 Double-click DataMaskingTool.exe
 ```
 
-Main application window:
-
-![Initial application window](screenshots/firstopened.png)
-
 #### 2. Select Input File
 
 Click "Browse..." next to "Input File (JSON/CSV)" and choose your data file.
@@ -237,10 +277,6 @@ Click "Select Fields to Mask" to open the field selection dialog.
 - Shows all column names
 - Check boxes for columns containing sensitive data
 
-Example field selection dialog:
-
-![Field selection dialog](screenshots/pickfields.png)
-
 #### 5. Enter Secret Key
 
 Enter a strong, memorable secret key. This key:
@@ -263,10 +299,6 @@ Click "Run Masking" to process the file.
 #### 7. Review Output
 
 Output files are saved to your chosen output folder.
-
-Completed run example:
-
-![Completed masking run](screenshots/endscreen.png)
 
 ## Output Files
 
@@ -384,7 +416,7 @@ The all-tests runner uses a fixed regression key, reads the current version from
 test_output\regression\<version>\
 ```
 
-For the current build, outputs are saved under `test_output\regression\1.2.3\`.
+For the current build, outputs are saved under `test_output\regression\1.3.0\`.
 
 This test flow masks all bundled example data plus core synthetic fixtures, including:
 
@@ -713,17 +745,17 @@ Install from a downloaded package artifact after downloading the `.zip` or `.tar
 install.packages(c("digest", "jsonlite", "shiny", "shinyFiles"))
 
 # Windows binary package
-install.packages("JsonCSVMaskr_0.1.0.zip", repos = NULL, type = "win.binary")
+install.packages("JsonCSVMaskr_1.3.0.zip", repos = NULL, type = "win.binary")
 
 # Source package on Windows, macOS, or Linux
-install.packages("JsonCSVMaskr_0.1.0.tar.gz", repos = NULL, type = "source")
+install.packages("JsonCSVMaskr_1.3.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Use the actual downloaded file path if the package artifact is not in the current R working directory:
 
 ```r
-install.packages("C:/Users/you/Downloads/JsonCSVMaskr_0.1.0.zip", repos = NULL, type = "win.binary")
-install.packages("~/Downloads/JsonCSVMaskr_0.1.0.tar.gz", repos = NULL, type = "source")
+install.packages("C:/Users/you/Downloads/JsonCSVMaskr_1.3.0.zip", repos = NULL, type = "win.binary")
+install.packages("~/Downloads/JsonCSVMaskr_1.3.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Install from a local checkout:
@@ -749,12 +781,12 @@ run_datamaskr()
 
 When the package loads, it prints the same no-warranty, repository, and contact notice shown in the Windows GUI.
 
-The Shiny app opens in a browser. The default output folder is `~/Documents/MASKED`, which resolves to the current user's Documents folder on Windows, macOS, and Linux. The GUI uses local filesystem Browse dialogs when run locally, so generated R replication scripts remember real input/output paths rather than Shiny upload temp paths.
+The Shiny app opens in a browser. The GUI uses local filesystem Browse dialogs when run locally, so generated R replication scripts remember real input/output paths rather than Shiny upload temp paths.
 
 R GUI workflow:
 
 1. On `Setup`, browse to a JSON or CSV input file.
-2. Leave the output folder as `~/Documents/MASKED` or choose another folder.
+2. Choose output folder.
 3. Enter a secret key.
 4. Go to `Fields` and select fields to mask.
 5. Go to `Run` and click `Run Masking`.
@@ -852,7 +884,7 @@ Build and check from the repository root:
 
 ```bash
 R CMD build Rpackage
-R CMD check JsonCSVMaskr_0.1.0.tar.gz --no-manual
+R CMD check JsonCSVMaskr_1.3.0.tar.gz --no-manual
 ```
 
 On Windows with R installed and available on `PATH`, build the `JsonCSVMaskr` R package artifacts with:
@@ -906,14 +938,14 @@ R_LIBS=/tmp/jsoncsvmaskr-lib Rscript Rpackage/tools/validate-fixtures.R . /tmp/j
 
 ### Testing R Against Windows Output
 
-For R-vs-Windows correspondence checks, first generate fresh Windows PowerShell outputs with the current `DataMaskingTool.ps1`, then pass that output root as the fifth validator argument. The validator requires a matching Windows scenario output in this mode and uses the supplied secret for all compared scenarios:
+For R-vs-Windows correspondence checks, first generate fresh Windows PowerShell outputs with the current `DataMaskingTool.ps1`, then pass that output root as the fifth validator argument. In comparison mode, the validator runs only the common scenarios that have matching PowerShell output folders, currently the 22 shared example/test-data scenarios, and uses the supplied secret for all compared scenarios:
 
 ```powershell
 .\testing scripts\test-masking-tool.ps1 -OutputRoot .\test_output\ps_correspondence_probe -SkipReplicationTests -Clean
 Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_probe testkey123 '.*' .\test_output\ps_correspondence_probe
 ```
 
-That run confirms the R implementation and Windows program produce corresponding masked values, masking keys, normalized CSV tables, and masked JSON or NDJSON outputs across the bundled fixture set. Use a narrower scenario pattern for targeted checks:
+That run confirms the R implementation and Windows program produce corresponding masked values, masking keys, normalized CSV tables, and masked JSON or NDJSON outputs across the shared bundled fixture set. Use a narrower scenario pattern for targeted checks:
 
 ```powershell
 .\testing scripts\test-masking-tool.ps1 -OutputRoot .\test_output\ps_correspondence_probe -SkipReplicationTests -Clean -ScenarioName nypd-officer-profile-json
@@ -922,6 +954,7 @@ Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_prob
 
 ## Change Log
 
+- **v1.3.0** - Updated the logo/icon assets, aligned the R package version with the Windows tool, added smarter field-selection prompts and searchable field selectors, retained selected fields across selector reopen/filter operations, and simplified the Shiny output-folder workflow
 - **v1.2.3** - Added timestamped output folders for GUI applications (PowerShell GUI and R Shiny GUI create `Masked_Data_GUI_<timestamp>` subfolders), updated documentation with table of contents and GUI output behavior details, clarified that replication scripts default to using the timestamped folder where they were generated
 - **v1.2.2** - Fixed PowerShell masking to preserve exact case-sensitive value identity in line with the R package, added a case-sensitive regression fixture, tightened masking-key HMAC assertions, and confirmed R/PowerShell correspondence across all bundled test and example data
 - **v1.2.1** - Simplified replication scripts into wrapper scripts that reuse the matching `DataMaskingTool.ps1`, automatically export that source copy beside each replay script, remember the original input path for no-argument replay, improve replication error messages, and make build signing conditional on version increases

@@ -19,7 +19,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.2.3"
+$script:AppVersion = "1.3.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
@@ -774,12 +774,15 @@ function Get-CsvFields {
 }
 
 function Show-CsvFieldSelector {
-    param([string]$FilePath)
+    param(
+        [string]$FilePath,
+        [string[]]$InitialSelected = @()
+    )
     try {
         $fields = Get-CsvFields -FilePath $FilePath
         if (-not $fields -or $fields.Count -eq 0) {
             [System.Windows.Forms.MessageBox]::Show("No fields found in CSV file.", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
-            return @()
+            return [PSCustomObject]@{ Accepted = $true; Fields = @() }
         }
         
         $form = New-Object System.Windows.Forms.Form
@@ -789,14 +792,25 @@ function Show-CsvFieldSelector {
         $form.TopMost = $true
         $form.FormBorderStyle = "FixedDialog"
         $form.MaximizeBox = $false
+
+        $searchLabel = New-Object System.Windows.Forms.Label
+        $searchLabel.Text = "Search:"
+        $searchLabel.AutoSize = $true
+        $searchLabel.Left = 10
+        $searchLabel.Top = 10
+
+        $searchBox = New-Object System.Windows.Forms.TextBox
+        $searchBox.Left = 65
+        $searchBox.Top = 8
+        $searchBox.Width = 405
         
         $list = New-Object System.Windows.Forms.CheckedListBox
         $list.Left = 10
-        $list.Top = 10
+        $list.Top = 40
         $list.Width = 460
-        $list.Height = 520
+        $list.Height = 490
         $list.Sorted = $true
-        $list.Items.AddRange($fields)
+        $fieldSelectorState = Add-SearchableFieldSelectorBehavior -List $list -SearchBox $searchBox -Fields $fields -InitialSelected $InitialSelected -Owner $form
         
         $panel = New-Object System.Windows.Forms.Panel
         $panel.Dock = "Bottom"
@@ -820,25 +834,147 @@ function Show-CsvFieldSelector {
         
         $panel.Controls.Add($ok)
         $panel.Controls.Add($cancel)
+        $form.Controls.Add($searchLabel)
+        $form.Controls.Add($searchBox)
         $form.Controls.Add($list)
         $form.Controls.Add($panel)
         
         $result = $form.ShowDialog()
         $selected = @()
-        if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
-            for ($i = 0; $i -lt $list.Items.Count; $i++) {
-                if ($list.GetItemChecked($i)) {
-                    $selected += $list.Items[$i]
-                }
+        $accepted = $result -eq [System.Windows.Forms.DialogResult]::OK
+        if ($accepted) {
+            foreach ($field in $fieldSelectorState.Fields) {
+                if ($fieldSelectorState.Checked.ContainsKey($field)) { $selected += $field }
             }
         }
         $form.Dispose()
-        return $selected
+        return [PSCustomObject]@{ Accepted = $accepted; Fields = @($selected) }
     }
     catch {
         [System.Windows.Forms.MessageBox]::Show("Error: $($_.Exception.Message)", "Error", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error)
-        return @()
+        return [PSCustomObject]@{ Accepted = $false; Fields = @() }
     }
+}
+
+function Add-SearchableFieldSelectorBehavior {
+    param(
+        [System.Windows.Forms.CheckedListBox]$List,
+        [System.Windows.Forms.TextBox]$SearchBox,
+        [string[]]$Fields,
+        [string[]]$InitialSelected = @(),
+        [System.Windows.Forms.Form]$Owner
+    )
+
+    $checkedFields = @{}
+    $available = @($Fields | Sort-Object -Unique)
+    foreach ($field in @($InitialSelected)) {
+        if ($available -contains $field) {
+            $checkedFields[$field] = $true
+        }
+    }
+
+    $promptState = @{
+        Fields = $available
+        Checked = $checkedFields
+        Asked = @{}
+        Suppress = $false
+        List = $List
+        SearchBox = $SearchBox
+        Owner = $Owner
+    }
+    $List.Tag = $promptState
+    $SearchBox.Tag = $promptState
+
+    $refreshList = {
+        param($sender, $eventArgs)
+
+        $state = if ($null -ne $sender) { $sender.Tag } else { $null }
+        if ($null -eq $state) { return }
+
+        $currentList = $state.List
+        $query = $state.SearchBox.Text
+        $state.Suppress = $true
+        try {
+            $currentList.BeginUpdate()
+            $currentList.Items.Clear()
+            foreach ($field in $state.Fields) {
+                if ([string]::IsNullOrWhiteSpace($query) -or $field.IndexOf($query, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                    $index = $currentList.Items.Add($field)
+                    if ($state.Checked.ContainsKey($field)) {
+                        $currentList.SetItemChecked($index, $true)
+                    }
+                }
+            }
+        }
+        finally {
+            $currentList.EndUpdate()
+            $state.Suppress = $false
+        }
+    }
+
+    $List.Add_ItemCheck({
+        param($sender, $eventArgs)
+
+        $state = $sender.Tag
+        if ($null -eq $state -or $state.Suppress) {
+            return
+        }
+
+        $selectedField = [string]$sender.Items[$eventArgs.Index]
+        if ($eventArgs.NewValue -eq [System.Windows.Forms.CheckState]::Checked) {
+            $state.Checked[$selectedField] = $true
+        } else {
+            $state.Checked.Remove($selectedField)
+            return
+        }
+
+        $leafName = ($selectedField -split '\.')[-1]
+        if ([string]::IsNullOrWhiteSpace($leafName) -or $state.Asked.ContainsKey($leafName)) {
+            return
+        }
+
+        $matches = @()
+        foreach ($candidate in $state.Fields) {
+            $candidateLeaf = ($candidate -split '\.')[-1]
+            if ($candidate -ne $selectedField -and $candidateLeaf -eq $leafName -and -not $state.Checked.ContainsKey($candidate)) {
+                $matches += $candidate
+            }
+        }
+
+        if ($matches.Count -eq 0) {
+            return
+        }
+
+        $state.Asked[$leafName] = $true
+        $message = "The field '$leafName' also appears in $($matches.Count) other place(s). Select all matching '$leafName' fields?"
+        $answer = [System.Windows.Forms.MessageBox]::Show(
+            $state.Owner,
+            $message,
+            "Select matching fields?",
+            [System.Windows.Forms.MessageBoxButtons]::YesNo,
+            [System.Windows.Forms.MessageBoxIcon]::Question
+        )
+
+        if ($answer -eq [System.Windows.Forms.DialogResult]::Yes) {
+            $state.Suppress = $true
+            try {
+                foreach ($match in $matches) {
+                    $state.Checked[$match] = $true
+                    $visibleIndex = $sender.Items.IndexOf($match)
+                    if ($visibleIndex -ge 0) {
+                        $sender.SetItemChecked($visibleIndex, $true)
+                    }
+                }
+            }
+            finally {
+                $state.Suppress = $false
+            }
+        }
+    })
+
+    $SearchBox.Add_TextChanged($refreshList)
+    & $refreshList $SearchBox $null
+    return $promptState
 }
 
 # ==================== Masking Functions ====================
@@ -2275,13 +2411,19 @@ $selectFieldsButton.Add_Click({
     if ($script:LastInputFile) {
         $ext = [System.IO.Path]::GetExtension($script:LastInputFile).ToLower()
         
-        $selected = @()
+        $selection = $null
         if ($ext -eq ".json") {
-            $selected = @(Show-CheckboxForm -Fields (Get-JsonFields $script:LastInputFile))
+            $selection = Show-CheckboxForm -Fields (Get-JsonFields $script:LastInputFile) -InitialSelected $script:SelectedFields
         }
         elseif ($ext -eq ".csv") {
-            $selected = @(Show-CsvFieldSelector -FilePath $script:LastInputFile)
+            $selection = Show-CsvFieldSelector -FilePath $script:LastInputFile -InitialSelected $script:SelectedFields
         }
+
+        if ($null -eq $selection -or -not $selection.Accepted) {
+            return
+        }
+
+        $selected = @($selection.Fields)
         
         # FIX: Ensure we capture the selection properly
         if ($selected -is [System.Collections.IEnumerable] -and $selected -isnot [string]) {
@@ -2369,7 +2511,10 @@ function Get-JsonFields {
 }
 
 function Show-CheckboxForm {
-    param([string[]]$Fields)
+    param(
+        [string[]]$Fields,
+        [string[]]$InitialSelected = @()
+    )
     $form = New-Object System.Windows.Forms.Form
     $form.Text = "Select Fields to Mask"
     $form.Size = New-Object System.Drawing.Size(500, 600)
@@ -2377,14 +2522,25 @@ function Show-CheckboxForm {
     $form.TopMost = $true
     $form.FormBorderStyle = "FixedDialog"
     $form.MaximizeBox = $false
+
+    $searchLabel = New-Object System.Windows.Forms.Label
+    $searchLabel.Text = "Search:"
+    $searchLabel.AutoSize = $true
+    $searchLabel.Left = 10
+    $searchLabel.Top = 10
+
+    $searchBox = New-Object System.Windows.Forms.TextBox
+    $searchBox.Left = 65
+    $searchBox.Top = 8
+    $searchBox.Width = 405
     
     $list = New-Object System.Windows.Forms.CheckedListBox
     $list.Left = 10
-    $list.Top = 10
+    $list.Top = 40
     $list.Width = 460
-    $list.Height = 520
+    $list.Height = 490
     $list.Sorted = $true
-    $list.Items.AddRange($Fields)
+    $fieldSelectorState = Add-SearchableFieldSelectorBehavior -List $list -SearchBox $searchBox -Fields $Fields -InitialSelected $InitialSelected -Owner $form
     
     $panel = New-Object System.Windows.Forms.Panel
     $panel.Dock = "Bottom"
@@ -2408,20 +2564,21 @@ function Show-CheckboxForm {
     
     $panel.Controls.Add($ok)
     $panel.Controls.Add($cancel)
+    $form.Controls.Add($searchLabel)
+    $form.Controls.Add($searchBox)
     $form.Controls.Add($list)
     $form.Controls.Add($panel)
     
     $result = $form.ShowDialog()
     $selected = @()
-    if ($result -eq [System.Windows.Forms.DialogResult]::OK) {
-        for ($i = 0; $i -lt $list.Items.Count; $i++) {
-            if ($list.GetItemChecked($i)) {
-                $selected += $list.Items[$i]
-            }
+    $accepted = $result -eq [System.Windows.Forms.DialogResult]::OK
+    if ($accepted) {
+        foreach ($field in $fieldSelectorState.Fields) {
+            if ($fieldSelectorState.Checked.ContainsKey($field)) { $selected += $field }
         }
     }
     $form.Dispose()
-    return $selected
+    return [PSCustomObject]@{ Accepted = $accepted; Fields = @($selected) }
 }
 
 $keyTextBox.Add_TextChanged({
