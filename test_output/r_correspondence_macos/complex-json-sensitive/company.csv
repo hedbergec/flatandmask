@@ -1,0 +1,4 @@
+"company_id","companySize","employees","founded","industryCode","name","root_id"
+"c001","medium",250,2005,"software","Tech Solutions Inc","20265275"
+"c002","large",5000,1995,"finance","Global Finance Corp","8f7b270e"
+"c003","small",75,2018,"research","Innovation Labs","9eead0bf"

@@ -1,0 +1,5 @@
+"accountHolderName","accountNumber","billingAddress","cardholderName","cardNumber","cvv","expiryMonth","expiryYear","payment_id","paymentMethods_id","root_id","routingNumber","type"
+,,"prkUGHFSB2Lo","Q76ZD/97JLBV","eOEnCfqX5y7/","123",12,2025,"pm001","49825a69","20265275",,"credit_card"
+,,,"lAvqnnlHyRxu","Gjph4LSXTev1",,8,2026,"pm002","2546dd10","8f7b270e",,"debit_card"
+,,,"PzHHFz6RuFES","BIrokiRZTpxQ",,3,2024,"pm003","ba017e4d","9eead0bf",,"credit_card"
+"MR4luMKTnoOF","123456789",,,,,,,"pm004","42586b74","9eead0bf","121000248","bank_account"

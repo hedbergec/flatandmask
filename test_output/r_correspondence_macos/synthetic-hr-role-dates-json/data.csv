@@ -1,0 +1,2 @@
+"dataset_name","description","root_id","synthetic_data_notice"
+"Synthetic HR Workforce Dataset","Synthetic/test HR dataset with fake PII-like fields, employment records, job changes, terminations, and replacement hiring over five calendar years.","20265275","All names, contact details, SSN-like values, addresses, IDs, salaries, and histories are synthetic test data and do not represent real people."

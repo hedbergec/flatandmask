@@ -1,0 +1,1126 @@
+"department","employees_id","event_date","event_id","event_type","history_id","job_title","manager_id","notes","previous_department","previous_job_title","reason","root_id","salary_usd"
+"Engineering","295a577f","2021-01-21","E00001-EVT-001","Hire","3acc8c99","Software Engineer I","E00017","Initial hire record",,,,"20265275",78848
+"Engineering","295a577f","2025-12-07","E00001-EVT-002","Termination","0aa89eaa","Software Engineer I","E00017",,,,"Involuntary termination","20265275",78848
+"Operations","18cecd42","2019-07-24","E00002-EVT-001","Hire","b8454a8f","Logistics Coordinator","E00391","Initial hire record",,,,"20265275",48094
+"Operations","18cecd42","2021-05-10","E00002-EVT-002","Termination","bf632de0","Logistics Coordinator","E00391",,,,"Retirement","20265275",48094
+"Marketing","0b7a3e35","2019-01-29","E00003-EVT-001","Hire","836d5d52","Marketing Manager",,"Initial hire record",,,,"20265275",98279
+"IT","0b7a3e35","2024-06-20","E00003-EVT-002","Role Change","f9170346","Help Desk Analyst",,,"Marketing","Marketing Manager",,"20265275",102716
+"IT","0b7a3e35","2025-01-11","E00003-EVT-003","Termination","88440fb6","Help Desk Analyst",,,,,"Voluntary resignation","20265275",102716
+"Engineering","479863ec","2019-05-17","E00004-EVT-001","Hire","db359a27","Engineering Manager","E00139","Initial hire record",,,,"20265275",101354
+"Engineering","479863ec","2022-06-09","E00004-EVT-002","Termination","94ddaa64","Engineering Manager","E00139",,,,"Retirement","20265275",101354
+"Customer Support","13d8984f","2019-06-27","E00005-EVT-001","Hire","46770dac","Customer Success Associate","E00288","Initial hire record",,,,"20265275",64150
+"Operations","e5ed7e37","2018-05-11","E00006-EVT-001","Hire","97eff1ca","Director of Operations","E00240","Initial hire record",,,,"20265275",148608
+"Engineering","677b3dfd","2018-08-06","E00007-EVT-001","Hire","6672e1cd","Engineering Manager","E00328","Initial hire record",,,,"20265275",116489
+"Engineering","677b3dfd","2021-04-08","E00007-EVT-002","Termination","3828cd38","Engineering Manager","E00328",,,,"Voluntary resignation","20265275",116489
+"Finance","3a173715","2020-09-22","E00008-EVT-001","Hire","9f6618b3","Accountant",,"Initial hire record",,,,"20265275",108478
+"Finance","3a173715","2022-03-30","E00008-EVT-002","Termination","082a1aed","Accountant",,,,,"Contract ended","20265275",108478
+"Finance","9d21c89a","2019-04-06","E00009-EVT-001","Hire","0c4fa54a","Financial Analyst","E00302","Initial hire record",,,,"20265275",71098
+"Legal","9d21c89a","2021-11-25","E00009-EVT-002","Promotion","dfad0ef5","Counsel","E00302",,"Finance","Financial Analyst",,"20265275",77450
+"Legal","9d21c89a","2022-11-17","E00009-EVT-003","Termination","04a0ccb1","Counsel","E00302",,,,"Voluntary resignation","20265275",77450
+"Engineering","87ec6445","2020-08-26","E00010-EVT-001","Hire","46442fba","Engineering Manager","E00414","Initial hire record",,,,"20265275",103962
+"IT","d05cb97f","2021-01-03","E00011-EVT-001","Hire","934b06bb","Systems Administrator","E00094","Initial hire record",,,,"20265275",84400
+"IT","d05cb97f","2021-11-19","E00011-EVT-002","Termination","6f2ba1d5","Systems Administrator","E00094",,,,"Retirement","20265275",84400
+"Engineering","47c5922b","2018-01-05","E00012-EVT-001","Hire","5b33e2f0","DevOps Engineer","E00402","Initial hire record",,,,"20265275",123793
+"Engineering","47c5922b","2023-08-24","E00012-EVT-002","Termination","928a0a11","DevOps Engineer","E00402",,,,"Relocation","20265275",123793
+"Human Resources","7cfe6111","2018-06-14","E00013-EVT-001","Hire","486a82d6","HR Manager",,"Initial hire record",,,,"20265275",102089
+"Engineering","99633b30","2020-07-25","E00014-EVT-001","Hire","1fecb66a","Senior Software Engineer","E00480","Initial hire record",,,,"20265275",136360
+"Engineering","99633b30","2024-01-22","E00014-EVT-002","Termination","538dd077","Senior Software Engineer","E00480",,,,"Retirement","20265275",136360
+"Sales","64b8e10a","2020-12-19","E00015-EVT-001","Hire","156be7b0","Sales Manager","E00284","Initial hire record",,,,"20265275",96256
+"Sales","7f8ed655","2018-07-09","E00016-EVT-001","Hire","af582080","Sales Development Rep","E00142","Initial hire record",,,,"20265275",96568
+"Sales","7f8ed655","2022-02-23","E00016-EVT-002","Termination","62ff17b3","Sales Development Rep","E00142",,,,"Voluntary resignation","20265275",96568
+"Legal","56d3f1f4","2020-05-30","E00017-EVT-001","Hire","dfccf378","Contracts Specialist",,"Initial hire record",,,,"20265275",57176
+"Marketing","ffdfa912","2019-05-24","E00018-EVT-001","Hire","d88e17ba","Product Marketing Manager","E00360","Initial hire record",,,,"20265275",104742
+"Marketing","ffdfa912","2023-08-22","E00018-EVT-002","Role Change","ec3ae722","Content Specialist","E00360",,"Marketing","Product Marketing Manager",,"20265275",116083
+"IT","ffdfa912","2024-10-07","E00018-EVT-003","Lateral Transfer","67e0ef42","Network Engineer","E00360",,"Marketing","Content Specialist",,"20265275",122051
+"Legal","ddb785e9","2021-01-03","E00019-EVT-001","Hire","19b06a72","Paralegal","E00060","Initial hire record",,,,"20265275",69851
+"Legal","f73193cd","2019-02-08","E00020-EVT-001","Hire","1f2e18fb","Counsel","E00486","Initial hire record",,,,"20265275",157934
+"Legal","f73193cd","2024-05-26","E00020-EVT-002","Termination","a3c4a0d1","Counsel","E00486",,,,"Retirement","20265275",157934
+"Engineering","339b1bbf","2019-09-09","E00021-EVT-001","Hire","1531a5de","Engineering Manager","E00001","Initial hire record",,,,"20265275",109306
+"Engineering","339b1bbf","2023-09-10","E00021-EVT-002","Role Change","640dc51e","Senior Software Engineer","E00001",,"Engineering","Engineering Manager",,"20265275",112816
+"Engineering","339b1bbf","2024-06-15","E00021-EVT-003","Termination","1101a732","Senior Software Engineer","E00001",,,,"Retirement","20265275",112816
+"IT","92011a7a","2019-04-06","E00022-EVT-001","Hire","e5f939e6","Security Analyst","E00024","Initial hire record",,,,"20265275",75525
+"Operations","eef60366","2018-12-27","E00023-EVT-001","Hire","e4702ef1","Operations Analyst","E00286","Initial hire record",,,,"20265275",85972
+"Operations","eef60366","2021-10-14","E00023-EVT-002","Role Change","0f60480c","Director of Operations","E00286",,"Operations","Operations Analyst",,"20265275",91968
+"Sales","a5a86b06","2019-07-22","E00024-EVT-001","Hire","b824b837","Account Executive","E00123","Initial hire record",,,,"20265275",98081
+"Sales","a5a86b06","2024-03-16","E00024-EVT-002","Termination","5bd4301b","Account Executive","E00123",,,,"Contract ended","20265275",98081
+"Operations","3bbadc6d","2021-01-16","E00025-EVT-001","Hire","1a8c09c4","Logistics Coordinator","E00106","Initial hire record",,,,"20265275",58267
+"Customer Support","470d7b96","2019-07-13","E00026-EVT-001","Hire","a1f4f856","Customer Success Associate","E00200","Initial hire record",,,,"20265275",83562
+"Sales","ae8ce807","2019-11-02","E00027-EVT-001","Hire","52b2e946","Sales Operations Analyst","E00173","Initial hire record",,,,"20265275",75935
+"IT","7342deb6","2018-11-09","E00028-EVT-001","Hire","ba24a1b4","Help Desk Analyst","E00343","Initial hire record",,,,"20265275",76816
+"IT","7342deb6","2024-12-11","E00028-EVT-002","Termination","f95a60e7","Help Desk Analyst","E00343",,,,"Relocation","20265275",76816
+"IT","10e4bf0c","2019-05-13","E00029-EVT-001","Hire","e32d1dcc","Help Desk Analyst","E00155","Initial hire record",,,,"20265275",72339
+"Customer Support","50a8feef","2020-06-10","E00030-EVT-001","Hire","f852b686","Customer Success Associate","E00495","Initial hire record",,,,"20265275",66543
+"Customer Support","50a8feef","2023-07-21","E00030-EVT-002","Lateral Transfer","c2ecf36e","Support Manager","E00495",,"Customer Support","Customer Success Associate",,"20265275",69252
+"Operations","d748f8e0","2018-02-28","E00031-EVT-001","Hire","31a3b46e","Logistics Coordinator","E00094","Initial hire record",,,,"20265275",59197
+"Operations","d748f8e0","2024-10-03","E00031-EVT-002","Termination","f53f3edd","Logistics Coordinator","E00094",,,,"Involuntary termination","20265275",59197
+"Customer Support","c4e5a714","2020-07-06","E00032-EVT-001","Hire","dad82a39","Support Manager","E00114","Initial hire record",,,,"20265275",96565
+"Customer Support","c4e5a714","2025-02-10","E00032-EVT-002","Lateral Transfer","5e976094","Customer Success Manager","E00114",,"Customer Support","Support Manager",,"20265275",105410
+"IT","c7700492","2018-09-02","E00033-EVT-001","Hire","2747adee","Security Analyst","E00354","Initial hire record",,,,"20265275",86559
+"IT","c7700492","2024-02-05","E00033-EVT-002","Role Change","d3f4bdb3","Systems Administrator","E00354",,"IT","Security Analyst",,"20265275",89890
+"Sales","b0dc54f7","2018-04-22","E00034-EVT-001","Hire","698a4ea5","Sales Development Rep","E00484","Initial hire record",,,,"20265275",91264
+"Human Resources","e6bd4d87","2018-11-02","E00035-EVT-001","Hire","bee4f520","HR Generalist","E00044","Initial hire record",,,,"20265275",74443
+"Human Resources","e6bd4d87","2023-01-21","E00035-EVT-002","Promotion","7f24751b","HR Coordinator","E00044",,"Human Resources","HR Generalist",,"20265275",78017
+"Human Resources","e6bd4d87","2025-12-19","E00035-EVT-003","Termination","9692ce9c","HR Coordinator","E00044",,,,"Retirement","20265275",78017
+"IT","19b5bbff","2019-06-26","E00036-EVT-001","Hire","87260304","Systems Administrator","E00123","Initial hire record",,,,"20265275",98281
+"IT","19b5bbff","2021-07-13","E00036-EVT-002","Termination","16a4e4ac","Systems Administrator","E00123",,,,"Voluntary resignation","20265275",98281
+"IT","98dccf30","2019-02-10","E00037-EVT-001","Hire","678b06e6","Security Analyst","E00116","Initial hire record",,,,"20265275",82930
+"IT","98dccf30","2024-02-17","E00037-EVT-002","Lateral Transfer","3213217c","IT Manager","E00116",,"IT","Security Analyst",,"20265275",90328
+"Customer Support","ea74b0ca","2018-06-14","E00038-EVT-001","Hire","4e632322","Support Manager",,"Initial hire record",,,,"20265275",115596
+"Customer Support","ea74b0ca","2025-11-14","E00038-EVT-002","Lateral Transfer","102c190c","Customer Success Manager",,,"Customer Support","Support Manager",,"20265275",128282
+"Customer Support","d43b7ee9","2019-01-07","E00039-EVT-001","Hire","546bce51","Customer Success Manager","E00417","Initial hire record",,,,"20265275",115180
+"Customer Support","d43b7ee9","2023-12-05","E00039-EVT-002","Termination","faff52b1","Customer Success Manager","E00417",,,,"Contract ended","20265275",115180
+"Customer Support","a1f5631c","2019-10-07","E00040-EVT-001","Hire","24e0e630","Support Specialist","E00497","Initial hire record",,,,"20265275",61270
+"Customer Support","a1f5631c","2021-09-25","E00040-EVT-002","Termination","34bffb8f","Support Specialist","E00497",,,,"Retirement","20265275",61270
+"Customer Support","8aa36083","2018-03-01","E00041-EVT-001","Hire","f02d69fb","Support Specialist","E00123","Initial hire record",,,,"20265275",73644
+"Customer Support","8aa36083","2025-09-03","E00041-EVT-002","Termination","84ebaff5","Support Specialist","E00123",,,,"Involuntary termination","20265275",73644
+"Customer Support","8de1b02d","2019-05-15","E00042-EVT-001","Hire","c84fb579","Support Manager","E00197","Initial hire record",,,,"20265275",110967
+"Legal","af97260b","2019-12-08","E00043-EVT-001","Hire","e7b0c532","Paralegal","E00279","Initial hire record",,,,"20265275",69893
+"Human Resources","22fa9880","2020-10-25","E00044-EVT-001","Hire","17024f7f","HR Generalist","E00052","Initial hire record",,,,"20265275",75339
+"Human Resources","22fa9880","2023-08-30","E00044-EVT-002","Termination","d176a7ba","HR Generalist","E00052",,,,"Involuntary termination","20265275",75339
+"Legal","059eae95","2019-10-11","E00045-EVT-001","Hire","c45880ae","Paralegal","E00389","Initial hire record",,,,"20265275",79538
+"Legal","059eae95","2021-06-19","E00045-EVT-002","Role Change","0f3a4a3f","Counsel","E00389",,"Legal","Paralegal",,"20265275",82602
+"Legal","059eae95","2024-03-24","E00045-EVT-003","Termination","b7a08c6b","Counsel","E00389",,,,"Retirement","20265275",82602
+"Engineering","1f6780ca","2018-03-01","E00046-EVT-001","Hire","2235a218","Senior Software Engineer","E00029","Initial hire record",,,,"20265275",127507
+"Engineering","1f6780ca","2023-09-06","E00046-EVT-002","Termination","3f06b6f3","Senior Software Engineer","E00029",,,,"Involuntary termination","20265275",127507
+"Engineering","fbd7a469","2020-08-02","E00047-EVT-001","Hire","f05d9cc5","Software Engineer II","E00131","Initial hire record",,,,"20265275",96902
+"Engineering","fbd7a469","2021-11-11","E00047-EVT-002","Lateral Transfer","4151c92a","Senior Software Engineer","E00131",,"Engineering","Software Engineer II",,"20265275",108111
+"Engineering","fbd7a469","2024-07-27","E00047-EVT-003","Termination","5c78bc14","Senior Software Engineer","E00131",,,,"Involuntary termination","20265275",108111
+"IT","b613fbf4","2020-01-06","E00048-EVT-001","Hire","ab7c648c","Network Engineer","E00359","Initial hire record",,,,"20265275",92670
+"Sales","04042656","2018-07-18","E00049-EVT-001","Hire","75e99a6d","Account Executive","E00159","Initial hire record",,,,"20265275",101560
+"Sales","04042656","2021-08-23","E00049-EVT-002","Termination","fc28f7fe","Account Executive","E00159",,,,"Voluntary resignation","20265275",101560
+"Sales","2860cd09","2019-08-28","E00050-EVT-001","Hire","ee2d1520","Sales Operations Analyst","E00240","Initial hire record",,,,"20265275",80099
+"Marketing","9abc18a3","2019-04-24","E00051-EVT-001","Hire","e8832c87","Marketing Coordinator",,"Initial hire record",,,,"20265275",58449
+"Engineering","09e687af","2020-07-18","E00052-EVT-001","Hire","4e701646","DevOps Engineer","E00381","Initial hire record",,,,"20265275",123157
+"Marketing","63e40f0c","2020-01-05","E00053-EVT-001","Hire","b569a61f","Marketing Manager","E00098","Initial hire record",,,,"20265275",97984
+"Operations","63e40f0c","2025-10-31","E00053-EVT-002","Promotion","c6526826","Operations Manager","E00098",,"Marketing","Marketing Manager",,"20265275",104398
+"Engineering","4a4c69a8","2018-01-06","E00054-EVT-001","Hire","c6146bda","Engineering Manager","E00075","Initial hire record",,,,"20265275",105085
+"Finance","a39d4fdc","2020-09-02","E00055-EVT-001","Hire","67afa42b","Accountant","E00263","Initial hire record",,,,"20265275",84378
+"Finance","a39d4fdc","2022-12-23","E00055-EVT-002","Termination","2bf4ce7d","Accountant","E00263",,,,"Voluntary resignation","20265275",84378
+"Customer Support","2eca8b97","2018-06-15","E00056-EVT-001","Hire","97394f21","Support Specialist","E00034","Initial hire record",,,,"20265275",63554
+"IT","7a425022","2020-07-13","E00057-EVT-001","Hire","662ce7bf","Network Engineer","E00174","Initial hire record",,,,"20265275",113201
+"Marketing","3cb43543","2018-05-03","E00058-EVT-001","Hire","e908810e","Content Specialist","E00288","Initial hire record",,,,"20265275",72217
+"Marketing","464e942b","2019-07-25","E00059-EVT-001","Hire","4dbc6701","Marketing Coordinator","E00220","Initial hire record",,,,"20265275",61812
+"Engineering","432d5bbf","2018-07-07","E00060-EVT-001","Hire","f451a391","Software Engineer I","E00215","Initial hire record",,,,"20265275",93382
+"Engineering","432d5bbf","2021-09-26","E00060-EVT-002","Lateral Transfer","952e05ef","Senior Software Engineer","E00215",,"Engineering","Software Engineer I",,"20265275",102193
+"Engineering","432d5bbf","2025-01-09","E00060-EVT-003","Termination","3188ac10","Senior Software Engineer","E00215",,,,"Involuntary termination","20265275",102193
+"Customer Support","0fdacfa5","2019-07-14","E00061-EVT-001","Hire","2da91c75","Support Manager","E00059","Initial hire record",,,,"20265275",103063
+"Customer Support","0fdacfa5","2022-10-07","E00061-EVT-002","Role Change","3b1f56ec","Customer Success Manager","E00059",,"Customer Support","Support Manager",,"20265275",110234
+"Marketing","9dc8bd49","2018-01-16","E00062-EVT-001","Hire","cf9a0cbb","Marketing Coordinator","E00090","Initial hire record",,,,"20265275",59298
+"Operations","6534c3c5","2019-08-16","E00063-EVT-001","Hire","c98a2dd2","Operations Manager","E00495","Initial hire record",,,,"20265275",99774
+"Engineering","37ba8641","2020-11-11","E00064-EVT-001","Hire","3a72a5bf","Software Engineer I","E00262","Initial hire record",,,,"20265275",96749
+"Customer Support","641ad7f5","2019-10-24","E00065-EVT-001","Hire","6c6b97e9","Implementation Specialist","E00226","Initial hire record",,,,"20265275",73552
+"IT","641ad7f5","2021-11-21","E00065-EVT-002","Role Change","01452414","Systems Administrator","E00226",,"Customer Support","Implementation Specialist",,"20265275",81276
+"Finance","4c10261c","2020-11-04","E00066-EVT-001","Hire","b1817423","Controller","E00284","Initial hire record",,,,"20265275",143598
+"IT","02735dd7","2020-06-18","E00067-EVT-001","Hire","3fbe9d14","Network Engineer","E00082","Initial hire record",,,,"20265275",89345
+"Marketing","c2a780d7","2018-10-17","E00068-EVT-001","Hire","073d3454","Marketing Coordinator","E00336","Initial hire record",,,,"20265275",54462
+"Marketing","c2a780d7","2022-12-23","E00068-EVT-002","Termination","5b4d1d92","Marketing Coordinator","E00336",,,,"Retirement","20265275",54462
+"Marketing","1c87dd84","2019-01-29","E00069-EVT-001","Hire","b25aaf86","Product Marketing Manager","E00080","Initial hire record",,,,"20265275",103423
+"Marketing","1c87dd84","2021-04-29","E00069-EVT-002","Promotion","1ea67cca","Marketing Coordinator","E00080",,"Marketing","Product Marketing Manager",,"20265275",115732
+"Customer Support","dc708b09","2020-04-21","E00070-EVT-001","Hire","70c8711f","Support Specialist","E00122","Initial hire record",,,,"20265275",64937
+"IT","6f07a008","2018-10-11","E00071-EVT-001","Hire","46245ea2","IT Manager",,"Initial hire record",,,,"20265275",104192
+"Marketing","1c6296c8","2020-04-29","E00072-EVT-001","Hire","74c38acc","Marketing Coordinator","E00192","Initial hire record",,,,"20265275",44745
+"Marketing","1c6296c8","2021-04-09","E00072-EVT-002","Lateral Transfer","532a4e9e","Content Specialist","E00192",,"Marketing","Marketing Coordinator",,"20265275",47193
+"Customer Support","dd59c211","2018-01-11","E00073-EVT-001","Hire","86cadf26","Support Manager",,"Initial hire record",,,,"20265275",98596
+"Customer Support","dd59c211","2021-10-29","E00073-EVT-002","Termination","526341a4","Support Manager",,,,,"Contract ended","20265275",98596
+"Finance","e18930fd","2021-01-02","E00074-EVT-001","Hire","1f45252e","Finance Manager","E00295","Initial hire record",,,,"20265275",96538
+"Finance","e18930fd","2023-07-24","E00074-EVT-002","Termination","d77d2b65","Finance Manager","E00295",,,,"Contract ended","20265275",96538
+"Human Resources","40c31a8c","2020-08-20","E00075-EVT-001","Hire","d1eb99fb","Compensation Analyst","E00192","Initial hire record",,,,"20265275",70426
+"Customer Support","0c80df46","2018-10-04","E00076-EVT-001","Hire","f07442f7","Customer Success Associate","E00484","Initial hire record",,,,"20265275",59135
+"Human Resources","c40f5a82","2019-07-14","E00077-EVT-001","Hire","721aac52","Recruiter","E00224","Initial hire record",,,,"20265275",67078
+"Human Resources","c40f5a82","2023-11-07","E00077-EVT-002","Termination","e0db5fa8","Recruiter","E00224",,,,"Relocation","20265275",67078
+"Marketing","22a34ded","2018-06-13","E00078-EVT-001","Hire","236a0e05","Marketing Coordinator","E00157","Initial hire record",,,,"20265275",53745
+"Marketing","22a34ded","2022-01-09","E00078-EVT-002","Role Change","8c0b8acf","Demand Generation Manager","E00157",,"Marketing","Marketing Coordinator",,"20265275",56318
+"Legal","342b5eb3","2018-03-05","E00079-EVT-001","Hire","0e335234","Contracts Specialist","E00348","Initial hire record",,,,"20265275",57678
+"Legal","9dc25eb0","2020-03-26","E00080-EVT-001","Hire","34db80f2","Compliance Analyst","E00128","Initial hire record",,,,"20265275",79301
+"Legal","9dc25eb0","2022-02-21","E00080-EVT-002","Role Change","f9864650","Contracts Specialist","E00128",,"Legal","Compliance Analyst",,"20265275",86536
+"Finance","3a06e72c","2018-12-20","E00081-EVT-001","Hire","f95c72a6","Finance Manager","E00415","Initial hire record",,,,"20265275",110585
+"Customer Support","62ff0cbf","2020-01-10","E00082-EVT-001","Hire","325ce5c0","Support Specialist","E00240","Initial hire record",,,,"20265275",71154
+"Customer Support","077fdf9f","2019-12-07","E00083-EVT-001","Hire","eb1f4495","Implementation Specialist","E00400","Initial hire record",,,,"20265275",57205
+"Finance","7f5948d3","2019-02-07","E00084-EVT-001","Hire","e09de618","Payroll Specialist","E00141","Initial hire record",,,,"20265275",73809
+"IT","5b16d0ab","2020-05-03","E00085-EVT-001","Hire","064db519","IT Manager","E00255","Initial hire record",,,,"20265275",116254
+"IT","5b16d0ab","2023-08-21","E00085-EVT-002","Termination","a2707dd2","IT Manager","E00255",,,,"Involuntary termination","20265275",116254
+"Engineering","1203107f","2019-10-16","E00086-EVT-001","Hire","ae26046f","Senior Software Engineer","E00067","Initial hire record",,,,"20265275",137317
+"Engineering","1203107f","2021-05-21","E00086-EVT-002","Termination","97b7c201","Senior Software Engineer","E00067",,,,"Relocation","20265275",137317
+"Engineering","05e33d68","2019-10-03","E00087-EVT-001","Hire","380c2ce3","Senior Software Engineer","E00256","Initial hire record",,,,"20265275",132220
+"Engineering","05e33d68","2023-08-04","E00087-EVT-002","Termination","11696064","Senior Software Engineer","E00256",,,,"Contract ended","20265275",132220
+"Customer Support","5f1079ad","2021-01-04","E00088-EVT-001","Hire","fa74c6e6","Customer Success Manager","E00221","Initial hire record",,,,"20265275",96267
+"Customer Support","5f1079ad","2021-05-30","E00088-EVT-002","Termination","1601b4e3","Customer Success Manager","E00221",,,,"Relocation","20265275",96267
+"Finance","167aac03","2018-07-18","E00089-EVT-001","Hire","3c3138c3","Financial Analyst","E00174","Initial hire record",,,,"20265275",81907
+"Finance","167aac03","2022-09-01","E00089-EVT-002","Promotion","82206251","Controller","E00174",,"Finance","Financial Analyst",,"20265275",87814
+"Finance","167aac03","2023-02-06","E00089-EVT-003","Termination","1f1ef8fe","Controller","E00174",,,,"Retirement","20265275",87814
+"Legal","0b1721f0","2019-11-03","E00090-EVT-001","Hire","272230da","Contracts Specialist","E00202","Initial hire record",,,,"20265275",73089
+"Legal","0b1721f0","2025-05-20","E00090-EVT-002","Termination","f5422686","Contracts Specialist","E00202",,,,"Relocation","20265275",73089
+"Human Resources","6f9a89ee","2020-08-29","E00091-EVT-001","Hire","55b80ef1","HR Manager","E00401","Initial hire record",,,,"20265275",104700
+"Human Resources","6f9a89ee","2021-05-28","E00091-EVT-002","Termination","d28af38d","HR Manager","E00401",,,,"Voluntary resignation","20265275",104700
+"Operations","dd7668da","2020-04-25","E00092-EVT-001","Hire","c7f0e08e","Operations Analyst","E00397","Initial hire record",,,,"20265275",75681
+"Operations","dd7668da","2025-09-08","E00092-EVT-002","Termination","2ab0a135","Operations Analyst","E00397",,,,"Contract ended","20265275",75681
+"Sales","00b30fcd","2020-09-18","E00093-EVT-001","Hire","d8f5882a","Sales Manager","E00143","Initial hire record",,,,"20265275",102300
+"Sales","00b30fcd","2021-04-21","E00093-EVT-002","Lateral Transfer","2c14979d","Sales Development Rep","E00143",,"Sales","Sales Manager",,"20265275",107946
+"Operations","b9d4cc86","2018-10-27","E00094-EVT-001","Hire","692d5677","Logistics Coordinator",,"Initial hire record",,,,"20265275",52517
+"Operations","b9d4cc86","2023-03-02","E00094-EVT-002","Termination","ada04908","Logistics Coordinator",,,,,"Involuntary termination","20265275",52517
+"Legal","39e53028","2019-04-22","E00095-EVT-001","Hire","d33d4da6","Contracts Specialist","E00170","Initial hire record",,,,"20265275",54720
+"Legal","39e53028","2021-06-30","E00095-EVT-002","Termination","84f35ef2","Contracts Specialist","E00170",,,,"Retirement","20265275",54720
+"IT","ce23861b","2018-03-18","E00096-EVT-001","Hire","19fb07fa","IT Manager","E00429","Initial hire record",,,,"20265275",101736
+"IT","ce23861b","2021-08-19","E00096-EVT-002","Termination","bfb25ae8","IT Manager","E00429",,,,"Relocation","20265275",101736
+"Customer Support","7d09fb87","2019-01-30","E00097-EVT-001","Hire","60f64fbd","Customer Success Manager","E00375","Initial hire record",,,,"20265275",99691
+"Engineering","a62794bb","2019-10-25","E00098-EVT-001","Hire","b4d64aa7","DevOps Engineer",,"Initial hire record",,,,"20265275",119128
+"Engineering","a62794bb","2021-03-26","E00098-EVT-002","Promotion","52cfc9ee","Software Engineer II",,,"Engineering","DevOps Engineer",,"20265275",127799
+"Engineering","a62794bb","2025-09-29","E00098-EVT-003","Termination","c57a643f","Software Engineer II",,,,,"Voluntary resignation","20265275",127799
+"Legal","a841b6dc","2018-08-29","E00099-EVT-001","Hire","7ad05a67","Compliance Analyst","E00152","Initial hire record",,,,"20265275",89929
+"Legal","a841b6dc","2023-08-23","E00099-EVT-002","Role Change","eb126fef","Paralegal","E00152",,"Legal","Compliance Analyst",,"20265275",100592
+"Finance","f456c024","2020-07-03","E00100-EVT-001","Hire","ced188d3","Controller","E00040","Initial hire record",,,,"20265275",148307
+"Finance","f456c024","2023-08-04","E00100-EVT-002","Termination","3e29e990","Controller","E00040",,,,"Voluntary resignation","20265275",148307
+"Customer Support","5c4720b0","2020-07-17","E00101-EVT-001","Hire","5cfd527d","Support Specialist","E00234","Initial hire record",,,,"20265275",57323
+"Customer Support","5c4720b0","2023-02-27","E00101-EVT-002","Termination","ab151870","Support Specialist","E00234",,,,"Contract ended","20265275",57323
+"Customer Support","832ab4c4","2019-08-11","E00102-EVT-001","Hire","ed039345","Support Specialist","E00070","Initial hire record",,,,"20265275",66397
+"Customer Support","832ab4c4","2025-07-30","E00102-EVT-002","Termination","840b7c95","Support Specialist","E00070",,,,"Contract ended","20265275",66397
+"Human Resources","d0cd59bb","2020-08-06","E00103-EVT-001","Hire","6935e171","Recruiter","E00195","Initial hire record",,,,"20265275",80840
+"Customer Support","8dee9f45","2018-04-10","E00104-EVT-001","Hire","4aa5ec03","Implementation Specialist","E00206","Initial hire record",,,,"20265275",61019
+"Customer Support","8dee9f45","2022-08-31","E00104-EVT-002","Termination","3c2521cb","Implementation Specialist","E00206",,,,"Relocation","20265275",61019
+"Sales","87910b8d","2018-05-05","E00105-EVT-001","Hire","ad335ac3","Senior Account Executive","E00451","Initial hire record",,,,"20265275",99242
+"Sales","87910b8d","2021-03-17","E00105-EVT-002","Termination","068a9bc0","Senior Account Executive","E00451",,,,"Voluntary resignation","20265275",99242
+"IT","7fee198e","2019-09-08","E00106-EVT-001","Hire","284293f9","Systems Administrator","E00413","Initial hire record",,,,"20265275",111199
+"IT","7fee198e","2021-12-15","E00106-EVT-002","Termination","67abf61b","Systems Administrator","E00413",,,,"Retirement","20265275",111199
+"IT","806a1948","2019-07-04","E00107-EVT-001","Hire","6d0d287b","Help Desk Analyst","E00309","Initial hire record",,,,"20265275",81359
+"IT","806a1948","2025-05-29","E00107-EVT-002","Termination","ee1541d6","Help Desk Analyst","E00309",,,,"Involuntary termination","20265275",81359
+"IT","0a60521f","2019-10-21","E00108-EVT-001","Hire","3c714823","IT Manager","E00274","Initial hire record",,,,"20265275",105275
+"Engineering","775f7868","2019-06-19","E00109-EVT-001","Hire","52258c1c","Software Engineer I","E00297","Initial hire record",,,,"20265275",94130
+"Engineering","775f7868","2025-11-26","E00109-EVT-002","Termination","0e70b18c","Software Engineer I","E00297",,,,"Involuntary termination","20265275",94130
+"Marketing","756445d6","2018-10-14","E00110-EVT-001","Hire","4a9af6c5","Content Specialist","E00470","Initial hire record",,,,"20265275",70909
+"Marketing","756445d6","2025-10-10","E00110-EVT-002","Termination","cba27770","Content Specialist","E00470",,,,"Relocation","20265275",70909
+"Customer Support","4cdf6300","2018-01-14","E00111-EVT-001","Hire","e33d9687","Support Specialist","E00007","Initial hire record",,,,"20265275",70439
+"Marketing","74fc0a2e","2020-03-23","E00112-EVT-001","Hire","538db02c","Demand Generation Manager","E00208","Initial hire record",,,,"20265275",98589
+"Marketing","74fc0a2e","2022-12-07","E00112-EVT-002","Termination","78ef20d6","Demand Generation Manager","E00208",,,,"Contract ended","20265275",98589
+"Engineering","26140da9","2020-10-20","E00113-EVT-001","Hire","91d1bb22","Software Engineer I","E00170","Initial hire record",,,,"20265275",90218
+"Engineering","26140da9","2021-03-29","E00113-EVT-002","Termination","a5fbbf90","Software Engineer I","E00170",,,,"Voluntary resignation","20265275",90218
+"IT","951a849d","2018-10-23","E00114-EVT-001","Hire","0a73a93b","IT Manager","E00154","Initial hire record",,,,"20265275",109051
+"Marketing","951a849d","2023-01-28","E00114-EVT-002","Promotion","94a3c529","Product Marketing Manager","E00154",,"IT","IT Manager",,"20265275",118680
+"Marketing","951a849d","2024-03-15","E00114-EVT-003","Termination","0ad4d143","Product Marketing Manager","E00154",,,,"Retirement","20265275",118680
+"Marketing","40f91e37","2020-03-23","E00115-EVT-001","Hire","f1dea4df","Marketing Manager",,"Initial hire record",,,,"20265275",106694
+"Marketing","40f91e37","2022-11-22","E00115-EVT-002","Termination","18d1bc72","Marketing Manager",,,,,"Voluntary resignation","20265275",106694
+"Engineering","88c1db63","2019-10-11","E00116-EVT-001","Hire","aeb1a764","DevOps Engineer","E00003","Initial hire record",,,,"20265275",122819
+"Engineering","88c1db63","2022-01-23","E00116-EVT-002","Termination","87a91009","DevOps Engineer","E00003",,,,"Retirement","20265275",122819
+"Marketing","2cc8f836","2018-01-26","E00117-EVT-001","Hire","d15d6318","Product Marketing Manager","E00399","Initial hire record",,,,"20265275",105563
+"Marketing","2cc8f836","2021-03-12","E00117-EVT-002","Lateral Transfer","8e5bd23a","Marketing Coordinator","E00399",,"Marketing","Product Marketing Manager",,"20265275",113591
+"Finance","c7ae0b71","2019-05-31","E00118-EVT-001","Hire","8dedfce6","Payroll Specialist","E00254","Initial hire record",,,,"20265275",61080
+"IT","713a21dd","2019-10-06","E00119-EVT-001","Hire","5397af37","Network Engineer","E00496","Initial hire record",,,,"20265275",66641
+"Customer Support","fab0bd4d","2020-06-16","E00120-EVT-001","Hire","af237bb4","Customer Success Associate","E00355","Initial hire record",,,,"20265275",107277
+"Legal","6c48c82a","2021-01-18","E00121-EVT-001","Hire","8fc8dbd3","Paralegal","E00185","Initial hire record",,,,"20265275",60204
+"Operations","af7c3a9b","2018-01-22","E00122-EVT-001","Hire","54652b8c","Operations Associate","E00262","Initial hire record",,,,"20265275",61462
+"Human Resources","af7c3a9b","2025-11-14","E00122-EVT-002","Promotion","0671bde8","HR Coordinator","E00262",,"Operations","Operations Associate",,"20265275",64775
+"Engineering","92f9c7dd","2019-10-01","E00123-EVT-001","Hire","5a9ba558","Senior Software Engineer","E00106","Initial hire record",,,,"20265275",137241
+"Engineering","92f9c7dd","2021-10-23","E00123-EVT-002","Termination","d1029ef7","Senior Software Engineer","E00106",,,,"Contract ended","20265275",137241
+"IT","a4f639ca","2018-12-24","E00124-EVT-001","Hire","c9dc08ce","IT Manager","E00287","Initial hire record",,,,"20265275",114084
+"Sales","9e820ee4","2018-07-28","E00125-EVT-001","Hire","c33b0326","Sales Development Rep","E00096","Initial hire record",,,,"20265275",107396
+"Engineering","077476b4","2018-06-23","E00126-EVT-001","Hire","9fedb58e","Senior Software Engineer","E00123","Initial hire record",,,,"20265275",130389
+"Engineering","077476b4","2022-04-10","E00126-EVT-002","Termination","932d1e48","Senior Software Engineer","E00123",,,,"Relocation","20265275",130389
+"Engineering","225beed6","2019-08-15","E00127-EVT-001","Hire","e854e01a","DevOps Engineer","E00432","Initial hire record",,,,"20265275",115597
+"Engineering","225beed6","2023-06-18","E00127-EVT-002","Termination","d9fddc5d","DevOps Engineer","E00432",,,,"Contract ended","20265275",115597
+"Engineering","6a8f4e9a","2018-03-05","E00128-EVT-001","Hire","fb890c56","Software Engineer I","E00141","Initial hire record",,,,"20265275",83226
+"Legal","6a8f4e9a","2022-07-23","E00128-EVT-002","Role Change","b9400b8f","Contracts Specialist","E00141",,"Engineering","Software Engineer I",,"20265275",91865
+"Customer Support","386560bd","2019-03-24","E00129-EVT-001","Hire","ed2d9bc4","Implementation Specialist","E00425","Initial hire record",,,,"20265275",66931
+"Engineering","6d3b27b3","2019-02-28","E00130-EVT-001","Hire","0eff043b","Software Engineer II","E00273","Initial hire record",,,,"20265275",77945
+"Engineering","6d3b27b3","2024-08-18","E00130-EVT-002","Termination","990bdb34","Software Engineer II","E00273",,,,"Relocation","20265275",77945
+"Engineering","54b3ac6c","2019-05-22","E00131-EVT-001","Hire","51a34b24","Senior Software Engineer","E00296","Initial hire record",,,,"20265275",138868
+"Customer Support","a736706e","2018-05-10","E00132-EVT-001","Hire","5bd9fd36","Customer Success Manager","E00496","Initial hire record",,,,"20265275",113512
+"Finance","4723fc45","2020-06-22","E00133-EVT-001","Hire","72872da3","Financial Analyst",,"Initial hire record",,,,"20265275",83959
+"Finance","4723fc45","2023-07-04","E00133-EVT-002","Termination","83e03f42","Financial Analyst",,,,,"Relocation","20265275",83959
+"Sales","fbc3a6a4","2020-05-29","E00134-EVT-001","Hire","a9d86431","Account Executive","E00001","Initial hire record",,,,"20265275",83988
+"Finance","c468ce5e","2018-07-31","E00135-EVT-001","Hire","3f6d8fb0","Accountant","E00154","Initial hire record",,,,"20265275",75535
+"Finance","4dbf163f","2018-10-14","E00136-EVT-001","Hire","1c450577","Accountant","E00374","Initial hire record",,,,"20265275",104312
+"Finance","4dbf163f","2021-12-17","E00136-EVT-002","Termination","d1cab1d1","Accountant","E00374",,,,"Involuntary termination","20265275",104312
+"Operations","1f04d90d","2018-04-22","E00137-EVT-001","Hire","f3951b2c","Logistics Coordinator","E00058","Initial hire record",,,,"20265275",50842
+"Finance","ed3ba7c5","2019-06-21","E00138-EVT-001","Hire","f2aea63b","Accountant",,"Initial hire record",,,,"20265275",69138
+"Finance","ed3ba7c5","2021-02-26","E00138-EVT-002","Termination","502cee4d","Accountant",,,,,"Voluntary resignation","20265275",69138
+"Engineering","f8743150","2019-11-01","E00139-EVT-001","Hire","d515273a","Engineering Manager","E00391","Initial hire record",,,,"20265275",108803
+"Human Resources","1e073814","2018-01-24","E00140-EVT-001","Hire","a9bc4d20","HR Generalist","E00178","Initial hire record",,,,"20265275",61368
+"Human Resources","1e073814","2024-06-28","E00140-EVT-002","Termination","0a114ea7","HR Generalist","E00178",,,,"Contract ended","20265275",61368
+"Finance","6312f01d","2020-07-21","E00141-EVT-001","Hire","511e1d24","Finance Manager","E00256","Initial hire record",,,,"20265275",112737
+"Engineering","18f860e9","2020-05-08","E00142-EVT-001","Hire","07731abd","Software Engineer I","E00214","Initial hire record",,,,"20265275",83356
+"Engineering","18f860e9","2022-10-16","E00142-EVT-002","Role Change","d6f8c8b1","Senior Software Engineer","E00214",,"Engineering","Software Engineer I",,"20265275",92307
+"Finance","f6213088","2020-07-24","E00143-EVT-001","Hire","fcccd296","Controller","E00150","Initial hire record",,,,"20265275",131261
+"Human Resources","36c960e7","2018-01-03","E00144-EVT-001","Hire","e2145146","Recruiter","E00373","Initial hire record",,,,"20265275",75329
+"Finance","139da381","2018-10-01","E00145-EVT-001","Hire","8c34f07b","Controller","E00039","Initial hire record",,,,"20265275",151880
+"Finance","139da381","2022-01-01","E00145-EVT-002","Role Change","bb8b8caf","Payroll Specialist","E00039",,"Finance","Controller",,"20265275",157459
+"Finance","139da381","2023-10-27","E00145-EVT-003","Termination","22ed977c","Payroll Specialist","E00039",,,,"Contract ended","20265275",157459
+"Finance","2e8bbf76","2018-08-05","E00146-EVT-001","Hire","5ca80b11","Financial Analyst","E00161","Initial hire record",,,,"20265275",74386
+"Finance","eb61ce2c","2019-12-30","E00147-EVT-001","Hire","b3976751","Financial Analyst","E00347","Initial hire record",,,,"20265275",81984
+"Finance","eb61ce2c","2022-11-25","E00147-EVT-002","Termination","da0070a1","Financial Analyst","E00347",,,,"Contract ended","20265275",81984
+"IT","b8fefb3c","2020-02-02","E00148-EVT-001","Hire","e60e5666","Network Engineer","E00331","Initial hire record",,,,"20265275",99976
+"IT","b8fefb3c","2021-09-09","E00148-EVT-002","Termination","7956ae5d","Network Engineer","E00331",,,,"Retirement","20265275",99976
+"Human Resources","2aa00b61","2020-05-23","E00149-EVT-001","Hire","ddf829f0","Compensation Analyst","E00466","Initial hire record",,,,"20265275",74662
+"Human Resources","2aa00b61","2022-02-14","E00149-EVT-002","Termination","8a4b2b94","Compensation Analyst","E00466",,,,"Involuntary termination","20265275",74662
+"Operations","83d7151b","2020-05-08","E00150-EVT-001","Hire","e8aafc7a","Operations Analyst","E00409","Initial hire record",,,,"20265275",75535
+"Sales","0006029a","2020-08-24","E00151-EVT-001","Hire","b70ae5c6","Sales Development Rep","E00300","Initial hire record",,,,"20265275",89696
+"Sales","0006029a","2024-12-06","E00151-EVT-002","Termination","ad1fe39e","Sales Development Rep","E00300",,,,"Involuntary termination","20265275",89696
+"Human Resources","141c0020","2018-10-19","E00152-EVT-001","Hire","20403869","Recruiter","E00429","Initial hire record",,,,"20265275",81451
+"Engineering","cf0c9453","2018-05-02","E00153-EVT-001","Hire","7b56d9e4","Senior Software Engineer","E00361","Initial hire record",,,,"20265275",126718
+"Marketing","2fd7ac4f","2020-01-01","E00154-EVT-001","Hire","f1ade94a","Content Specialist","E00418","Initial hire record",,,,"20265275",60315
+"Marketing","2fd7ac4f","2025-05-28","E00154-EVT-002","Termination","43b1cff4","Content Specialist","E00418",,,,"Involuntary termination","20265275",60315
+"Customer Support","3ce9c519","2019-11-10","E00155-EVT-001","Hire","6805795a","Customer Success Associate",,"Initial hire record",,,,"20265275",103846
+"Customer Support","4bece4c1","2018-12-07","E00156-EVT-001","Hire","d6833b42","Support Manager","E00194","Initial hire record",,,,"20265275",109566
+"Customer Support","4bece4c1","2024-05-15","E00156-EVT-002","Role Change","a1311d9a","Support Specialist","E00194",,"Customer Support","Support Manager",,"20265275",114418
+"Marketing","9374957c","2020-02-08","E00157-EVT-001","Hire","c401a236","Content Specialist","E00281","Initial hire record",,,,"20265275",58272
+"Marketing","9374957c","2021-04-23","E00157-EVT-002","Termination","3b2bb78e","Content Specialist","E00281",,,,"Involuntary termination","20265275",58272
+"Legal","2fb8a5bc","2019-07-31","E00158-EVT-001","Hire","745d99fe","Compliance Analyst","E00026","Initial hire record",,,,"20265275",78745
+"Legal","2fb8a5bc","2023-11-03","E00158-EVT-002","Termination","b2c2244f","Compliance Analyst","E00026",,,,"Retirement","20265275",78745
+"Sales","3d55db82","2020-08-22","E00159-EVT-001","Hire","f475aac6","Sales Operations Analyst","E00136","Initial hire record",,,,"20265275",85026
+"Sales","3d55db82","2025-01-02","E00159-EVT-002","Termination","b0b044cb","Sales Operations Analyst","E00136",,,,"Contract ended","20265275",85026
+"Finance","d2665a3b","2019-12-06","E00160-EVT-001","Hire","874ca90e","Accountant","E00498","Initial hire record",,,,"20265275",107964
+"Finance","d2665a3b","2022-04-22","E00160-EVT-002","Termination","b8373d91","Accountant","E00498",,,,"Retirement","20265275",107964
+"Legal","6ecf21ec","2018-10-29","E00161-EVT-001","Hire","1254017c","Counsel","E00230","Initial hire record",,,,"20265275",149941
+"Legal","6ecf21ec","2024-11-23","E00161-EVT-002","Termination","53303045","Counsel","E00230",,,,"Retirement","20265275",149941
+"Legal","252cf11f","2019-10-30","E00162-EVT-001","Hire","3cc10c09","Paralegal","E00470","Initial hire record",,,,"20265275",68050
+"Legal","252cf11f","2021-07-04","E00162-EVT-002","Termination","d5470bf9","Paralegal","E00470",,,,"Involuntary termination","20265275",68050
+"Customer Support","0d89d84e","2020-08-26","E00163-EVT-001","Hire","ccd8dbc1","Implementation Specialist","E00207","Initial hire record",,,,"20265275",54227
+"Customer Support","0d89d84e","2023-12-08","E00163-EVT-002","Termination","6f3a5a54","Implementation Specialist","E00207",,,,"Retirement","20265275",54227
+"Engineering","64177c2a","2020-06-26","E00164-EVT-001","Hire","4bf01dac","Senior Software Engineer","E00214","Initial hire record",,,,"20265275",136514
+"Human Resources","c27ac989","2019-01-30","E00165-EVT-001","Hire","7a17d117","HR Generalist","E00128","Initial hire record",,,,"20265275",62577
+"Human Resources","c27ac989","2023-11-05","E00165-EVT-002","Role Change","05abec54","HR Manager","E00128",,"Human Resources","HR Generalist",,"20265275",69904
+"Human Resources","c27ac989","2025-05-26","E00165-EVT-003","Promotion","95997771","HR Coordinator","E00128",,"Human Resources","HR Manager",,"20265275",77980
+"Legal","e533ea3b","2019-12-07","E00166-EVT-001","Hire","bec7d7a0","Compliance Analyst","E00133","Initial hire record",,,,"20265275",74358
+"Engineering","852df5cc","2018-01-18","E00167-EVT-001","Hire","ad35a5a5","Software Engineer II","E00413","Initial hire record",,,,"20265275",83332
+"Finance","852df5cc","2024-10-22","E00167-EVT-002","Role Change","56be303c","Controller","E00413",,"Engineering","Software Engineer II",,"20265275",92359
+"Sales","e4966b2a","2018-08-10","E00168-EVT-001","Hire","e4429216","Senior Account Executive",,"Initial hire record",,,,"20265275",96785
+"Sales","e4966b2a","2023-05-17","E00168-EVT-002","Role Change","9050dfa4","Sales Operations Analyst",,,"Sales","Senior Account Executive",,"20265275",104533
+"Sales","bb544d4d","2020-04-08","E00169-EVT-001","Hire","1af0a9f4","Sales Operations Analyst","E00299","Initial hire record",,,,"20265275",81722
+"Engineering","c3887dce","2018-07-02","E00170-EVT-001","Hire","eb969b5a","Senior Software Engineer","E00382","Initial hire record",,,,"20265275",133282
+"Sales","c4d040f2","2018-04-21","E00171-EVT-001","Hire","48be234d","Sales Operations Analyst","E00103","Initial hire record",,,,"20265275",73940
+"Sales","c4d040f2","2021-03-31","E00171-EVT-002","Termination","f27a0f05","Sales Operations Analyst","E00103",,,,"Retirement","20265275",73940
+"Engineering","cd157c40","2018-11-21","E00172-EVT-001","Hire","1fc91948","Engineering Manager","E00400","Initial hire record",,,,"20265275",112042
+"Engineering","cd157c40","2021-08-10","E00172-EVT-002","Termination","cd09edc2","Engineering Manager","E00400",,,,"Contract ended","20265275",112042
+"Human Resources","a195bea4","2019-05-25","E00173-EVT-001","Hire","2b538bfb","HR Coordinator","E00177","Initial hire record",,,,"20265275",50414
+"Engineering","f8432469","2020-09-30","E00174-EVT-001","Hire","737f2430","Senior Software Engineer","E00085","Initial hire record",,,,"20265275",137771
+"Engineering","f8432469","2023-04-16","E00174-EVT-002","Role Change","74cd12e0","Software Engineer I","E00085",,"Engineering","Senior Software Engineer",,"20265275",144385
+"Human Resources","5a59ea6f","2018-04-09","E00175-EVT-001","Hire","21d6b9df","HR Manager","E00011","Initial hire record",,,,"20265275",99542
+"Human Resources","5a59ea6f","2024-12-18","E00175-EVT-002","Termination","4190e9cb","HR Manager","E00011",,,,"Voluntary resignation","20265275",99542
+"Engineering","a4a15c16","2018-08-03","E00176-EVT-001","Hire","f7c89c71","DevOps Engineer","E00061","Initial hire record",,,,"20265275",127763
+"Engineering","a4a15c16","2025-05-04","E00176-EVT-002","Termination","810057d3","DevOps Engineer","E00061",,,,"Retirement","20265275",127763
+"Customer Support","e4318b4f","2019-04-26","E00177-EVT-001","Hire","a03c4f30","Customer Success Manager",,"Initial hire record",,,,"20265275",96089
+"Finance","f6a0df03","2018-03-22","E00178-EVT-001","Hire","20271f7c","Financial Analyst","E00347","Initial hire record",,,,"20265275",78521
+"Finance","f6a0df03","2021-02-21","E00178-EVT-002","Termination","ba7c260c","Financial Analyst","E00347",,,,"Retirement","20265275",78521
+"Finance","59bc03d7","2020-03-30","E00179-EVT-001","Hire","58cff682","Finance Manager","E00198","Initial hire record",,,,"20265275",110959
+"Operations","6d77b784","2018-03-01","E00180-EVT-001","Hire","003429fb","Logistics Coordinator","E00250","Initial hire record",,,,"20265275",47281
+"Operations","6d77b784","2023-02-23","E00180-EVT-002","Termination","2b7ecefa","Logistics Coordinator","E00250",,,,"Contract ended","20265275",47281
+"IT","7e4942d7","2019-12-10","E00181-EVT-001","Hire","33821b07","Network Engineer","E00198","Initial hire record",,,,"20265275",98496
+"Operations","daff8d3c","2019-04-27","E00182-EVT-001","Hire","de072c0c","Operations Manager","E00411","Initial hire record",,,,"20265275",98583
+"Operations","daff8d3c","2025-02-26","E00182-EVT-002","Termination","fca55991","Operations Manager","E00411",,,,"Retirement","20265275",98583
+"Sales","f9ec1f76","2019-02-28","E00183-EVT-001","Hire","36165da8","Sales Manager","E00187","Initial hire record",,,,"20265275",110949
+"Sales","f9ec1f76","2022-03-02","E00183-EVT-002","Termination","9c37f15b","Sales Manager","E00187",,,,"Retirement","20265275",110949
+"Finance","4c31b72f","2018-12-03","E00184-EVT-001","Hire","031295da","Accountant","E00368","Initial hire record",,,,"20265275",87271
+"Customer Support","c66728a3","2020-10-29","E00185-EVT-001","Hire","d7692873","Support Manager","E00003","Initial hire record",,,,"20265275",100411
+"Operations","e9b2f7de","2019-05-24","E00186-EVT-001","Hire","bafdac62","Operations Manager","E00176","Initial hire record",,,,"20265275",104965
+"Marketing","92f58a02","2018-12-31","E00187-EVT-001","Hire","8f78b96c","Content Specialist","E00327","Initial hire record",,,,"20265275",69511
+"Human Resources","afda0734","2019-07-01","E00188-EVT-001","Hire","6b327f4f","HR Generalist","E00350","Initial hire record",,,,"20265275",61273
+"Human Resources","d653d671","2020-03-04","E00189-EVT-001","Hire","45de83d6","Compensation Analyst","E00500","Initial hire record",,,,"20265275",82650
+"Customer Support","1f85d348","2018-06-02","E00190-EVT-001","Hire","85390985","Customer Success Associate","E00377","Initial hire record",,,,"20265275",67253
+"Customer Support","1f85d348","2025-09-02","E00190-EVT-002","Termination","5f4441ce","Customer Success Associate","E00377",,,,"Contract ended","20265275",67253
+"Human Resources","8af9d4c0","2019-09-09","E00191-EVT-001","Hire","8c0407c3","HR Manager","E00282","Initial hire record",,,,"20265275",112074
+"Marketing","82f07d30","2020-01-09","E00192-EVT-001","Hire","e1dd4641","Demand Generation Manager","E00386","Initial hire record",,,,"20265275",105619
+"Sales","deba8b12","2019-08-03","E00193-EVT-001","Hire","c8415aba","Sales Manager","E00421","Initial hire record",,,,"20265275",96809
+"Sales","deba8b12","2022-08-27","E00193-EVT-002","Termination","5a42e9cf","Sales Manager","E00421",,,,"Relocation","20265275",96809
+"IT","9f09de5a","2018-08-01","E00194-EVT-001","Hire","77ae1eda","Network Engineer","E00360","Initial hire record",,,,"20265275",68472
+"Sales","e84ac7d1","2020-03-05","E00195-EVT-001","Hire","c4bd8403","Sales Operations Analyst","E00222","Initial hire record",,,,"20265275",83782
+"Sales","e84ac7d1","2024-09-07","E00195-EVT-002","Termination","f64adc3d","Sales Operations Analyst","E00222",,,,"Voluntary resignation","20265275",83782
+"Finance","de3bf1d1","2020-06-15","E00196-EVT-001","Hire","5103fc95","Payroll Specialist","E00339","Initial hire record",,,,"20265275",65498
+"Operations","a4dfebc7","2021-01-26","E00197-EVT-001","Hire","3f404757","Director of Operations","E00384","Initial hire record",,,,"20265275",138789
+"Operations","a4dfebc7","2024-04-28","E00197-EVT-002","Termination","fe911ffb","Director of Operations","E00384",,,,"Voluntary resignation","20265275",138789
+"Legal","45c391ea","2019-08-19","E00198-EVT-001","Hire","bc086294","Legal Assistant",,"Initial hire record",,,,"20265275",99019
+"Legal","45c391ea","2024-10-13","E00198-EVT-002","Termination","72bd1422","Legal Assistant",,,,,"Contract ended","20265275",99019
+"Sales","974b1982","2018-11-09","E00199-EVT-001","Hire","27a2f263","Sales Manager","E00414","Initial hire record",,,,"20265275",114532
+"Sales","72d5b085","2018-08-11","E00200-EVT-001","Hire","591af064","Sales Operations Analyst","E00042","Initial hire record",,,,"20265275",74759
+"Customer Support","087cedfb","2020-01-20","E00201-EVT-001","Hire","12342318","Customer Success Associate","E00396","Initial hire record",,,,"20265275",80722
+"Engineering","0cd4e563","2018-10-27","E00202-EVT-001","Hire","9ff81f04","Engineering Manager","E00021","Initial hire record",,,,"20265275",111843
+"Engineering","0cd4e563","2022-11-23","E00202-EVT-002","Termination","e009ea6a","Engineering Manager","E00021",,,,"Voluntary resignation","20265275",111843
+"Legal","b185147a","2019-06-24","E00203-EVT-001","Hire","50d59771","Compliance Analyst","E00090","Initial hire record",,,,"20265275",87960
+"Legal","b185147a","2022-09-09","E00203-EVT-002","Termination","88c72432","Compliance Analyst","E00090",,,,"Involuntary termination","20265275",87960
+"Customer Support","8832ed99","2019-04-17","E00204-EVT-001","Hire","9bfdebae","Customer Success Associate","E00144","Initial hire record",,,,"20265275",60052
+"Customer Support","8832ed99","2024-10-05","E00204-EVT-002","Termination","35c111bc","Customer Success Associate","E00144",,,,"Voluntary resignation","20265275",60052
+"Operations","211002d0","2019-05-15","E00205-EVT-001","Hire","50d22aab","Operations Associate","E00304","Initial hire record",,,,"20265275",57827
+"Operations","211002d0","2024-10-21","E00205-EVT-002","Termination","41f1f46d","Operations Associate","E00304",,,,"Voluntary resignation","20265275",57827
+"IT","bb7afc8a","2020-08-23","E00206-EVT-001","Hire","f42976fb","Network Engineer","E00113","Initial hire record",,,,"20265275",111839
+"Legal","bdb19604","2018-11-03","E00207-EVT-001","Hire","96fcfc2c","Paralegal","E00244","Initial hire record",,,,"20265275",78841
+"Legal","bdb19604","2025-06-24","E00207-EVT-002","Termination","dcb60dd3","Paralegal","E00244",,,,"Involuntary termination","20265275",78841
+"Customer Support","668781cc","2019-12-19","E00208-EVT-001","Hire","f85d24f4","Support Manager","E00465","Initial hire record",,,,"20265275",115301
+"Customer Support","668781cc","2022-07-26","E00208-EVT-002","Role Change","969c861d","Support Specialist","E00465",,"Customer Support","Support Manager",,"20265275",121689
+"Finance","37f621d3","2018-01-15","E00209-EVT-001","Hire","c1872942","Controller","E00353","Initial hire record",,,,"20265275",143288
+"Finance","37f621d3","2022-12-19","E00209-EVT-002","Termination","d31762b2","Controller","E00353",,,,"Relocation","20265275",143288
+"Legal","34295551","2020-09-15","E00210-EVT-001","Hire","9ddb5807","Counsel","E00285","Initial hire record",,,,"20265275",151856
+"Legal","34295551","2025-02-01","E00210-EVT-002","Termination","e503c85b","Counsel","E00285",,,,"Voluntary resignation","20265275",151856
+"Human Resources","4f1baf4d","2020-03-07","E00211-EVT-001","Hire","d1042423","HR Generalist",,"Initial hire record",,,,"20265275",76836
+"Human Resources","4f1baf4d","2023-11-28","E00211-EVT-002","Termination","1c2ec547","HR Generalist",,,,,"Contract ended","20265275",76836
+"Engineering","c413e83c","2020-06-18","E00212-EVT-001","Hire","9d08240d","DevOps Engineer","E00337","Initial hire record",,,,"20265275",111350
+"Engineering","c413e83c","2022-11-10","E00212-EVT-002","Termination","6c4d957c","DevOps Engineer","E00337",,,,"Involuntary termination","20265275",111350
+"Operations","3076071b","2020-03-20","E00213-EVT-001","Hire","ac4b99d7","Logistics Coordinator","E00266","Initial hire record",,,,"20265275",56285
+"Operations","3076071b","2022-02-15","E00213-EVT-002","Termination","7b097d5f","Logistics Coordinator","E00266",,,,"Voluntary resignation","20265275",56285
+"Finance","bb26ece4","2018-05-29","E00214-EVT-001","Hire","f02af330","Controller","E00485","Initial hire record",,,,"20265275",147487
+"Finance","bb26ece4","2025-08-16","E00214-EVT-002","Termination","a8cbd5f1","Controller","E00485",,,,"Involuntary termination","20265275",147487
+"Operations","bf1ea05d","2019-04-16","E00215-EVT-001","Hire","b0712bd7","Operations Analyst","E00181","Initial hire record",,,,"20265275",79345
+"IT","2dd99629","2019-02-13","E00216-EVT-001","Hire","4be8157f","Network Engineer","E00447","Initial hire record",,,,"20265275",70391
+"IT","2dd99629","2022-02-03","E00216-EVT-002","Termination","2595ab30","Network Engineer","E00447",,,,"Involuntary termination","20265275",70391
+"Marketing","6d9d4392","2019-10-08","E00217-EVT-001","Hire","05f21c83","Marketing Manager","E00452","Initial hire record",,,,"20265275",112133
+"Marketing","6d9d4392","2021-02-04","E00217-EVT-002","Role Change","dd18dd44","Content Specialist","E00452",,"Marketing","Marketing Manager",,"20265275",119033
+"Finance","21a0de9b","2020-07-31","E00218-EVT-001","Hire","a0a42316","Controller","E00007","Initial hire record",,,,"20265275",141343
+"Operations","9fe5785f","2020-05-08","E00219-EVT-001","Hire","621b56aa","Operations Analyst","E00206","Initial hire record",,,,"20265275",81199
+"Operations","59ca40f9","2018-10-03","E00220-EVT-001","Hire","394137c9","Operations Manager","E00369","Initial hire record",,,,"20265275",116665
+"Operations","59ca40f9","2021-11-10","E00220-EVT-002","Termination","d90ba91e","Operations Manager","E00369",,,,"Voluntary resignation","20265275",116665
+"Marketing","0a0c93e7","2019-06-12","E00221-EVT-001","Hire","8bb42dc6","Marketing Manager",,"Initial hire record",,,,"20265275",107276
+"Marketing","0a0c93e7","2022-08-02","E00221-EVT-002","Termination","ca35a8fb","Marketing Manager",,,,,"Voluntary resignation","20265275",107276
+"Operations","83a301ff","2019-08-10","E00222-EVT-001","Hire","1cda56d4","Director of Operations","E00075","Initial hire record",,,,"20265275",151196
+"Marketing","ca3c4240","2020-12-02","E00223-EVT-001","Hire","2cc0e34e","Marketing Manager","E00095","Initial hire record",,,,"20265275",110755
+"Finance","f588ddbc","2019-06-22","E00224-EVT-001","Hire","10dc1681","Accountant","E00336","Initial hire record",,,,"20265275",95507
+"Finance","f588ddbc","2025-07-31","E00224-EVT-002","Termination","a5695bed","Accountant","E00336",,,,"Voluntary resignation","20265275",95507
+"Sales","a4b4dfe5","2020-06-30","E00225-EVT-001","Hire","5e3df357","Sales Manager","E00358","Initial hire record",,,,"20265275",100427
+"Sales","44148b0b","2019-09-14","E00226-EVT-001","Hire","50251168","Account Executive",,"Initial hire record",,,,"20265275",81345
+"IT","9a48536b","2020-06-14","E00227-EVT-001","Hire","b69d1c1a","Network Engineer","E00367","Initial hire record",,,,"20265275",80870
+"Finance","dad38328","2018-10-07","E00228-EVT-001","Hire","e949b380","Financial Analyst","E00234","Initial hire record",,,,"20265275",78489
+"Finance","dad38328","2023-01-07","E00228-EVT-002","Termination","165dc500","Financial Analyst","E00234",,,,"Voluntary resignation","20265275",78489
+"Human Resources","b0a2c108","2018-07-04","E00229-EVT-001","Hire","7df1ac60","HR Generalist",,"Initial hire record",,,,"20265275",60937
+"Human Resources","b0a2c108","2025-07-09","E00229-EVT-002","Termination","10d9bd05","HR Generalist",,,,,"Relocation","20265275",60937
+"IT","06a204a3","2020-02-21","E00230-EVT-001","Hire","8843a825","Security Analyst","E00394","Initial hire record",,,,"20265275",69413
+"Legal","18bac3b8","2018-09-08","E00231-EVT-001","Hire","55f1cc7f","Counsel","E00153","Initial hire record",,,,"20265275",154300
+"Customer Support","bb4abd19","2018-11-14","E00232-EVT-001","Hire","72cc0c2f","Implementation Specialist","E00128","Initial hire record",,,,"20265275",65169
+"IT","bb4abd19","2023-11-12","E00232-EVT-002","Promotion","8244885e","Help Desk Analyst","E00128",,"Customer Support","Implementation Specialist",,"20265275",67753
+"Customer Support","41590449","2018-02-13","E00233-EVT-001","Hire","78df203f","Customer Success Associate","E00371","Initial hire record",,,,"20265275",100170
+"Engineering","3530a079","2020-12-23","E00234-EVT-001","Hire","0ba74a16","Software Engineer I","E00420","Initial hire record",,,,"20265275",81079
+"Engineering","3530a079","2021-07-10","E00234-EVT-002","Termination","35ca3461","Software Engineer I","E00420",,,,"Contract ended","20265275",81079
+"IT","aa3d710c","2020-10-15","E00235-EVT-001","Hire","d91997c9","IT Manager","E00145","Initial hire record",,,,"20265275",114070
+"Human Resources","aa3d710c","2023-05-21","E00235-EVT-002","Lateral Transfer","f141422b","HR Coordinator","E00145",,"IT","IT Manager",,"20265275",127041
+"Operations","02cad1ed","2020-12-12","E00236-EVT-001","Hire","e5da9edd","Operations Manager","E00132","Initial hire record",,,,"20265275",116446
+"Operations","02cad1ed","2025-02-26","E00236-EVT-002","Termination","c61f40d5","Operations Manager","E00132",,,,"Voluntary resignation","20265275",116446
+"Sales","50c198ff","2018-03-25","E00237-EVT-001","Hire","cae09695","Sales Manager","E00040","Initial hire record",,,,"20265275",98306
+"Sales","50c198ff","2022-03-09","E00237-EVT-002","Lateral Transfer","81a12d84","Senior Account Executive","E00040",,"Sales","Sales Manager",,"20265275",104156
+"Finance","fdb54d67","2020-01-04","E00238-EVT-001","Hire","77fbcdc9","Controller","E00219","Initial hire record",,,,"20265275",146031
+"Operations","180e3b62","2019-05-08","E00239-EVT-001","Hire","6a97b826","Logistics Coordinator","E00193","Initial hire record",,,,"20265275",61453
+"Marketing","ade01aa8","2019-07-20","E00240-EVT-001","Hire","caab7292","Marketing Coordinator","E00293","Initial hire record",,,,"20265275",61142
+"IT","974451e8","2019-10-27","E00241-EVT-001","Hire","afc79baa","Help Desk Analyst","E00423","Initial hire record",,,,"20265275",84811
+"Operations","64f77d71","2019-09-17","E00242-EVT-001","Hire","0b3cff4f","Operations Associate",,"Initial hire record",,,,"20265275",89365
+"Customer Support","6e817f86","2018-04-11","E00243-EVT-001","Hire","7cdf5355","Implementation Specialist","E00044","Initial hire record",,,,"20265275",70961
+"Customer Support","6e817f86","2021-12-26","E00243-EVT-002","Termination","9eda42fa","Implementation Specialist","E00044",,,,"Retirement","20265275",70961
+"Operations","d329a5dc","2018-07-03","E00244-EVT-001","Hire","e7697215","Logistics Coordinator","E00217","Initial hire record",,,,"20265275",46687
+"Marketing","0e34fa34","2018-06-25","E00245-EVT-001","Hire","e94fe8b0","Content Specialist","E00125","Initial hire record",,,,"20265275",56682
+"Marketing","0e34fa34","2021-11-24","E00245-EVT-002","Termination","5e5919d2","Content Specialist","E00125",,,,"Voluntary resignation","20265275",56682
+"Customer Support","4d47fd08","2018-10-17","E00246-EVT-001","Hire","2bf79347","Implementation Specialist","E00464","Initial hire record",,,,"20265275",53602
+"Customer Support","4d47fd08","2021-04-02","E00246-EVT-002","Promotion","d025b54e","Support Manager","E00464",,"Customer Support","Implementation Specialist",,"20265275",55935
+"Customer Support","4d47fd08","2022-10-06","E00246-EVT-003","Termination","68eb50e0","Support Manager","E00464",,,,"Retirement","20265275",55935
+"Human Resources","d2bda021","2020-03-02","E00247-EVT-001","Hire","aa6b6d57","Recruiter","E00261","Initial hire record",,,,"20265275",70574
+"Engineering","0789b44c","2019-12-12","E00248-EVT-001","Hire","b9efdb71","Software Engineer I","E00155","Initial hire record",,,,"20265275",87531
+"IT","3203bbfb","2019-05-08","E00249-EVT-001","Hire","87bb7bfc","Network Engineer","E00497","Initial hire record",,,,"20265275",92545
+"Engineering","9720eb2f","2018-11-20","E00250-EVT-001","Hire","a9963a72","Engineering Manager",,"Initial hire record",,,,"20265275",106403
+"IT","22e54b66","2019-04-21","E00251-EVT-001","Hire","27b161ca","IT Manager","E00184","Initial hire record",,,,"20265275",103566
+"IT","22e54b66","2022-08-30","E00251-EVT-002","Termination","45daaa8e","IT Manager","E00184",,,,"Relocation","20265275",103566
+"IT","710a7d42","2019-02-23","E00252-EVT-001","Hire","b4948727","Systems Administrator","E00489","Initial hire record",,,,"20265275",59334
+"Human Resources","c2cb9bc5","2018-08-12","E00253-EVT-001","Hire","692a1ccd","HR Manager","E00450","Initial hire record",,,,"20265275",110798
+"Human Resources","c2cb9bc5","2021-06-17","E00253-EVT-002","Promotion","802407b8","Compensation Analyst","E00450",,"Human Resources","HR Manager",,"20265275",117138
+"Legal","c2cb9bc5","2025-05-18","E00253-EVT-003","Promotion","6b9f73ce","Counsel","E00450",,"Human Resources","Compensation Analyst",,"20265275",128975
+"Engineering","2303f161","2019-08-26","E00254-EVT-001","Hire","62ef7e73","DevOps Engineer","E00354","Initial hire record",,,,"20265275",131091
+"Engineering","2303f161","2021-01-09","E00254-EVT-002","Termination","baa78573","DevOps Engineer","E00354",,,,"Relocation","20265275",131091
+"IT","5882fe0d","2018-07-04","E00255-EVT-001","Hire","d80b7c45","Network Engineer","E00333","Initial hire record",,,,"20265275",71389
+"IT","5882fe0d","2023-05-04","E00255-EVT-002","Termination","8944213d","Network Engineer","E00333",,,,"Contract ended","20265275",71389
+"Engineering","d4d2b371","2018-11-04","E00256-EVT-001","Hire","99b977f3","Senior Software Engineer","E00092","Initial hire record",,,,"20265275",131312
+"Engineering","d4d2b371","2022-11-08","E00256-EVT-002","Termination","5ee7ba73","Senior Software Engineer","E00092",,,,"Involuntary termination","20265275",131312
+"Legal","dc0e0427","2020-10-07","E00257-EVT-001","Hire","16f63d13","Legal Assistant","E00338","Initial hire record",,,,"20265275",70589
+"Human Resources","efc32dd4","2019-09-04","E00258-EVT-001","Hire","9c3bfebb","HR Manager","E00026","Initial hire record",,,,"20265275",106849
+"Human Resources","efc32dd4","2021-12-30","E00258-EVT-002","Termination","3cd93062","HR Manager","E00026",,,,"Retirement","20265275",106849
+"Operations","f7acba7e","2018-05-13","E00259-EVT-001","Hire","e324c0fe","Director of Operations","E00063","Initial hire record",,,,"20265275",145595
+"Marketing","b13675cb","2020-12-12","E00260-EVT-001","Hire","7fe0a620","Demand Generation Manager","E00182","Initial hire record",,,,"20265275",114846
+"Operations","1bdbb47b","2018-04-04","E00261-EVT-001","Hire","a3a24a19","Operations Manager","E00413","Initial hire record",,,,"20265275",106937
+"Finance","1bdbb47b","2024-02-28","E00261-EVT-002","Lateral Transfer","7327f38d","Payroll Specialist","E00413",,"Operations","Operations Manager",,"20265275",111060
+"Human Resources","3ccca3fd","2019-02-02","E00262-EVT-001","Hire","f1394274","HR Generalist","E00473","Initial hire record",,,,"20265275",66830
+"Human Resources","3ccca3fd","2023-10-17","E00262-EVT-002","Termination","107f3e28","HR Generalist","E00473",,,,"Contract ended","20265275",66830
+"Legal","e32ac9ee","2019-03-03","E00263-EVT-001","Hire","a91044a9","Legal Assistant","E00410","Initial hire record",,,,"20265275",92840
+"Human Resources","3616ca0b","2020-04-27","E00264-EVT-001","Hire","31521e0e","Recruiter","E00122","Initial hire record",,,,"20265275",65844
+"Human Resources","3616ca0b","2025-04-01","E00264-EVT-002","Role Change","1bad478e","Compensation Analyst","E00122",,"Human Resources","Recruiter",,"20265275",70525
+"Customer Support","b1b90afc","2019-09-28","E00265-EVT-001","Hire","c7edb9a9","Implementation Specialist","E00447","Initial hire record",,,,"20265275",63726
+"Finance","370b72c4","2019-10-02","E00266-EVT-001","Hire","940b6b80","Controller","E00160","Initial hire record",,,,"20265275",131736
+"Finance","630c3f1d","2021-01-16","E00267-EVT-001","Hire","8a282101","Financial Analyst","E00139","Initial hire record",,,,"20265275",80479
+"Finance","630c3f1d","2023-10-05","E00267-EVT-002","Termination","646f0785","Financial Analyst","E00139",,,,"Relocation","20265275",80479
+"Finance","a81a81a3","2020-03-13","E00268-EVT-001","Hire","9cf0d16b","Finance Manager","E00457","Initial hire record",,,,"20265275",101864
+"Customer Support","47bff799","2019-04-20","E00269-EVT-001","Hire","6566a77b","Support Manager","E00459","Initial hire record",,,,"20265275",103333
+"Customer Support","47bff799","2022-03-09","E00269-EVT-002","Termination","78a373ec","Support Manager","E00459",,,,"Voluntary resignation","20265275",103333
+"Marketing","19d86829","2018-09-18","E00270-EVT-001","Hire","504f88dd","Marketing Manager","E00419","Initial hire record",,,,"20265275",112644
+"Operations","b99c282e","2019-12-02","E00271-EVT-001","Hire","b8b1e346","Operations Manager","E00089","Initial hire record",,,,"20265275",113843
+"Operations","e4f45aca","2020-10-09","E00272-EVT-001","Hire","15f27e48","Logistics Coordinator","E00419","Initial hire record",,,,"20265275",45014
+"Operations","e4f45aca","2023-05-24","E00272-EVT-002","Termination","d7f53134","Logistics Coordinator","E00419",,,,"Retirement","20265275",45014
+"Marketing","3b2dd998","2018-01-17","E00273-EVT-001","Hire","9b302be3","Marketing Coordinator","E00207","Initial hire record",,,,"20265275",63037
+"Operations","4332d5f0","2020-02-21","E00274-EVT-001","Hire","9f802c02","Operations Manager","E00340","Initial hire record",,,,"20265275",110260
+"Operations","0cfbfb7c","2018-06-23","E00275-EVT-001","Hire","ecd4e42f","Operations Analyst","E00213","Initial hire record",,,,"20265275",73496
+"Operations","0cfbfb7c","2024-06-26","E00275-EVT-002","Termination","52069a83","Operations Analyst","E00213",,,,"Retirement","20265275",73496
+"Legal","2c274ebd","2020-04-21","E00276-EVT-001","Hire","31dcd661","Compliance Analyst","E00018","Initial hire record",,,,"20265275",86896
+"Finance","e080c6bd","2019-10-02","E00277-EVT-001","Hire","b059b123","Controller",,"Initial hire record",,,,"20265275",151088
+"Sales","8c44bf86","2019-06-18","E00278-EVT-001","Hire","735ac7e7","Sales Manager","E00297","Initial hire record",,,,"20265275",98012
+"Finance","10b43d59","2018-12-24","E00279-EVT-001","Hire","db5fbe75","Controller","E00338","Initial hire record",,,,"20265275",150391
+"Customer Support","98f62349","2019-03-08","E00280-EVT-001","Hire","c231e3d7","Customer Success Associate","E00177","Initial hire record",,,,"20265275",92863
+"Customer Support","98f62349","2023-02-19","E00280-EVT-002","Promotion","4ec4106f","Customer Success Manager","E00177",,"Customer Support","Customer Success Associate",,"20265275",96096
+"Operations","f7482271","2019-08-15","E00281-EVT-001","Hire","abec2542","Operations Associate","E00348","Initial hire record",,,,"20265275",107252
+"IT","77e8de6a","2019-02-04","E00282-EVT-001","Hire","05cab430","IT Manager","E00354","Initial hire record",,,,"20265275",113037
+"Finance","d50a90b8","2019-03-21","E00283-EVT-001","Hire","796f464d","Accountant","E00363","Initial hire record",,,,"20265275",94281
+"Finance","d50a90b8","2024-07-27","E00283-EVT-002","Role Change","0d8fd92c","Payroll Specialist","E00363",,"Finance","Accountant",,"20265275",97154
+"Operations","ec9be29e","2019-06-12","E00284-EVT-001","Hire","b1e09e8d","Logistics Coordinator","E00142","Initial hire record",,,,"20265275",48307
+"Operations","ec9be29e","2023-09-01","E00284-EVT-002","Promotion","7a956f79","Operations Associate","E00142",,"Operations","Logistics Coordinator",,"20265275",50515
+"Operations","df71b8bf","2018-08-06","E00285-EVT-001","Hire","36238c13","Operations Analyst","E00053","Initial hire record",,,,"20265275",83469
+"Operations","df71b8bf","2023-12-11","E00285-EVT-002","Termination","207e3fd1","Operations Analyst","E00053",,,,"Relocation","20265275",83469
+"Customer Support","66836987","2020-06-12","E00286-EVT-001","Hire","391e8f47","Support Manager","E00400","Initial hire record",,,,"20265275",109235
+"Customer Support","66836987","2024-10-24","E00286-EVT-002","Termination","63f762d5","Support Manager","E00400",,,,"Contract ended","20265275",109235
+"Finance","ce7eda39","2019-08-17","E00287-EVT-001","Hire","3bddf5c6","Finance Manager","E00021","Initial hire record",,,,"20265275",102655
+"Customer Support","8f8a7bbb","2018-05-10","E00288-EVT-001","Hire","5382a67a","Support Manager","E00256","Initial hire record",,,,"20265275",113712
+"Customer Support","8f8a7bbb","2022-06-12","E00288-EVT-002","Termination","9c096245","Support Manager","E00256",,,,"Relocation","20265275",113712
+"Finance","7c1704f7","2018-10-17","E00289-EVT-001","Hire","5e8340a0","Accountant","E00242","Initial hire record",,,,"20265275",87040
+"Customer Support","3534ca9d","2019-03-28","E00290-EVT-001","Hire","374605f0","Implementation Specialist","E00219","Initial hire record",,,,"20265275",55067
+"Marketing","23408a63","2018-12-04","E00291-EVT-001","Hire","b2e2586e","Marketing Manager","E00298","Initial hire record",,,,"20265275",110374
+"Engineering","cc784f96","2018-10-21","E00292-EVT-001","Hire","6f35a590","Software Engineer II","E00231","Initial hire record",,,,"20265275",96965
+"Finance","16708407","2020-01-12","E00293-EVT-001","Hire","ccd3af13","Controller","E00238","Initial hire record",,,,"20265275",148685
+"IT","16708407","2024-05-21","E00293-EVT-002","Role Change","1da52f2b","Help Desk Analyst","E00238",,"Finance","Controller",,"20265275",157313
+"Marketing","29f113cb","2020-07-17","E00294-EVT-001","Hire","f327b6ff","Marketing Manager","E00027","Initial hire record",,,,"20265275",97419
+"IT","6bac1efd","2019-05-01","E00295-EVT-001","Hire","573154ff","Help Desk Analyst","E00193","Initial hire record",,,,"20265275",82519
+"IT","6bac1efd","2024-07-02","E00295-EVT-002","Termination","41fac78e","Help Desk Analyst","E00193",,,,"Contract ended","20265275",82519
+"IT","14f04215","2018-09-18","E00296-EVT-001","Hire","34622541","Security Analyst","E00031","Initial hire record",,,,"20265275",70051
+"IT","14f04215","2024-10-29","E00296-EVT-002","Role Change","b7fab582","IT Manager","E00031",,"IT","Security Analyst",,"20265275",74747
+"Legal","1878d156","2019-03-20","E00297-EVT-001","Hire","020745df","Paralegal","E00237","Initial hire record",,,,"20265275",78384
+"Legal","1878d156","2021-09-25","E00297-EVT-002","Lateral Transfer","8b9fe1e3","Contracts Specialist","E00237",,"Legal","Paralegal",,"20265275",84878
+"Operations","f5af50b0","2020-03-18","E00298-EVT-001","Hire","63ab42d5","Director of Operations","E00357","Initial hire record",,,,"20265275",151704
+"Customer Support","f5af50b0","2025-01-25","E00298-EVT-002","Role Change","e487476d","Customer Success Associate","E00357",,"Operations","Director of Operations",,"20265275",158974
+"Sales","1500fcd6","2020-07-29","E00299-EVT-001","Hire","5796113e","Account Executive","E00013","Initial hire record",,,,"20265275",99690
+"Sales","faa40ca6","2021-01-15","E00300-EVT-001","Hire","ee188a3d","Sales Manager","E00404","Initial hire record",,,,"20265275",114849
+"Sales","faa40ca6","2022-07-29","E00300-EVT-002","Termination","8288d477","Sales Manager","E00404",,,,"Involuntary termination","20265275",114849
+"Finance","99b8d84f","2019-02-24","E00301-EVT-001","Hire","cc8db0d6","Controller","E00123","Initial hire record",,,,"20265275",135535
+"Legal","269cc6d5","2020-08-20","E00302-EVT-001","Hire","2306e623","Legal Assistant","E00423","Initial hire record",,,,"20265275",101519
+"Engineering","3e2ecb3a","2020-12-02","E00303-EVT-001","Hire","f1fd03de","Software Engineer II",,"Initial hire record",,,,"20265275",96554
+"Marketing","c954ec47","2020-09-22","E00304-EVT-001","Hire","ad680640","Demand Generation Manager","E00272","Initial hire record",,,,"20265275",115443
+"Marketing","c954ec47","2022-06-22","E00304-EVT-002","Promotion","e46e5395","Product Marketing Manager","E00272",,"Marketing","Demand Generation Manager",,"20265275",129261
+"Legal","51f66699","2019-01-09","E00305-EVT-001","Hire","408c7279","Compliance Analyst","E00355","Initial hire record",,,,"20265275",74746
+"Marketing","51f66699","2024-12-30","E00305-EVT-002","Promotion","54778ee0","Content Specialist","E00355",,"Legal","Compliance Analyst",,"20265275",77614
+"Engineering","93688bbc","2020-07-07","E00306-EVT-001","Hire","dbdb4aac","Senior Software Engineer","E00274","Initial hire record",,,,"20265275",143690
+"Engineering","93688bbc","2021-12-06","E00306-EVT-002","Termination","b79e6474","Senior Software Engineer","E00274",,,,"Contract ended","20265275",143690
+"Customer Support","1e558cdf","2018-08-19","E00307-EVT-001","Hire","12ba6287","Customer Success Manager","E00072","Initial hire record",,,,"20265275",111695
+"Customer Support","1e558cdf","2023-05-20","E00307-EVT-002","Termination","ceb13fea","Customer Success Manager","E00072",,,,"Voluntary resignation","20265275",111695
+"Human Resources","1abaec8c","2021-01-07","E00308-EVT-001","Hire","16770ebc","HR Coordinator","E00491","Initial hire record",,,,"20265275",57596
+"Human Resources","1abaec8c","2024-08-09","E00308-EVT-002","Termination","e38a8663","HR Coordinator","E00491",,,,"Voluntary resignation","20265275",57596
+"Sales","9d3b6267","2019-12-21","E00309-EVT-001","Hire","5cca2fa4","Senior Account Executive","E00448","Initial hire record",,,,"20265275",91095
+"Legal","ca6b1d00","2018-05-16","E00310-EVT-001","Hire","0ce641a2","Compliance Analyst","E00046","Initial hire record",,,,"20265275",88355
+"Sales","2bddba51","2020-08-07","E00311-EVT-001","Hire","00987297","Sales Operations Analyst",,"Initial hire record",,,,"20265275",76357
+"Marketing","8e90934d","2020-09-11","E00312-EVT-001","Hire","d42dd407","Marketing Manager","E00133","Initial hire record",,,,"20265275",114532
+"Marketing","8e90934d","2025-07-16","E00312-EVT-002","Termination","c82fba9e","Marketing Manager","E00133",,,,"Involuntary termination","20265275",114532
+"Sales","77606ee0","2020-05-09","E00313-EVT-001","Hire","dee5a4b3","Senior Account Executive","E00183","Initial hire record",,,,"20265275",101848
+"Sales","77606ee0","2022-10-09","E00313-EVT-002","Promotion","326aaaa1","Sales Manager","E00183",,"Sales","Senior Account Executive",,"20265275",109086
+"Marketing","60540f8c","2020-12-30","E00314-EVT-001","Hire","5ef37c2c","Marketing Coordinator","E00074","Initial hire record",,,,"20265275",62006
+"Legal","2a3f5d69","2018-08-22","E00315-EVT-001","Hire","82c2b149","Counsel","E00040","Initial hire record",,,,"20265275",159675
+"Engineering","593ee837","2019-04-10","E00316-EVT-001","Hire","d53da9aa","Software Engineer II","E00067","Initial hire record",,,,"20265275",86073
+"Customer Support","593ee837","2021-11-17","E00316-EVT-002","Lateral Transfer","9d4ad68f","Customer Success Associate","E00067",,"Engineering","Software Engineer II",,"20265275",94876
+"Customer Support","593ee837","2024-03-20","E00316-EVT-003","Termination","516cee0d","Customer Success Associate","E00067",,,,"Involuntary termination","20265275",94876
+"Human Resources","48a8c830","2019-09-10","E00317-EVT-001","Hire","6014c700","HR Coordinator","E00401","Initial hire record",,,,"20265275",43336
+"Human Resources","48a8c830","2022-05-21","E00317-EVT-002","Termination","1b247efc","HR Coordinator","E00401",,,,"Voluntary resignation","20265275",43336
+"Finance","5b37765d","2018-01-29","E00318-EVT-001","Hire","059feb5e","Accountant","E00099","Initial hire record",,,,"20265275",89657
+"Finance","5b37765d","2022-12-11","E00318-EVT-002","Termination","c4ac4164","Accountant","E00099",,,,"Retirement","20265275",89657
+"IT","d68daf3d","2019-04-12","E00319-EVT-001","Hire","f962904c","IT Manager","E00161","Initial hire record",,,,"20265275",109355
+"IT","d68daf3d","2021-05-19","E00319-EVT-002","Termination","23fcd8bd","IT Manager","E00161",,,,"Relocation","20265275",109355
+"Customer Support","5c1475a4","2020-04-14","E00320-EVT-001","Hire","d15853ed","Customer Success Associate","E00220","Initial hire record",,,,"20265275",74044
+"Finance","e572bccf","2018-05-13","E00321-EVT-001","Hire","eff31665","Financial Analyst","E00174","Initial hire record",,,,"20265275",80918
+"Finance","e572bccf","2025-05-21","E00321-EVT-002","Termination","25645049","Financial Analyst","E00174",,,,"Contract ended","20265275",80918
+"Engineering","b93793c1","2018-08-10","E00322-EVT-001","Hire","2f9269d1","DevOps Engineer","E00255","Initial hire record",,,,"20265275",115003
+"Legal","5ad55530","2020-08-12","E00323-EVT-001","Hire","5abf8a2c","Paralegal","E00255","Initial hire record",,,,"20265275",65616
+"Legal","5ad55530","2025-09-16","E00323-EVT-002","Role Change","67d14be1","Contracts Specialist","E00255",,"Legal","Paralegal",,"20265275",68211
+"Engineering","4d40809a","2019-09-13","E00324-EVT-001","Hire","eb231d6e","Engineering Manager","E00069","Initial hire record",,,,"20265275",101378
+"Marketing","7ea6383a","2019-10-19","E00325-EVT-001","Hire","8ebe7d26","Demand Generation Manager",,"Initial hire record",,,,"20265275",98012
+"Finance","90fbd4f5","2019-09-17","E00326-EVT-001","Hire","11936a1b","Accountant","E00011","Initial hire record",,,,"20265275",62501
+"Finance","34114955","2018-07-24","E00327-EVT-001","Hire","178efee3","Finance Manager","E00258","Initial hire record",,,,"20265275",102747
+"Finance","34114955","2021-06-21","E00327-EVT-002","Termination","df1b3192","Finance Manager","E00258",,,,"Contract ended","20265275",102747
+"Finance","f2191064","2018-07-14","E00328-EVT-001","Hire","60cf1d17","Controller","E00035","Initial hire record",,,,"20265275",150394
+"Finance","f2191064","2022-10-04","E00328-EVT-002","Role Change","612efa36","Payroll Specialist","E00035",,"Finance","Controller",,"20265275",158024
+"Finance","f2191064","2025-07-11","E00328-EVT-003","Promotion","9f713c5e","Finance Manager","E00035",,"Finance","Payroll Specialist",,"20265275",166580
+"Legal","a8a345f8","2018-02-08","E00329-EVT-001","Hire","73e00f63","Contracts Specialist","E00442","Initial hire record",,,,"20265275",73573
+"Legal","a8a345f8","2024-03-11","E00329-EVT-002","Termination","577fe968","Contracts Specialist","E00442",,,,"Retirement","20265275",73573
+"Sales","a6860571","2020-04-20","E00330-EVT-001","Hire","80138862","Sales Operations Analyst","E00467","Initial hire record",,,,"20265275",79441
+"Customer Support","664b2fbc","2020-06-12","E00331-EVT-001","Hire","266c6065","Implementation Specialist","E00019","Initial hire record",,,,"20265275",66828
+"Customer Support","664b2fbc","2023-12-09","E00331-EVT-002","Termination","1965ff59","Implementation Specialist","E00019",,,,"Voluntary resignation","20265275",66828
+"Operations","8a911655","2018-07-04","E00332-EVT-001","Hire","69f7c108","Logistics Coordinator","E00371","Initial hire record",,,,"20265275",56005
+"Operations","8a911655","2025-12-15","E00332-EVT-002","Termination","ae883183","Logistics Coordinator","E00371",,,,"Retirement","20265275",56005
+"Operations","55754de7","2020-05-16","E00333-EVT-001","Hire","06ddbed1","Operations Analyst","E00090","Initial hire record",,,,"20265275",76143
+"Engineering","0b1a2834","2020-08-31","E00334-EVT-001","Hire","85090151","Senior Software Engineer","E00011","Initial hire record",,,,"20265275",138050
+"Engineering","0b1a2834","2022-10-15","E00334-EVT-002","Termination","cdc88def","Senior Software Engineer","E00011",,,,"Retirement","20265275",138050
+"Operations","5c88579d","2019-09-09","E00335-EVT-001","Hire","22c06b01","Logistics Coordinator","E00388","Initial hire record",,,,"20265275",45957
+"Sales","fdb4d72c","2018-05-16","E00336-EVT-001","Hire","4fad1126","Sales Manager","E00374","Initial hire record",,,,"20265275",107529
+"Finance","a3e0ed7e","2019-05-27","E00337-EVT-001","Hire","921936a9","Financial Analyst","E00394","Initial hire record",,,,"20265275",85920
+"Engineering","7c12420d","2020-02-12","E00338-EVT-001","Hire","fd1da545","DevOps Engineer","E00486","Initial hire record",,,,"20265275",129690
+"Engineering","7c12420d","2023-11-08","E00338-EVT-002","Promotion","fdcd1db8","Software Engineer II","E00486",,"Engineering","DevOps Engineer",,"20265275",136572
+"Engineering","7c12420d","2024-08-29","E00338-EVT-003","Termination","fa3dce50","Software Engineer II","E00486",,,,"Relocation","20265275",136572
+"Human Resources","9d9f20b8","2020-06-10","E00339-EVT-001","Hire","22fd5676","HR Manager","E00254","Initial hire record",,,,"20265275",110867
+"Engineering","5679e81a","2018-10-26","E00340-EVT-001","Hire","ff0aa516","DevOps Engineer","E00135","Initial hire record",,,,"20265275",111942
+"Engineering","5679e81a","2025-12-15","E00340-EVT-002","Lateral Transfer","13fb9986","Engineering Manager","E00135",,"Engineering","DevOps Engineer",,"20265275",118194
+"Finance","c790420c","2018-05-01","E00341-EVT-001","Hire","65f9632d","Accountant","E00121","Initial hire record",,,,"20265275",58415
+"Engineering","612ed800","2020-10-06","E00342-EVT-001","Hire","971a92c4","Engineering Manager","E00068","Initial hire record",,,,"20265275",107114
+"Engineering","612ed800","2021-10-24","E00342-EVT-002","Termination","371d59ad","Engineering Manager","E00068",,,,"Relocation","20265275",107114
+"Sales","c9789a78","2019-10-04","E00343-EVT-001","Hire","7840f8d5","Sales Manager","E00162","Initial hire record",,,,"20265275",110279
+"Sales","c9789a78","2022-12-09","E00343-EVT-002","Role Change","78ff5656","Sales Operations Analyst","E00162",,"Sales","Sales Manager",,"20265275",119450
+"Human Resources","a93b254c","2020-01-01","E00344-EVT-001","Hire","d3ad52d1","Compensation Analyst","E00253","Initial hire record",,,,"20265275",87378
+"IT","a848b418","2018-07-13","E00345-EVT-001","Hire","69503c86","Network Engineer","E00146","Initial hire record",,,,"20265275",113154
+"IT","a848b418","2022-03-28","E00345-EVT-002","Termination","6b8ad375","Network Engineer","E00146",,,,"Voluntary resignation","20265275",113154
+"Customer Support","59b0b47a","2018-09-22","E00346-EVT-001","Hire","01561df1","Customer Success Manager","E00411","Initial hire record",,,,"20265275",102926
+"Customer Support","59b0b47a","2025-10-14","E00346-EVT-002","Role Change","7f2497e2","Implementation Specialist","E00411",,"Customer Support","Customer Success Manager",,"20265275",109018
+"Operations","1fdbbc54","2018-11-12","E00347-EVT-001","Hire","6c167f20","Logistics Coordinator","E00411","Initial hire record",,,,"20265275",46951
+"Operations","cde1ea89","2019-01-17","E00348-EVT-001","Hire","8ed6bfa8","Logistics Coordinator","E00048","Initial hire record",,,,"20265275",57224
+"Sales","35fd1f9f","2020-12-07","E00349-EVT-001","Hire","5699c806","Account Executive","E00025","Initial hire record",,,,"20265275",95015
+"Sales","35fd1f9f","2021-02-20","E00349-EVT-002","Termination","2df1a4e4","Account Executive","E00025",,,,"Involuntary termination","20265275",95015
+"Customer Support","85334686","2019-01-09","E00350-EVT-001","Hire","944c12fb","Customer Success Associate","E00043","Initial hire record",,,,"20265275",110240
+"Customer Support","85334686","2024-07-27","E00350-EVT-002","Termination","d1cca085","Customer Success Associate","E00043",,,,"Retirement","20265275",110240
+"Human Resources","f703d3a3","2020-03-19","E00351-EVT-001","Hire","0f84b9f8","HR Coordinator",,"Initial hire record",,,,"20265275",46823
+"Human Resources","f703d3a3","2022-01-09","E00351-EVT-002","Termination","64cc47a8","HR Coordinator",,,,,"Retirement","20265275",46823
+"IT","1154fb6c","2019-03-05","E00352-EVT-001","Hire","7bd3dc2b","Help Desk Analyst","E00333","Initial hire record",,,,"20265275",84765
+"Customer Support","94eecc42","2020-07-09","E00353-EVT-001","Hire","a11d5c21","Support Specialist","E00151","Initial hire record",,,,"20265275",72176
+"Customer Support","94eecc42","2021-01-16","E00353-EVT-002","Termination","d9980aa9","Support Specialist","E00151",,,,"Involuntary termination","20265275",72176
+"Human Resources","9c6ff24c","2018-02-08","E00354-EVT-001","Hire","9389b961","HR Manager","E00284","Initial hire record",,,,"20265275",109828
+"Customer Support","9c6ff24c","2023-10-15","E00354-EVT-002","Role Change","abce6e67","Support Manager","E00284",,"Human Resources","HR Manager",,"20265275",119021
+"IT","554ec3fb","2019-03-26","E00355-EVT-001","Hire","8bf7e71f","IT Manager","E00174","Initial hire record",,,,"20265275",115256
+"IT","554ec3fb","2021-05-07","E00355-EVT-002","Termination","83ae3a8f","IT Manager","E00174",,,,"Contract ended","20265275",115256
+"Engineering","40e91fa8","2018-11-17","E00356-EVT-001","Hire","3b50a6e6","Software Engineer II","E00407","Initial hire record",,,,"20265275",95849
+"IT","f465dd47","2019-04-04","E00357-EVT-001","Hire","13dcbc49","Help Desk Analyst","E00175","Initial hire record",,,,"20265275",84937
+"IT","f465dd47","2024-01-22","E00357-EVT-002","Lateral Transfer","23d19c79","IT Manager","E00175",,"IT","Help Desk Analyst",,"20265275",91072
+"Human Resources","d3ff700c","2018-08-04","E00358-EVT-001","Hire","dca1e2dd","HR Manager","E00446","Initial hire record",,,,"20265275",101473
+"Customer Support","f5bb2e99","2019-08-11","E00359-EVT-001","Hire","8407bc04","Customer Success Manager","E00137","Initial hire record",,,,"20265275",112548
+"Customer Support","f5bb2e99","2021-09-05","E00359-EVT-002","Termination","4c63039d","Customer Success Manager","E00137",,,,"Voluntary resignation","20265275",112548
+"Customer Support","805cf65a","2018-01-21","E00360-EVT-001","Hire","121d3f3b","Customer Success Associate","E00484","Initial hire record",,,,"20265275",102030
+"Operations","a07cae47","2019-09-16","E00361-EVT-001","Hire","715056f7","Operations Manager","E00005","Initial hire record",,,,"20265275",106279
+"Operations","a07cae47","2024-06-02","E00361-EVT-002","Promotion","ed262cd3","Logistics Coordinator","E00005",,"Operations","Operations Manager",,"20265275",113359
+"Operations","b3cbf0fe","2020-12-01","E00362-EVT-001","Hire","70c72242","Operations Analyst","E00048","Initial hire record",,,,"20265275",86720
+"Operations","b3cbf0fe","2021-10-07","E00362-EVT-002","Termination","515a126c","Operations Analyst","E00048",,,,"Retirement","20265275",86720
+"Legal","5cebf488","2018-09-11","E00363-EVT-001","Hire","b37c7a68","Compliance Analyst","E00482","Initial hire record",,,,"20265275",70564
+"Engineering","2c7b9cb9","2020-11-30","E00364-EVT-001","Hire","ef3a3234","DevOps Engineer","E00265","Initial hire record",,,,"20265275",119114
+"Marketing","1172ea27","2020-04-04","E00365-EVT-001","Hire","7b2b31e1","Marketing Manager","E00399","Initial hire record",,,,"20265275",115275
+"Finance","7059161d","2020-07-21","E00366-EVT-001","Hire","67e40168","Financial Analyst",,"Initial hire record",,,,"20265275",84510
+"Sales","7059161d","2022-08-12","E00366-EVT-002","Promotion","748e2a11","Sales Operations Analyst",,,"Finance","Financial Analyst",,"20265275",91253
+"Engineering","5b6283db","2020-05-13","E00367-EVT-001","Hire","a1b77b62","Software Engineer II","E00157","Initial hire record",,,,"20265275",77594
+"Engineering","221a0fa9","2020-10-30","E00368-EVT-001","Hire","6910898d","Software Engineer II","E00231","Initial hire record",,,,"20265275",96855
+"Finance","f09a37bf","2018-02-20","E00369-EVT-001","Hire","4f60ca89","Financial Analyst","E00396","Initial hire record",,,,"20265275",87743
+"Legal","014ce78c","2018-02-08","E00370-EVT-001","Hire","91502aa8","Contracts Specialist","E00126","Initial hire record",,,,"20265275",62009
+"Finance","337bb6dd","2021-01-14","E00371-EVT-001","Hire","5e5f2369","Accountant","E00094","Initial hire record",,,,"20265275",66020
+"Operations","70f1c418","2018-04-17","E00372-EVT-001","Hire","a0940142","Operations Associate","E00306","Initial hire record",,,,"20265275",68274
+"Legal","1c58d18d","2018-07-27","E00373-EVT-001","Hire","29da2eb0","Counsel","E00334","Initial hire record",,,,"20265275",154071
+"Legal","1c58d18d","2022-11-20","E00373-EVT-002","Termination","d2c203bb","Counsel","E00334",,,,"Contract ended","20265275",154071
+"Sales","857eb31a","2018-01-02","E00374-EVT-001","Hire","a51c3ca9","Account Executive","E00247","Initial hire record",,,,"20265275",82971
+"Sales","857eb31a","2023-02-25","E00374-EVT-002","Termination","e0a6e85f","Account Executive","E00247",,,,"Relocation","20265275",82971
+"Legal","633c7fde","2020-06-03","E00375-EVT-001","Hire","2a830781","Compliance Analyst","E00491","Initial hire record",,,,"20265275",75909
+"Customer Support","d27cde43","2018-01-20","E00376-EVT-001","Hire","c806db35","Support Specialist","E00459","Initial hire record",,,,"20265275",58686
+"Customer Support","d27cde43","2021-11-01","E00376-EVT-002","Termination","88f1e1ad","Support Specialist","E00459",,,,"Retirement","20265275",58686
+"Engineering","2bce4a30","2018-09-13","E00377-EVT-001","Hire","809a0a6a","Software Engineer I","E00099","Initial hire record",,,,"20265275",91161
+"IT","84a2fcd4","2018-08-16","E00378-EVT-001","Hire","9ad035ef","Network Engineer","E00257","Initial hire record",,,,"20265275",112010
+"IT","84a2fcd4","2023-05-09","E00378-EVT-002","Termination","a46518e7","Network Engineer","E00257",,,,"Relocation","20265275",112010
+"Human Resources","54673684","2019-06-02","E00379-EVT-001","Hire","7ed7669f","HR Manager","E00002","Initial hire record",,,,"20265275",114353
+"Human Resources","54673684","2021-03-17","E00379-EVT-002","Termination","07480eac","HR Manager","E00002",,,,"Contract ended","20265275",114353
+"Legal","722a7318","2019-10-10","E00380-EVT-001","Hire","805220d4","Paralegal","E00172","Initial hire record",,,,"20265275",59169
+"Marketing","2fdd65ab","2019-05-22","E00381-EVT-001","Hire","5183dbfc","Demand Generation Manager","E00491","Initial hire record",,,,"20265275",99533
+"Marketing","2fdd65ab","2023-06-09","E00381-EVT-002","Termination","bd2d8782","Demand Generation Manager","E00491",,,,"Relocation","20265275",99533
+"Finance","e256038b","2018-05-07","E00382-EVT-001","Hire","ec7a4a5a","Financial Analyst",,"Initial hire record",,,,"20265275",83480
+"Customer Support","e487411b","2018-07-27","E00383-EVT-001","Hire","085632d3","Support Manager","E00346","Initial hire record",,,,"20265275",107128
+"Customer Support","9e8b9422","2019-05-13","E00384-EVT-001","Hire","aa927fdd","Customer Success Associate","E00031","Initial hire record",,,,"20265275",64022
+"Engineering","e7db1672","2019-05-02","E00385-EVT-001","Hire","ef5f170d","Software Engineer I","E00287","Initial hire record",,,,"20265275",92616
+"Engineering","e7db1672","2022-01-29","E00385-EVT-002","Termination","3729def6","Software Engineer I","E00287",,,,"Contract ended","20265275",92616
+"Marketing","28e4fa39","2018-08-03","E00386-EVT-001","Hire","ae2be210","Content Specialist","E00467","Initial hire record",,,,"20265275",67886
+"Finance","489e988d","2018-03-03","E00387-EVT-001","Hire","c6fb4e7b","Payroll Specialist","E00149","Initial hire record",,,,"20265275",71176
+"IT","6c39e7b2","2018-12-27","E00388-EVT-001","Hire","5a629ea8","Help Desk Analyst","E00011","Initial hire record",,,,"20265275",77578
+"IT","6c39e7b2","2024-01-29","E00388-EVT-002","Role Change","7878b954","Systems Administrator","E00011",,"IT","Help Desk Analyst",,"20265275",86461
+"Engineering","e4ba12fc","2019-01-24","E00389-EVT-001","Hire","81fb64ea","Software Engineer II","E00356","Initial hire record",,,,"20265275",82281
+"Engineering","e4ba12fc","2025-06-30","E00389-EVT-002","Termination","915e1800","Software Engineer II","E00356",,,,"Involuntary termination","20265275",82281
+"Customer Support","44cbdc3a","2018-06-16","E00390-EVT-001","Hire","7b104d17","Customer Success Associate","E00340","Initial hire record",,,,"20265275",106423
+"Operations","60eb10d7","2018-03-16","E00391-EVT-001","Hire","bb7f7de4","Director of Operations","E00104","Initial hire record",,,,"20265275",142789
+"Human Resources","9c0b7658","2020-11-15","E00392-EVT-001","Hire","065da3a5","Compensation Analyst","E00231","Initial hire record",,,,"20265275",89353
+"Human Resources","9c0b7658","2022-07-23","E00392-EVT-002","Termination","a20befc1","Compensation Analyst","E00231",,,,"Voluntary resignation","20265275",89353
+"Legal","a871fa23","2019-07-21","E00393-EVT-001","Hire","b965b013","Legal Assistant","E00037","Initial hire record",,,,"20265275",69925
+"Human Resources","a871fa23","2022-11-21","E00393-EVT-002","Promotion","f4007031","HR Generalist","E00037",,"Legal","Legal Assistant",,"20265275",72237
+"Human Resources","f6453a59","2019-08-01","E00394-EVT-001","Hire","ed645a66","Recruiter","E00207","Initial hire record",,,,"20265275",74358
+"Human Resources","f6453a59","2024-10-15","E00394-EVT-002","Termination","a8977832","Recruiter","E00207",,,,"Contract ended","20265275",74358
+"Finance","a8b87096","2019-01-20","E00395-EVT-001","Hire","4bd981c2","Payroll Specialist","E00358","Initial hire record",,,,"20265275",67050
+"Operations","0095611b","2019-09-06","E00396-EVT-001","Hire","620baf82","Director of Operations","E00291","Initial hire record",,,,"20265275",146684
+"Engineering","c9761c70","2018-12-30","E00397-EVT-001","Hire","d887e46a","Software Engineer I","E00309","Initial hire record",,,,"20265275",77050
+"Engineering","c9761c70","2024-07-07","E00397-EVT-002","Termination","4b301e6d","Software Engineer I","E00309",,,,"Contract ended","20265275",77050
+"Operations","50df9f15","2018-08-15","E00398-EVT-001","Hire","5fdb5033","Operations Analyst","E00245","Initial hire record",,,,"20265275",73231
+"IT","50df9f15","2025-06-07","E00398-EVT-002","Lateral Transfer","2ea782d6","Network Engineer","E00245",,"Operations","Operations Analyst",,"20265275",76009
+"Human Resources","7d9edefb","2020-07-01","E00399-EVT-001","Hire","5860f26b","HR Generalist","E00310","Initial hire record",,,,"20265275",58096
+"Engineering","1439991c","2019-05-26","E00400-EVT-001","Hire","e7b251c5","DevOps Engineer","E00376","Initial hire record",,,,"20265275",116884
+"Human Resources","1439991c","2021-12-26","E00400-EVT-002","Role Change","b49b4101","Recruiter","E00376",,"Engineering","DevOps Engineer",,"20265275",122364
+"IT","e9e2f0cd","2020-04-22","E00401-EVT-001","Hire","02a96920","Network Engineer","E00189","Initial hire record",,,,"20265275",104929
+"Marketing","cf51fc43","2019-02-03","E00402-EVT-001","Hire","bb11f8a1","Product Marketing Manager",,"Initial hire record",,,,"20265275",108998
+"Finance","4fbb2529","2019-08-26","E00403-EVT-001","Hire","3e904ce9","Financial Analyst","E00201","Initial hire record",,,,"20265275",73068
+"Finance","4fbb2529","2021-09-15","E00403-EVT-002","Termination","95cee664","Financial Analyst","E00201",,,,"Involuntary termination","20265275",73068
+"Finance","315c3dfa","2019-09-24","E00404-EVT-001","Hire","de611b30","Finance Manager",,"Initial hire record",,,,"20265275",110548
+"Finance","9db7e250","2018-12-09","E00405-EVT-001","Hire","9f99294f","Financial Analyst","E00056","Initial hire record",,,,"20265275",70442
+"Finance","9db7e250","2024-09-16","E00405-EVT-002","Termination","72469414","Financial Analyst","E00056",,,,"Involuntary termination","20265275",70442
+"Marketing","1f10c663","2020-03-08","E00406-EVT-001","Hire","2c2f0766","Marketing Coordinator","E00034","Initial hire record",,,,"20265275",49971
+"Marketing","1f10c663","2023-09-25","E00406-EVT-002","Termination","771d94a6","Marketing Coordinator","E00034",,,,"Voluntary resignation","20265275",49971
+"Marketing","47a44d87","2018-09-30","E00407-EVT-001","Hire","947f65ac","Product Marketing Manager","E00390","Initial hire record",,,,"20265275",106880
+"IT","f06c0afd","2019-05-14","E00408-EVT-001","Hire","0a81e922","Network Engineer",,"Initial hire record",,,,"20265275",95616
+"Operations","934d0536","2018-02-18","E00409-EVT-001","Hire","0a132958","Logistics Coordinator","E00170","Initial hire record",,,,"20265275",50504
+"Finance","467cb6df","2018-04-17","E00410-EVT-001","Hire","a77a5838","Financial Analyst","E00481","Initial hire record",,,,"20265275",89786
+"Finance","467cb6df","2023-11-23","E00410-EVT-002","Termination","a7bb7a2c","Financial Analyst","E00481",,,,"Voluntary resignation","20265275",89786
+"IT","d2c1788e","2019-08-08","E00411-EVT-001","Hire","9005fa88","Security Analyst","E00326","Initial hire record",,,,"20265275",87888
+"Sales","86a0e8f2","2021-01-05","E00412-EVT-001","Hire","3e73cbde","Sales Manager","E00090","Initial hire record",,,,"20265275",101006
+"Human Resources","856b2379","2020-02-06","E00413-EVT-001","Hire","2962ae12","HR Manager","E00213","Initial hire record",,,,"20265275",112103
+"Customer Support","3a5b4eb7","2018-04-29","E00414-EVT-001","Hire","5bd3434e","Customer Success Manager","E00377","Initial hire record",,,,"20265275",108626
+"Finance","ac121998","2020-02-27","E00415-EVT-001","Hire","cfb79f87","Accountant","E00499","Initial hire record",,,,"20265275",81061
+"Finance","ac121998","2022-06-10","E00415-EVT-002","Termination","6ad8f4e3","Accountant","E00499",,,,"Voluntary resignation","20265275",81061
+"Marketing","a49adca5","2019-07-05","E00416-EVT-001","Hire","5c2b0253","Content Specialist","E00204","Initial hire record",,,,"20265275",59865
+"Engineering","989c0e2e","2020-09-23","E00417-EVT-001","Hire","d9b0f7b1","Software Engineer II","E00057","Initial hire record",,,,"20265275",81963
+"Engineering","989c0e2e","2022-05-09","E00417-EVT-002","Role Change","eb4acb2a","Senior Software Engineer","E00057",,"Engineering","Software Engineer II",,"20265275",85783
+"Marketing","7d49a69e","2019-04-26","E00418-EVT-001","Hire","071a4fe1","Marketing Coordinator","E00390","Initial hire record",,,,"20265275",58659
+"Marketing","7d49a69e","2021-10-16","E00418-EVT-002","Promotion","2b49fc8e","Product Marketing Manager","E00390",,"Marketing","Marketing Coordinator",,"20265275",63851
+"Marketing","7d49a69e","2022-04-17","E00418-EVT-003","Role Change","e08675f3","Demand Generation Manager","E00390",,"Marketing","Product Marketing Manager",,"20265275",71070
+"Operations","21f5add4","2020-01-30","E00419-EVT-001","Hire","0bc3fe6a","Logistics Coordinator",,"Initial hire record",,,,"20265275",54241
+"Sales","f6f20767","2020-01-25","E00420-EVT-001","Hire","ded9c2ed","Account Executive","E00338","Initial hire record",,,,"20265275",95808
+"Operations","113806f0","2018-07-25","E00421-EVT-001","Hire","6567531a","Operations Manager","E00100","Initial hire record",,,,"20265275",108611
+"Operations","113806f0","2021-12-13","E00421-EVT-002","Lateral Transfer","906cb80c","Logistics Coordinator","E00100",,"Operations","Operations Manager",,"20265275",114519
+"IT","3f312e57","2018-07-03","E00422-EVT-001","Hire","bd449375","Systems Administrator","E00367","Initial hire record",,,,"20265275",61912
+"IT","3f312e57","2021-08-31","E00422-EVT-002","Termination","2b348a87","Systems Administrator","E00367",,,,"Relocation","20265275",61912
+"Finance","14cb6659","2020-02-12","E00423-EVT-001","Hire","16fb34d6","Payroll Specialist","E00402","Initial hire record",,,,"20265275",65505
+"Human Resources","7a62b354","2018-05-07","E00424-EVT-001","Hire","f28a2f2c","Recruiter","E00434","Initial hire record",,,,"20265275",82335
+"Human Resources","7a62b354","2022-01-06","E00424-EVT-002","Lateral Transfer","945814f5","Compensation Analyst","E00434",,"Human Resources","Recruiter",,"20265275",89044
+"Customer Support","66568742","2018-10-29","E00425-EVT-001","Hire","13321dd7","Support Manager","E00383","Initial hire record",,,,"20265275",115708
+"IT","0ac8e590","2018-04-18","E00426-EVT-001","Hire","8ee0ad29","Systems Administrator","E00439","Initial hire record",,,,"20265275",111716
+"IT","0ac8e590","2022-05-17","E00426-EVT-002","Termination","5e84cae3","Systems Administrator","E00439",,,,"Voluntary resignation","20265275",111716
+"IT","2b2855de","2020-03-17","E00427-EVT-001","Hire","696af567","IT Manager","E00386","Initial hire record",,,,"20265275",99188
+"IT","2b2855de","2021-11-12","E00427-EVT-002","Lateral Transfer","45c8c250","Security Analyst","E00386",,"IT","IT Manager",,"20265275",108131
+"IT","2b2855de","2023-10-22","E00427-EVT-003","Termination","805a5283","Security Analyst","E00386",,,,"Voluntary resignation","20265275",108131
+"Finance","4026cc9c","2020-02-11","E00428-EVT-001","Hire","4f5fa19c","Financial Analyst","E00087","Initial hire record",,,,"20265275",82995
+"Operations","be4991d0","2019-09-12","E00429-EVT-001","Hire","e4465605","Operations Manager","E00335","Initial hire record",,,,"20265275",115534
+"Human Resources","84ebe394","2020-09-09","E00430-EVT-001","Hire","847e32e5","HR Manager","E00049","Initial hire record",,,,"20265275",104969
+"Legal","76906dbd","2018-05-11","E00431-EVT-001","Hire","d076e685","Paralegal","E00276","Initial hire record",,,,"20265275",76003
+"Legal","76906dbd","2021-07-08","E00431-EVT-002","Lateral Transfer","c7961ab0","Compliance Analyst","E00276",,"Legal","Paralegal",,"20265275",82554
+"Engineering","76906dbd","2024-07-13","E00431-EVT-003","Lateral Transfer","e06e564a","Senior Software Engineer","E00276",,"Legal","Compliance Analyst",,"20265275",92455
+"Legal","6331ed08","2018-03-13","E00432-EVT-001","Hire","5392fe12","Compliance Analyst","E00260","Initial hire record",,,,"20265275",71772
+"Legal","8b044871","2019-03-06","E00433-EVT-001","Hire","951311f7","Counsel","E00023","Initial hire record",,,,"20265275",149244
+"Sales","5ab1874a","2018-12-01","E00434-EVT-001","Hire","a810f1b5","Sales Operations Analyst","E00484","Initial hire record",,,,"20265275",82109
+"Engineering","a800db55","2020-06-07","E00435-EVT-001","Hire","e0dc5c97","Senior Software Engineer",,"Initial hire record",,,,"20265275",138417
+"IT","4f3b5406","2018-01-21","E00436-EVT-001","Hire","47f2eae9","Security Analyst","E00497","Initial hire record",,,,"20265275",72209
+"Marketing","ef49bcf6","2019-01-06","E00437-EVT-001","Hire","2da32ebb","Product Marketing Manager","E00348","Initial hire record",,,,"20265275",107310
+"Marketing","ef49bcf6","2021-07-02","E00437-EVT-002","Termination","3a70b077","Product Marketing Manager","E00348",,,,"Contract ended","20265275",107310
+"IT","ffbe7243","2020-05-06","E00438-EVT-001","Hire","921e8347","IT Manager","E00182","Initial hire record",,,,"20265275",111000
+"Engineering","bdd62af6","2018-04-28","E00439-EVT-001","Hire","03c99a86","Engineering Manager","E00284","Initial hire record",,,,"20265275",98771
+"Engineering","bdd62af6","2022-08-03","E00439-EVT-002","Termination","e16a74bb","Engineering Manager","E00284",,,,"Voluntary resignation","20265275",98771
+"Operations","549fdbb4","2019-12-08","E00440-EVT-001","Hire","f4ccccdd","Director of Operations","E00339","Initial hire record",,,,"20265275",144002
+"Finance","549fdbb4","2024-08-28","E00440-EVT-002","Role Change","8cedb85f","Accountant","E00339",,"Operations","Director of Operations",,"20265275",151152
+"IT","70adc5eb","2018-08-30","E00441-EVT-001","Hire","b76a41e1","IT Manager","E00151","Initial hire record",,,,"20265275",105504
+"Finance","556f47b5","2019-12-18","E00442-EVT-001","Hire","978e9b2c","Accountant","E00206","Initial hire record",,,,"20265275",113339
+"Finance","556f47b5","2023-01-18","E00442-EVT-002","Lateral Transfer","0320796d","Finance Manager","E00206",,"Finance","Accountant",,"20265275",125904
+"Finance","556f47b5","2025-06-08","E00442-EVT-003","Termination","8f5ea7ae","Finance Manager","E00206",,,,"Contract ended","20265275",125904
+"Operations","c4ba6f80","2019-09-05","E00443-EVT-001","Hire","4b62d542","Logistics Coordinator","E00094","Initial hire record",,,,"20265275",54943
+"Operations","c4ba6f80","2025-07-31","E00443-EVT-002","Termination","e2fdfa66","Logistics Coordinator","E00094",,,,"Voluntary resignation","20265275",54943
+"Marketing","da8ad52c","2018-11-25","E00444-EVT-001","Hire","70799119","Marketing Coordinator","E00492","Initial hire record",,,,"20265275",49520
+"Finance","ace80da9","2018-02-13","E00445-EVT-001","Hire","470a93ae","Accountant","E00257","Initial hire record",,,,"20265275",63265
+"Finance","ace80da9","2025-01-08","E00445-EVT-002","Termination","cf32262e","Accountant","E00257",,,,"Contract ended","20265275",63265
+"Legal","724aef87","2019-05-26","E00446-EVT-001","Hire","f2bd7e92","Contracts Specialist","E00443","Initial hire record",,,,"20265275",62212
+"Operations","3a44c1fc","2019-07-15","E00447-EVT-001","Hire","09b9a34c","Operations Associate","E00219","Initial hire record",,,,"20265275",67594
+"Operations","3a44c1fc","2023-01-04","E00447-EVT-002","Promotion","ef1ef379","Director of Operations","E00219",,"Operations","Operations Associate",,"20265275",71747
+"Finance","adade32a","2020-01-15","E00448-EVT-001","Hire","d283012a","Payroll Specialist","E00365","Initial hire record",,,,"20265275",62193
+"Finance","adade32a","2022-01-18","E00448-EVT-002","Termination","f195caaa","Payroll Specialist","E00365",,,,"Retirement","20265275",62193
+"Customer Support","c21b52f4","2019-11-16","E00449-EVT-001","Hire","307ea91f","Customer Success Manager","E00343","Initial hire record",,,,"20265275",105973
+"Human Resources","95bd400d","2019-01-26","E00450-EVT-001","Hire","392d1739","HR Manager","E00474","Initial hire record",,,,"20265275",102321
+"Legal","368361f6","2020-01-20","E00451-EVT-001","Hire","135a8ece","Compliance Analyst","E00061","Initial hire record",,,,"20265275",83695
+"Legal","368361f6","2021-01-01","E00451-EVT-002","Termination","5edd2e0d","Compliance Analyst","E00061",,,,"Contract ended","20265275",83695
+"Operations","3d6a3698","2020-12-26","E00452-EVT-001","Hire","762f8fe1","Operations Manager","E00085","Initial hire record",,,,"20265275",112825
+"Operations","3d6a3698","2021-09-20","E00452-EVT-002","Termination","13019470","Operations Manager","E00085",,,,"Involuntary termination","20265275",112825
+"Legal","a5776afb","2019-06-15","E00453-EVT-001","Hire","4ff56dbe","Counsel","E00152","Initial hire record",,,,"20265275",155942
+"Legal","a5776afb","2025-01-26","E00453-EVT-002","Termination","2cd299cf","Counsel","E00152",,,,"Retirement","20265275",155942
+"Finance","12b9c7be","2019-12-13","E00454-EVT-001","Hire","d26963b4","Accountant","E00189","Initial hire record",,,,"20265275",96463
+"IT","12b9c7be","2022-07-27","E00454-EVT-002","Promotion","4d193da2","IT Manager","E00189",,"Finance","Accountant",,"20265275",103281
+"Finance","5fa6f254","2019-06-12","E00455-EVT-001","Hire","7be04f64","Finance Manager","E00283","Initial hire record",,,,"20265275",116520
+"Customer Support","3da18539","2020-07-29","E00456-EVT-001","Hire","4f63617c","Customer Success Associate","E00091","Initial hire record",,,,"20265275",67125
+"Legal","eebe5b66","2018-01-25","E00457-EVT-001","Hire","7411d606","Contracts Specialist","E00197","Initial hire record",,,,"20265275",72768
+"Legal","eebe5b66","2024-10-20","E00457-EVT-002","Termination","a442af17","Contracts Specialist","E00197",,,,"Involuntary termination","20265275",72768
+"Engineering","68ec83ae","2020-06-28","E00458-EVT-001","Hire","3a49f9e6","DevOps Engineer","E00246","Initial hire record",,,,"20265275",116345
+"IT","70f61010","2020-02-29","E00459-EVT-001","Hire","937924c6","Network Engineer","E00147","Initial hire record",,,,"20265275",64658
+"IT","70f61010","2023-12-08","E00459-EVT-002","Termination","90b8e211","Network Engineer","E00147",,,,"Contract ended","20265275",64658
+"Engineering","61d42262","2020-05-27","E00460-EVT-001","Hire","8c243dde","Software Engineer II","E00093","Initial hire record",,,,"20265275",93382
+"Engineering","18629e30","2018-10-30","E00461-EVT-001","Hire","3581157f","Senior Software Engineer","E00408","Initial hire record",,,,"20265275",138799
+"Engineering","18629e30","2021-12-14","E00461-EVT-002","Termination","ca4e895d","Senior Software Engineer","E00408",,,,"Retirement","20265275",138799
+"Marketing","6fe48930","2019-05-19","E00462-EVT-001","Hire","fa66d566","Content Specialist","E00255","Initial hire record",,,,"20265275",65556
+"Legal","6e7bb786","2018-10-01","E00463-EVT-001","Hire","0099b86a","Paralegal",,"Initial hire record",,,,"20265275",62609
+"Legal","6e7bb786","2025-04-16","E00463-EVT-002","Termination","37eb9c3f","Paralegal",,,,,"Contract ended","20265275",62609
+"Human Resources","d7c1cbda","2020-02-01","E00464-EVT-001","Hire","60e5a32d","Compensation Analyst","E00340","Initial hire record",,,,"20265275",70772
+"Engineering","676e2852","2019-09-06","E00465-EVT-001","Hire","507d951f","Engineering Manager","E00173","Initial hire record",,,,"20265275",111407
+"Engineering","676e2852","2021-09-23","E00465-EVT-002","Termination","d2111b45","Engineering Manager","E00173",,,,"Relocation","20265275",111407
+"Sales","6f3e275e","2020-10-24","E00466-EVT-001","Hire","2df6b42c","Sales Manager","E00217","Initial hire record",,,,"20265275",106028
+"Marketing","c05e09d9","2020-02-19","E00467-EVT-001","Hire","48cfc0c1","Product Marketing Manager",,"Initial hire record",,,,"20265275",101400
+"Marketing","c05e09d9","2023-04-15","E00467-EVT-002","Role Change","1b02bb8d","Marketing Manager",,,"Marketing","Product Marketing Manager",,"20265275",105540
+"Marketing","c05e09d9","2024-10-07","E00467-EVT-003","Termination","3994385f","Marketing Manager",,,,,"Contract ended","20265275",105540
+"Sales","e1aab657","2019-02-18","E00468-EVT-001","Hire","95328d10","Account Executive","E00124","Initial hire record",,,,"20265275",101918
+"Sales","e1aab657","2023-01-22","E00468-EVT-002","Termination","6d2c25dc","Account Executive","E00124",,,,"Relocation","20265275",101918
+"Operations","a95de4a2","2018-09-23","E00469-EVT-001","Hire","6624eaf8","Logistics Coordinator","E00460","Initial hire record",,,,"20265275",46190
+"Engineering","43689daf","2020-10-24","E00470-EVT-001","Hire","90da54e0","Software Engineer II","E00312","Initial hire record",,,,"20265275",92918
+"Customer Support","1135e063","2018-01-31","E00471-EVT-001","Hire","5df909cc","Support Specialist","E00159","Initial hire record",,,,"20265275",57673
+"Customer Support","b2f06589","2020-06-24","E00472-EVT-001","Hire","6ffddeca","Customer Success Manager","E00498","Initial hire record",,,,"20265275",100602
+"Customer Support","b2f06589","2024-07-09","E00472-EVT-002","Termination","aeda2311","Customer Success Manager","E00498",,,,"Contract ended","20265275",100602
+"Customer Support","642b7186","2018-03-29","E00473-EVT-001","Hire","83bdabc8","Customer Success Manager","E00030","Initial hire record",,,,"20265275",116336
+"Customer Support","642b7186","2022-09-23","E00473-EVT-002","Lateral Transfer","fb0e8918","Support Manager","E00030",,"Customer Support","Customer Success Manager",,"20265275",122578
+"Customer Support","642b7186","2025-08-17","E00473-EVT-003","Termination","64367681","Support Manager","E00030",,,,"Involuntary termination","20265275",122578
+"Customer Support","5b88dcb3","2020-08-10","E00474-EVT-001","Hire","7a9edae8","Implementation Specialist","E00375","Initial hire record",,,,"20265275",56575
+"Legal","d2d15ae6","2020-08-20","E00475-EVT-001","Hire","1df8b65a","Contracts Specialist","E00164","Initial hire record",,,,"20265275",57768
+"Sales","71a0917a","2018-06-17","E00476-EVT-001","Hire","3f42c01a","Sales Operations Analyst","E00232","Initial hire record",,,,"20265275",78775
+"Sales","71a0917a","2023-06-02","E00476-EVT-002","Termination","cf778757","Sales Operations Analyst","E00232",,,,"Voluntary resignation","20265275",78775
+"Operations","64ca8946","2020-03-07","E00477-EVT-001","Hire","eeee6660","Logistics Coordinator","E00458","Initial hire record",,,,"20265275",43325
+"Legal","e626ed5a","2020-07-11","E00478-EVT-001","Hire","0831fdb0","Legal Assistant","E00325","Initial hire record",,,,"20265275",109559
+"Marketing","d5650425","2019-09-11","E00479-EVT-001","Hire","8d3ad220","Marketing Coordinator","E00445","Initial hire record",,,,"20265275",53058
+"Marketing","d5650425","2023-01-21","E00479-EVT-002","Termination","b57bbbe1","Marketing Coordinator","E00445",,,,"Retirement","20265275",53058
+"Engineering","69def7db","2020-06-11","E00480-EVT-001","Hire","fbe94810","Engineering Manager","E00338","Initial hire record",,,,"20265275",108503
+"Engineering","69def7db","2024-04-25","E00480-EVT-002","Termination","75829982","Engineering Manager","E00338",,,,"Contract ended","20265275",108503
+"Customer Support","c755dea6","2018-03-08","E00481-EVT-001","Hire","12bd8152","Implementation Specialist","E00109","Initial hire record",,,,"20265275",62499
+"Customer Support","c755dea6","2023-08-07","E00481-EVT-002","Termination","1a0d0ac1","Implementation Specialist","E00109",,,,"Relocation","20265275",62499
+"Sales","84c55962","2020-04-29","E00482-EVT-001","Hire","e03dff40","Senior Account Executive",,"Initial hire record",,,,"20265275",88915
+"Sales","84c55962","2024-10-09","E00482-EVT-002","Termination","7d96fd47","Senior Account Executive",,,,,"Relocation","20265275",88915
+"Operations","66d5420f","2020-03-10","E00483-EVT-001","Hire","ceb9038b","Operations Analyst","E00163","Initial hire record",,,,"20265275",74692
+"Operations","66d5420f","2024-01-01","E00483-EVT-002","Termination","4862ce14","Operations Analyst","E00163",,,,"Voluntary resignation","20265275",74692
+"Human Resources","9b5b0e32","2018-11-10","E00484-EVT-001","Hire","d9f44ea0","HR Manager","E00279","Initial hire record",,,,"20265275",96911
+"Sales","1011e24e","2019-07-18","E00485-EVT-001","Hire","46a9c8f2","Sales Development Rep","E00322","Initial hire record",,,,"20265275",60437
+"Sales","1011e24e","2023-10-02","E00485-EVT-002","Role Change","95c2debf","Senior Account Executive","E00322",,"Sales","Sales Development Rep",,"20265275",62290
+"Human Resources","32a22495","2018-05-31","E00486-EVT-001","Hire","98c4f6ab","Compensation Analyst","E00040","Initial hire record",,,,"20265275",84942
+"Human Resources","32a22495","2022-12-28","E00486-EVT-002","Termination","740d9067","Compensation Analyst","E00040",,,,"Involuntary termination","20265275",84942
+"Engineering","74f07d3b","2019-06-06","E00487-EVT-001","Hire","23729672","Engineering Manager","E00016","Initial hire record",,,,"20265275",99984
+"IT","1b86cef5","2019-12-15","E00488-EVT-001","Hire","acc36e0f","Help Desk Analyst","E00240","Initial hire record",,,,"20265275",87071
+"IT","1b86cef5","2021-07-24","E00488-EVT-002","Promotion","3cbb4d6d","IT Manager","E00240",,"IT","Help Desk Analyst",,"20265275",89755
+"IT","1b86cef5","2024-02-15","E00488-EVT-003","Termination","daca99d9","IT Manager","E00240",,,,"Relocation","20265275",89755
+"Customer Support","f62f9e7c","2019-07-11","E00489-EVT-001","Hire","34a811bd","Support Manager","E00311","Initial hire record",,,,"20265275",106444
+"Operations","b0b9279e","2018-08-23","E00490-EVT-001","Hire","1ad78b5b","Operations Associate","E00220","Initial hire record",,,,"20265275",66790
+"Operations","b0b9279e","2025-06-17","E00490-EVT-002","Promotion","f5ef8172","Operations Manager","E00220",,"Operations","Operations Associate",,"20265275",70009
+"Marketing","27e2acd7","2018-05-16","E00491-EVT-001","Hire","30e43b65","Content Specialist","E00109","Initial hire record",,,,"20265275",65635
+"Human Resources","3b853252","2020-05-12","E00492-EVT-001","Hire","fe6a984d","Recruiter","E00088","Initial hire record",,,,"20265275",66907
+"Human Resources","3b853252","2022-07-09","E00492-EVT-002","Termination","0ddbcfa4","Recruiter","E00088",,,,"Voluntary resignation","20265275",66907
+"Human Resources","507e337f","2020-08-20","E00493-EVT-001","Hire","b86c1d02","HR Coordinator","E00213","Initial hire record",,,,"20265275",46116
+"Human Resources","507e337f","2021-05-22","E00493-EVT-002","Termination","bf36c7bb","HR Coordinator","E00213",,,,"Retirement","20265275",46116
+"Finance","a261123c","2019-04-04","E00494-EVT-001","Hire","e092083d","Accountant","E00072","Initial hire record",,,,"20265275",58134
+"Finance","a261123c","2024-09-23","E00494-EVT-002","Termination","f809823f","Accountant","E00072",,,,"Voluntary resignation","20265275",58134
+"Sales","028a2ad7","2020-02-17","E00495-EVT-001","Hire","5f34b78a","Senior Account Executive","E00474","Initial hire record",,,,"20265275",89844
+"Sales","028a2ad7","2021-07-13","E00495-EVT-002","Role Change","5b611eda","Sales Manager","E00474",,"Sales","Senior Account Executive",,"20265275",98797
+"Sales","028a2ad7","2023-12-26","E00495-EVT-003","Termination","64ba1e4e","Sales Manager","E00474",,,,"Contract ended","20265275",98797
+"Marketing","dca28c76","2019-04-08","E00496-EVT-001","Hire","2ced6e44","Product Marketing Manager","E00152","Initial hire record",,,,"20265275",99008
+"Finance","ebdc94e8","2019-03-04","E00497-EVT-001","Hire","40265710","Payroll Specialist","E00264","Initial hire record",,,,"20265275",72350
+"Operations","382477c1","2019-09-22","E00498-EVT-001","Hire","7814a65c","Operations Analyst","E00076","Initial hire record",,,,"20265275",87915
+"Operations","382477c1","2022-12-30","E00498-EVT-002","Termination","9472a44f","Operations Analyst","E00076",,,,"Involuntary termination","20265275",87915
+"Engineering","bae49b97","2020-10-25","E00499-EVT-001","Hire","9708599f","DevOps Engineer","E00028","Initial hire record",,,,"20265275",125118
+"Engineering","bae49b97","2021-01-05","E00499-EVT-002","Termination","3f3dc279","DevOps Engineer","E00028",,,,"Contract ended","20265275",125118
+"Human Resources","928b4413","2018-08-16","E00500-EVT-001","Hire","4cf31116","HR Generalist","E00459","Initial hire record",,,,"20265275",63195
+"Marketing","928b4413","2024-04-03","E00500-EVT-002","Role Change","6230e838","Marketing Coordinator","E00459",,"Human Resources","HR Generalist",,"20265275",68369
+"Marketing","928b4413","2025-04-01","E00500-EVT-003","Termination","fa8412be","Marketing Coordinator","E00459",,,,"Contract ended","20265275",68369
+"Customer Support","eda1900e","2021-02-03","E00501-EVT-001","Hire","93d9f150","Customer Success Manager",,"Replacement/new hire during 2021",,,,"20265275",105657
+"Legal","55fb8a91","2021-03-21","E00502-EVT-001","Hire","800e89ab","Counsel","E00081","Replacement/new hire during 2021",,,,"20265275",148818
+"Legal","55fb8a91","2024-05-10","E00502-EVT-002","Termination","d14c15a8","Counsel","E00081",,,,"Relocation","20265275",148818
+"Sales","932e8434","2021-06-09","E00503-EVT-001","Hire","e0ed14e5","Sales Manager","E00389","Replacement/new hire during 2021",,,,"20265275",101678
+"Legal","6f6b7064","2021-12-22","E00504-EVT-001","Hire","445c7d1b","Paralegal","E00392","Replacement/new hire during 2021",,,,"20265275",69264
+"Legal","6f6b7064","2025-11-22","E00504-EVT-002","Termination","46bc24cd","Paralegal","E00392",,,,"Involuntary termination","20265275",69264
+"Legal","e9a00afa","2021-03-07","E00505-EVT-001","Hire","e9f70da4","Compliance Analyst","E00322","Replacement/new hire during 2021",,,,"20265275",89345
+"Sales","c7f21a1b","2021-09-04","E00506-EVT-001","Hire","0315c57a","Sales Manager","E00069","Replacement/new hire during 2021",,,,"20265275",106856
+"Sales","c7f21a1b","2025-10-18","E00506-EVT-002","Termination","b95eddd8","Sales Manager","E00069",,,,"Voluntary resignation","20265275",106856
+"Customer Support","09c776f6","2021-12-19","E00507-EVT-001","Hire","ad584fbd","Implementation Specialist","E00001","Replacement/new hire during 2021",,,,"20265275",59576
+"Customer Support","09c776f6","2022-03-19","E00507-EVT-002","Role Change","8667bcb2","Customer Success Associate","E00001",,"Customer Support","Implementation Specialist",,"20265275",64263
+"Legal","a1b78bd2","2021-11-10","E00508-EVT-001","Hire","cff9ed25","Compliance Analyst","E00351","Replacement/new hire during 2021",,,,"20265275",83389
+"Legal","a1b78bd2","2023-05-30","E00508-EVT-002","Termination","f69a9ea0","Compliance Analyst","E00351",,,,"Involuntary termination","20265275",83389
+"Customer Support","ebd1adbd","2021-12-08","E00509-EVT-001","Hire","15dff218","Customer Success Manager","E00399","Replacement/new hire during 2021",,,,"20265275",105017
+"Customer Support","ebd1adbd","2024-12-03","E00509-EVT-002","Termination","f6af8648","Customer Success Manager","E00399",,,,"Retirement","20265275",105017
+"Customer Support","7ccefaa7","2021-01-05","E00510-EVT-001","Hire","75804513","Customer Success Manager","E00487","Replacement/new hire during 2021",,,,"20265275",101187
+"Sales","9944353e","2021-02-04","E00511-EVT-001","Hire","abb4fdb4","Sales Operations Analyst","E00272","Replacement/new hire during 2021",,,,"20265275",84851
+"Sales","9944353e","2022-10-20","E00511-EVT-002","Termination","1093158a","Sales Operations Analyst","E00272",,,,"Voluntary resignation","20265275",84851
+"Finance","c9ebd403","2021-09-13","E00512-EVT-001","Hire","9226da1d","Accountant","E00433","Replacement/new hire during 2021",,,,"20265275",99520
+"Finance","c9ebd403","2024-10-31","E00512-EVT-002","Promotion","975a8cbe","Financial Analyst","E00433",,"Finance","Accountant",,"20265275",107167
+"Engineering","727b4542","2021-02-25","E00513-EVT-001","Hire","17c5b32f","Senior Software Engineer","E00366","Replacement/new hire during 2021",,,,"20265275",140729
+"IT","1abc30db","2021-03-13","E00514-EVT-001","Hire","d2a7e7c3","Help Desk Analyst","E00235","Replacement/new hire during 2021",,,,"20265275",69171
+"Finance","e5a888cc","2021-02-10","E00515-EVT-001","Hire","c775ebf9","Controller","E00176","Replacement/new hire during 2021",,,,"20265275",135167
+"IT","d8a2bf14","2021-11-09","E00516-EVT-001","Hire","480e3cce","IT Manager","E00352","Replacement/new hire during 2021",,,,"20265275",112385
+"IT","d8a2bf14","2024-04-08","E00516-EVT-002","Lateral Transfer","672bff07","Network Engineer","E00352",,"IT","IT Manager",,"20265275",124101
+"Marketing","7c1092d4","2021-05-01","E00517-EVT-001","Hire","bd75628d","Marketing Coordinator",,"Replacement/new hire during 2021",,,,"20265275",59172
+"Marketing","7c1092d4","2022-10-17","E00517-EVT-002","Termination","6288eb51","Marketing Coordinator",,,,,"Contract ended","20265275",59172
+"Marketing","0f678105","2021-09-02","E00518-EVT-001","Hire","61674397","Product Marketing Manager","E00498","Replacement/new hire during 2021",,,,"20265275",105942
+"Marketing","0f678105","2023-07-15","E00518-EVT-002","Termination","452d6994","Product Marketing Manager","E00498",,,,"Retirement","20265275",105942
+"Legal","73b4d94f","2021-03-01","E00519-EVT-001","Hire","b06bccab","Contracts Specialist","E00351","Replacement/new hire during 2021",,,,"20265275",67350
+"Legal","73b4d94f","2022-02-16","E00519-EVT-002","Termination","fd3351c2","Contracts Specialist","E00351",,,,"Involuntary termination","20265275",67350
+"Engineering","662f2a56","2021-04-03","E00520-EVT-001","Hire","73873d52","DevOps Engineer",,"Replacement/new hire during 2021",,,,"20265275",120260
+"Customer Support","fed2116b","2021-07-07","E00521-EVT-001","Hire","2f8eb8de","Customer Success Manager","E00374","Replacement/new hire during 2021",,,,"20265275",114068
+"IT","4579d3c1","2021-07-10","E00522-EVT-001","Hire","e857072c","Help Desk Analyst",,"Replacement/new hire during 2021",,,,"20265275",73651
+"IT","4579d3c1","2021-08-30","E00522-EVT-002","Lateral Transfer","c31f9aac","Network Engineer",,,"IT","Help Desk Analyst",,"20265275",78928
+"IT","4579d3c1","2022-10-28","E00522-EVT-003","Termination","08d8ac6d","Network Engineer",,,,,"Retirement","20265275",78928
+"Human Resources","668adcf0","2021-07-16","E00523-EVT-001","Hire","4f802b25","Compensation Analyst",,"Replacement/new hire during 2021",,,,"20265275",83549
+"Human Resources","668adcf0","2025-06-28","E00523-EVT-002","Termination","0f174211","Compensation Analyst",,,,,"Retirement","20265275",83549
+"IT","587b8927","2021-06-24","E00524-EVT-001","Hire","7ed8601c","Help Desk Analyst","E00247","Replacement/new hire during 2021",,,,"20265275",89366
+"IT","587b8927","2022-10-06","E00524-EVT-002","Promotion","cec46d1d","Systems Administrator","E00247",,"IT","Help Desk Analyst",,"20265275",93062
+"Sales","bf9ea384","2021-05-08","E00525-EVT-001","Hire","d7036206","Sales Development Rep","E00197","Replacement/new hire during 2021",,,,"20265275",105550
+"Human Resources","416ebb31","2021-01-19","E00526-EVT-001","Hire","5b893f4b","Compensation Analyst","E00481","Replacement/new hire during 2021",,,,"20265275",80754
+"Human Resources","416ebb31","2023-07-02","E00526-EVT-002","Termination","b23e294d","Compensation Analyst","E00481",,,,"Voluntary resignation","20265275",80754
+"Engineering","b9c23815","2021-12-02","E00527-EVT-001","Hire","d73724ea","Engineering Manager","E00375","Replacement/new hire during 2021",,,,"20265275",97624
+"Human Resources","34481982","2021-05-01","E00528-EVT-001","Hire","9cfc8f34","HR Manager","E00290","Replacement/new hire during 2021",,,,"20265275",107459
+"Human Resources","34481982","2022-09-14","E00528-EVT-002","Termination","c094138b","HR Manager","E00290",,,,"Involuntary termination","20265275",107459
+"Marketing","4f044b9a","2021-11-30","E00529-EVT-001","Hire","c5216ed2","Product Marketing Manager","E00174","Replacement/new hire during 2021",,,,"20265275",108278
+"Marketing","4f044b9a","2023-07-10","E00529-EVT-002","Lateral Transfer","b1ef76db","Marketing Manager","E00174",,"Marketing","Product Marketing Manager",,"20265275",112267
+"Engineering","e30bcedf","2021-11-29","E00530-EVT-001","Hire","70327922","DevOps Engineer","E00529","Replacement/new hire during 2021",,,,"20265275",113570
+"Engineering","e30bcedf","2023-04-15","E00530-EVT-002","Promotion","1a143c03","Engineering Manager","E00529",,"Engineering","DevOps Engineer",,"20265275",118866
+"IT","4c2eef07","2021-05-05","E00531-EVT-001","Hire","c780dc2a","Security Analyst","E00186","Replacement/new hire during 2021",,,,"20265275",80860
+"IT","4c2eef07","2022-09-22","E00531-EVT-002","Termination","3e393870","Security Analyst","E00186",,,,"Voluntary resignation","20265275",80860
+"Engineering","9d361ca0","2021-05-06","E00532-EVT-001","Hire","5365d911","Engineering Manager","E00382","Replacement/new hire during 2021",,,,"20265275",109356
+"Sales","66e6486b","2021-12-31","E00533-EVT-001","Hire","fa400d15","Sales Manager","E00071","Replacement/new hire during 2021",,,,"20265275",111396
+"Sales","66e6486b","2025-11-27","E00533-EVT-002","Termination","2518cb70","Sales Manager","E00071",,,,"Contract ended","20265275",111396
+"Marketing","db928c06","2021-11-08","E00534-EVT-001","Hire","39fa491c","Marketing Manager","E00412","Replacement/new hire during 2021",,,,"20265275",116205
+"Legal","075b7051","2021-03-19","E00535-EVT-001","Hire","5a034979","Legal Assistant",,"Replacement/new hire during 2021",,,,"20265275",113693
+"Legal","772a5f85","2021-09-18","E00536-EVT-001","Hire","2981ca6b","Counsel","E00222","Replacement/new hire during 2021",,,,"20265275",159981
+"Legal","772a5f85","2025-08-23","E00536-EVT-002","Termination","356b3b0b","Counsel","E00222",,,,"Relocation","20265275",159981
+"Engineering","bd49f117","2021-05-13","E00537-EVT-001","Hire","d4b934a5","Senior Software Engineer","E00524","Replacement/new hire during 2021",,,,"20265275",145862
+"Finance","bd49f117","2022-10-09","E00537-EVT-002","Promotion","4fffbf83","Accountant","E00524",,"Engineering","Senior Software Engineer",,"20265275",159593
+"Finance","bd49f117","2024-02-11","E00537-EVT-003","Termination","d8d94733","Accountant","E00524",,,,"Contract ended","20265275",159593
+"Sales","cc187938","2021-08-07","E00538-EVT-001","Hire","d88198fe","Sales Manager","E00474","Replacement/new hire during 2021",,,,"20265275",110576
+"Marketing","978436c3","2021-09-17","E00539-EVT-001","Hire","afdd403d","Content Specialist","E00361","Replacement/new hire during 2021",,,,"20265275",63988
+"IT","38dae5b5","2021-05-16","E00540-EVT-001","Hire","9af16c56","Systems Administrator","E00464","Replacement/new hire during 2021",,,,"20265275",85809
+"Legal","38dae5b5","2025-02-08","E00540-EVT-002","Promotion","86164cb2","Counsel","E00464",,"IT","Systems Administrator",,"20265275",95537
+"Operations","feffba0c","2021-11-11","E00541-EVT-001","Hire","6576967d","Logistics Coordinator","E00139","Replacement/new hire during 2021",,,,"20265275",55461
+"IT","815f2d15","2021-05-28","E00542-EVT-001","Hire","7b7c0fbe","Help Desk Analyst","E00191","Replacement/new hire during 2021",,,,"20265275",82749
+"Sales","d50cc172","2021-04-21","E00543-EVT-001","Hire","8f50296b","Sales Manager",,"Replacement/new hire during 2021",,,,"20265275",109402
+"Operations","9a9a2c11","2021-10-21","E00544-EVT-001","Hire","64699b1a","Operations Analyst","E00444","Replacement/new hire during 2021",,,,"20265275",74457
+"IT","df6eadf3","2021-10-02","E00545-EVT-001","Hire","9ace5a16","Security Analyst","E00478","Replacement/new hire during 2021",,,,"20265275",75502
+"IT","df6eadf3","2025-12-04","E00545-EVT-002","Termination","6e94df9e","Security Analyst","E00478",,,,"Relocation","20265275",75502
+"Operations","be7c1b06","2021-01-22","E00546-EVT-001","Hire","8ca8dcbd","Operations Manager","E00016","Replacement/new hire during 2021",,,,"20265275",101142
+"Engineering","2d6cfa47","2021-10-29","E00547-EVT-001","Hire","f062e7d0","Software Engineer I","E00345","Replacement/new hire during 2021",,,,"20265275",88816
+"Legal","1d3e5f7e","2021-09-05","E00548-EVT-001","Hire","5c4bc97a","Compliance Analyst","E00304","Replacement/new hire during 2021",,,,"20265275",78319
+"Legal","1d3e5f7e","2021-09-25","E00548-EVT-002","Promotion","b6cb6267","Paralegal","E00304",,"Legal","Compliance Analyst",,"20265275",82902
+"Legal","1d3e5f7e","2025-08-19","E00548-EVT-003","Termination","4425b1da","Paralegal","E00304",,,,"Involuntary termination","20265275",82902
+"Finance","d8a27fa3","2021-06-20","E00549-EVT-001","Hire","4d5198eb","Payroll Specialist","E00048","Replacement/new hire during 2021",,,,"20265275",57711
+"Marketing","e551ae43","2021-01-19","E00550-EVT-001","Hire","9c6e37ac","Content Specialist","E00340","Replacement/new hire during 2021",,,,"20265275",63533
+"IT","59c41966","2022-06-08","E00551-EVT-001","Hire","c98cabf6","Systems Administrator","E00186","Replacement/new hire during 2022",,,,"20265275",58495
+"Marketing","dbae5a88","2022-08-19","E00552-EVT-001","Hire","b9592e4d","Marketing Manager","E00109","Replacement/new hire during 2022",,,,"20265275",116677
+"Customer Support","0e97905f","2022-01-17","E00553-EVT-001","Hire","c460992a","Customer Success Manager","E00402","Replacement/new hire during 2022",,,,"20265275",99778
+"Customer Support","0e97905f","2024-04-26","E00553-EVT-002","Termination","cb05019c","Customer Success Manager","E00402",,,,"Retirement","20265275",99778
+"Finance","8961771a","2022-07-03","E00554-EVT-001","Hire","f86070af","Financial Analyst","E00347","Replacement/new hire during 2022",,,,"20265275",79036
+"Human Resources","595adddf","2022-09-17","E00555-EVT-001","Hire","4ecc2a63","HR Generalist","E00487","Replacement/new hire during 2022",,,,"20265275",59534
+"Engineering","0a2b04ff","2022-08-23","E00556-EVT-001","Hire","8fc9afa2","Senior Software Engineer","E00001","Replacement/new hire during 2022",,,,"20265275",138975
+"Customer Support","6c01ef34","2022-06-26","E00557-EVT-001","Hire","9de99a5c","Customer Success Associate","E00434","Replacement/new hire during 2022",,,,"20265275",61547
+"Customer Support","6c01ef34","2024-01-01","E00557-EVT-002","Termination","ff06e29b","Customer Success Associate","E00434",,,,"Relocation","20265275",61547
+"Operations","c705e7e2","2022-07-21","E00558-EVT-001","Hire","7d688a6c","Director of Operations",,"Replacement/new hire during 2022",,,,"20265275",153501
+"Operations","c705e7e2","2023-10-15","E00558-EVT-002","Termination","b18d0a97","Director of Operations",,,,,"Relocation","20265275",153501
+"Human Resources","7ec60ed7","2022-06-04","E00559-EVT-001","Hire","615b0ddf","HR Generalist","E00249","Replacement/new hire during 2022",,,,"20265275",70267
+"Finance","f945b423","2022-12-18","E00560-EVT-001","Hire","734fd457","Payroll Specialist","E00264","Replacement/new hire during 2022",,,,"20265275",56322
+"Customer Support","39b73f08","2022-07-10","E00561-EVT-001","Hire","4d06c0ce","Implementation Specialist","E00533","Replacement/new hire during 2022",,,,"20265275",68517
+"Customer Support","39b73f08","2025-08-13","E00561-EVT-002","Termination","676a75a0","Implementation Specialist","E00533",,,,"Involuntary termination","20265275",68517
+"Customer Support","c50e13db","2022-01-25","E00562-EVT-001","Hire","986efd62","Support Manager","E00076","Replacement/new hire during 2022",,,,"20265275",111229
+"Sales","3b0b3825","2022-11-02","E00563-EVT-001","Hire","bb9ebcad","Sales Development Rep","E00026","Replacement/new hire during 2022",,,,"20265275",62319
+"Legal","266851c4","2022-08-23","E00564-EVT-001","Hire","0a2808ba","Counsel",,"Replacement/new hire during 2022",,,,"20265275",147331
+"Finance","ff01347b","2022-03-01","E00565-EVT-001","Hire","3651b29f","Finance Manager","E00196","Replacement/new hire during 2022",,,,"20265275",102279
+"Engineering","17e26c9f","2022-05-20","E00566-EVT-001","Hire","12dd1fa5","Senior Software Engineer","E00017","Replacement/new hire during 2022",,,,"20265275",126165
+"Customer Support","4cb858a5","2022-08-04","E00567-EVT-001","Hire","eb348d13","Implementation Specialist","E00344","Replacement/new hire during 2022",,,,"20265275",73800
+"Operations","9c3297b7","2022-12-05","E00568-EVT-001","Hire","01d154c3","Operations Associate","E00051","Replacement/new hire during 2022",,,,"20265275",110855
+"Operations","9c3297b7","2025-05-19","E00568-EVT-002","Termination","aef30409","Operations Associate","E00051",,,,"Involuntary termination","20265275",110855
+"Marketing","41995d15","2022-08-09","E00569-EVT-001","Hire","70b3480f","Marketing Manager","E00019","Replacement/new hire during 2022",,,,"20265275",109611
+"Marketing","41995d15","2024-11-04","E00569-EVT-002","Termination","5efbd7e7","Marketing Manager","E00019",,,,"Retirement","20265275",109611
+"Operations","2ddf721f","2022-07-29","E00570-EVT-001","Hire","8766c62f","Director of Operations","E00272","Replacement/new hire during 2022",,,,"20265275",147535
+"Operations","2ddf721f","2025-08-26","E00570-EVT-002","Termination","220d8579","Director of Operations","E00272",,,,"Involuntary termination","20265275",147535
+"Human Resources","eda6ad72","2022-06-21","E00571-EVT-001","Hire","a72b9873","HR Manager","E00432","Replacement/new hire during 2022",,,,"20265275",111205
+"Human Resources","eda6ad72","2025-09-05","E00571-EVT-002","Lateral Transfer","4701b0bc","Recruiter","E00432",,"Human Resources","HR Manager",,"20265275",116321
+"IT","f9195332","2022-10-19","E00572-EVT-001","Hire","92b656ca","Systems Administrator","E00058","Replacement/new hire during 2022",,,,"20265275",95992
+"Sales","5fa5d2fe","2022-01-16","E00573-EVT-001","Hire","64503a9b","Sales Development Rep","E00294","Replacement/new hire during 2022",,,,"20265275",68566
+"Legal","8cff25b9","2022-07-17","E00574-EVT-001","Hire","e9add60e","Paralegal","E00169","Replacement/new hire during 2022",,,,"20265275",61305
+"Customer Support","22039562","2022-03-05","E00575-EVT-001","Hire","0e59c815","Support Manager","E00170","Replacement/new hire during 2022",,,,"20265275",99395
+"Customer Support","22039562","2023-09-18","E00575-EVT-002","Promotion","5672c541","Customer Success Manager","E00170",,"Customer Support","Support Manager",,"20265275",110415
+"Customer Support","80cf7190","2022-05-14","E00576-EVT-001","Hire","89f0c532","Customer Success Associate","E00285","Replacement/new hire during 2022",,,,"20265275",77442
+"Customer Support","80cf7190","2025-05-02","E00576-EVT-002","Lateral Transfer","1ab0b79c","Support Specialist","E00285",,"Customer Support","Customer Success Associate",,"20265275",85332
+"Engineering","b93b4715","2022-11-21","E00577-EVT-001","Hire","32520512","Engineering Manager","E00283","Replacement/new hire during 2022",,,,"20265275",105985
+"Legal","5c56e173","2022-07-27","E00578-EVT-001","Hire","cf5db883","Counsel","E00109","Replacement/new hire during 2022",,,,"20265275",161629
+"Sales","733e875e","2022-04-25","E00579-EVT-001","Hire","7fceeec7","Account Executive","E00489","Replacement/new hire during 2022",,,,"20265275",85918
+"Marketing","d1bafec7","2022-02-04","E00580-EVT-001","Hire","4ac71264","Marketing Manager","E00339","Replacement/new hire during 2022",,,,"20265275",104895
+"Sales","b82649ef","2022-05-23","E00581-EVT-001","Hire","a80d259d","Sales Manager","E00464","Replacement/new hire during 2022",,,,"20265275",98993
+"Customer Support","70cfc5da","2022-09-01","E00582-EVT-001","Hire","ca2cc001","Support Specialist","E00377","Replacement/new hire during 2022",,,,"20265275",59468
+"Customer Support","70cfc5da","2024-02-08","E00582-EVT-002","Lateral Transfer","e09d7474","Implementation Specialist","E00377",,"Customer Support","Support Specialist",,"20265275",66471
+"Customer Support","0536a7a3","2022-05-23","E00583-EVT-002","Lateral Transfer","ade8119b","Customer Success Manager","E00185",,"Customer Support","Customer Success Associate",,"20265275",91280
+"Customer Support","0536a7a3","2022-06-18","E00583-EVT-001","Hire","aec5551f","Customer Success Associate","E00185","Replacement/new hire during 2022",,,,"20265275",88245
+"Customer Support","0536a7a3","2025-05-18","E00583-EVT-003","Promotion","06764f85","Customer Success Associate","E00185",,"Customer Support","Customer Success Manager",,"20265275",100536
+"Customer Support","ffcc4446","2022-04-02","E00584-EVT-001","Hire","590dfc9b","Customer Success Associate","E00427","Replacement/new hire during 2022",,,,"20265275",59296
+"Customer Support","ffcc4446","2023-11-26","E00584-EVT-002","Termination","6fd39bd9","Customer Success Associate","E00427",,,,"Voluntary resignation","20265275",59296
+"IT","7f7f1455","2022-12-11","E00585-EVT-001","Hire","31764f30","IT Manager","E00125","Replacement/new hire during 2022",,,,"20265275",101065
+"Marketing","f562901c","2022-08-19","E00586-EVT-001","Hire","7b7e83ab","Demand Generation Manager","E00257","Replacement/new hire during 2022",,,,"20265275",106093
+"Marketing","f562901c","2023-08-11","E00586-EVT-002","Termination","24b38e7a","Demand Generation Manager","E00257",,,,"Retirement","20265275",106093
+"Marketing","5beed776","2022-06-14","E00587-EVT-001","Hire","1a9248e3","Marketing Coordinator","E00210","Replacement/new hire during 2022",,,,"20265275",57008
+"Marketing","5beed776","2023-02-15","E00587-EVT-002","Termination","0c12ba6e","Marketing Coordinator","E00210",,,,"Relocation","20265275",57008
+"Customer Support","87540d2a","2022-05-24","E00588-EVT-001","Hire","0ee68049","Customer Success Associate","E00039","Replacement/new hire during 2022",,,,"20265275",94761
+"Sales","bceccdf7","2022-04-13","E00589-EVT-001","Hire","0efb3b59","Sales Manager","E00159","Replacement/new hire during 2022",,,,"20265275",114410
+"Customer Support","95892e0e","2022-07-17","E00590-EVT-002","Promotion","36d2a941","Support Specialist","E00429",,"Customer Support","Customer Success Associate",,"20265275",85576
+"Customer Support","95892e0e","2022-08-24","E00590-EVT-001","Hire","da528530","Customer Success Associate","E00429","Replacement/new hire during 2022",,,,"20265275",78737
+"Marketing","95892e0e","2024-06-08","E00590-EVT-003","Lateral Transfer","3de1a309","Content Specialist","E00429",,"Customer Support","Support Specialist",,"20265275",92279
+"Operations","112b3fa2","2022-09-16","E00591-EVT-001","Hire","e5bb2537","Operations Associate","E00497","Replacement/new hire during 2022",,,,"20265275",112218
+"Operations","112b3fa2","2025-04-06","E00591-EVT-002","Role Change","ae048890","Operations Manager","E00497",,"Operations","Operations Associate",,"20265275",122031
+"Finance","0dbc8d10","2022-05-22","E00592-EVT-001","Hire","e2ea364a","Finance Manager","E00551","Replacement/new hire during 2022",,,,"20265275",111260
+"Finance","0dbc8d10","2023-02-22","E00592-EVT-002","Termination","911de0ac","Finance Manager","E00551",,,,"Relocation","20265275",111260
+"Operations","96b54a1e","2022-01-05","E00593-EVT-001","Hire","a23e36b2","Operations Associate","E00094","Replacement/new hire during 2022",,,,"20265275",69760
+"Operations","96b54a1e","2023-06-20","E00593-EVT-002","Role Change","654c04bf","Logistics Coordinator","E00094",,"Operations","Operations Associate",,"20265275",73148
+"Human Resources","45fe7d6f","2022-11-05","E00594-EVT-001","Hire","a52c3073","HR Manager","E00343","Replacement/new hire during 2022",,,,"20265275",97292
+"Human Resources","45fe7d6f","2023-04-24","E00594-EVT-002","Termination","df150308","HR Manager","E00343",,,,"Relocation","20265275",97292
+"Operations","8f34c366","2022-08-16","E00595-EVT-001","Hire","deeec0b2","Operations Associate","E00468","Replacement/new hire during 2022",,,,"20265275",111854
+"Operations","8f34c366","2024-04-22","E00595-EVT-002","Termination","fb4d1ad8","Operations Associate","E00468",,,,"Relocation","20265275",111854
+"IT","017569df","2022-09-08","E00596-EVT-001","Hire","1f5b236c","Help Desk Analyst","E00205","Replacement/new hire during 2022",,,,"20265275",88819
+"Sales","f72a0314","2022-08-11","E00597-EVT-001","Hire","9aeeeba6","Sales Development Rep","E00150","Replacement/new hire during 2022",,,,"20265275",110561
+"Sales","f72a0314","2024-02-27","E00597-EVT-002","Termination","b5b9724c","Sales Development Rep","E00150",,,,"Relocation","20265275",110561
+"Customer Support","718b281a","2022-02-01","E00598-EVT-001","Hire","3ba78791","Support Specialist","E00544","Replacement/new hire during 2022",,,,"20265275",72536
+"Customer Support","718b281a","2023-03-28","E00598-EVT-002","Termination","bb220c2f","Support Specialist","E00544",,,,"Contract ended","20265275",72536
+"IT","06718db1","2022-07-26","E00599-EVT-001","Hire","80d270fb","Security Analyst","E00530","Replacement/new hire during 2022",,,,"20265275",89490
+"Human Resources","52ad5958","2022-04-25","E00600-EVT-001","Hire","1757e49e","Recruiter","E00043","Replacement/new hire during 2022",,,,"20265275",66018
+"Human Resources","52ad5958","2023-09-25","E00600-EVT-002","Termination","4e7b3532","Recruiter","E00043",,,,"Voluntary resignation","20265275",66018
+"Marketing","f559c815","2023-05-30","E00601-EVT-001","Hire","ab130ccf","Marketing Coordinator","E00507","Replacement/new hire during 2023",,,,"20265275",56505
+"Marketing","6c8c6bc4","2023-06-28","E00602-EVT-001","Hire","c5b4ab3f","Product Marketing Manager","E00582","Replacement/new hire during 2023",,,,"20265275",101637
+"Customer Support","b0aa8677","2023-06-22","E00603-EVT-001","Hire","70216a2e","Customer Success Manager","E00527","Replacement/new hire during 2023",,,,"20265275",110344
+"Operations","8409b41a","2023-03-16","E00604-EVT-001","Hire","6f54ea17","Logistics Coordinator","E00286","Replacement/new hire during 2023",,,,"20265275",54146
+"IT","d8218e6c","2023-11-28","E00605-EVT-001","Hire","bdd153d1","Network Engineer","E00014","Replacement/new hire during 2023",,,,"20265275",108184
+"Marketing","a57f58fb","2023-08-09","E00606-EVT-001","Hire","5a6470ea","Demand Generation Manager","E00175","Replacement/new hire during 2023",,,,"20265275",108131
+"Marketing","3f8fff95","2023-04-25","E00607-EVT-001","Hire","892c41be","Marketing Manager","E00572","Replacement/new hire during 2023",,,,"20265275",111246
+"Marketing","51b9d022","2023-05-22","E00608-EVT-001","Hire","14114876","Marketing Coordinator","E00506","Replacement/new hire during 2023",,,,"20265275",61669
+"Human Resources","49596400","2023-01-28","E00609-EVT-001","Hire","9be0a187","HR Manager","E00539","Replacement/new hire during 2023",,,,"20265275",107742
+"Operations","8e6d5e8a","2023-07-15","E00610-EVT-001","Hire","f0cfaf32","Operations Manager","E00248","Replacement/new hire during 2023",,,,"20265275",111545
+"Operations","8e6d5e8a","2024-11-02","E00610-EVT-002","Termination","4e8eed21","Operations Manager","E00248",,,,"Retirement","20265275",111545
+"Finance","3e39bd62","2023-05-12","E00611-EVT-001","Hire","fc480da9","Controller","E00043","Replacement/new hire during 2023",,,,"20265275",131668
+"Customer Support","925a6a9e","2023-10-02","E00612-EVT-001","Hire","b82d480e","Customer Success Associate","E00065","Replacement/new hire during 2023",,,,"20265275",69311
+"Legal","a94d68e8","2023-02-21","E00613-EVT-001","Hire","9d15061c","Contracts Specialist","E00117","Replacement/new hire during 2023",,,,"20265275",69307
+"Human Resources","15c9c777","2023-12-04","E00614-EVT-001","Hire","11745f59","Compensation Analyst","E00367","Replacement/new hire during 2023",,,,"20265275",88370
+"Human Resources","15c9c777","2025-05-26","E00614-EVT-002","Termination","67a983f8","Compensation Analyst","E00367",,,,"Retirement","20265275",88370
+"Operations","538ef9b9","2023-09-09","E00615-EVT-001","Hire","3b6971be","Operations Associate","E00233","Replacement/new hire during 2023",,,,"20265275",56561
+"Operations","538ef9b9","2025-06-06","E00615-EVT-002","Promotion","4cee4f2e","Logistics Coordinator","E00233",,"Operations","Operations Associate",,"20265275",61455
+"Marketing","684307cc","2023-10-01","E00616-EVT-001","Hire","4ca4d8fd","Marketing Coordinator",,"Replacement/new hire during 2023",,,,"20265275",43916
+"IT","cb2ce261","2023-02-07","E00617-EVT-001","Hire","281ac9b4","Security Analyst","E00401","Replacement/new hire during 2023",,,,"20265275",75671
+"Sales","317a50e1","2023-12-15","E00618-EVT-001","Hire","c66b7344","Sales Operations Analyst","E00612","Replacement/new hire during 2023",,,,"20265275",87695
+"Human Resources","435df9c0","2023-03-07","E00619-EVT-001","Hire","e9bae6cc","Compensation Analyst",,"Replacement/new hire during 2023",,,,"20265275",76306
+"Operations","a3a32aa1","2023-02-14","E00620-EVT-001","Hire","fb12a5ee","Operations Analyst","E00150","Replacement/new hire during 2023",,,,"20265275",87178
+"Engineering","a993afcf","2023-11-02","E00621-EVT-001","Hire","05c59a4e","DevOps Engineer","E00356","Replacement/new hire during 2023",,,,"20265275",112345
+"Finance","3468ad13","2023-04-05","E00622-EVT-001","Hire","9a7f970a","Financial Analyst","E00457","Replacement/new hire during 2023",,,,"20265275",89552
+"Human Resources","4c58c717","2023-03-28","E00623-EVT-001","Hire","8074747e","HR Manager","E00107","Replacement/new hire during 2023",,,,"20265275",106540
+"Customer Support","60f94a9c","2023-11-27","E00624-EVT-001","Hire","00014ff0","Implementation Specialist","E00431","Replacement/new hire during 2023",,,,"20265275",65650
+"Operations","b084eafa","2023-03-24","E00625-EVT-001","Hire","e4ccb685","Logistics Coordinator","E00308","Replacement/new hire during 2023",,,,"20265275",55061
+"Operations","b084eafa","2024-01-04","E00625-EVT-002","Lateral Transfer","3f643cda","Director of Operations","E00308",,"Operations","Logistics Coordinator",,"20265275",61517
+"Marketing","b7d390a6","2023-06-16","E00626-EVT-001","Hire","e24b1cfd","Demand Generation Manager","E00372","Replacement/new hire during 2023",,,,"20265275",109070
+"Customer Support","d15fcf4d","2023-11-16","E00627-EVT-001","Hire","a6946c09","Customer Success Manager",,"Replacement/new hire during 2023",,,,"20265275",109504
+"Operations","33715ee7","2023-04-12","E00628-EVT-001","Hire","6d913981","Director of Operations","E00330","Replacement/new hire during 2023",,,,"20265275",140937
+"Finance","5bf67a28","2023-07-02","E00629-EVT-001","Hire","527ae6ce","Payroll Specialist","E00159","Replacement/new hire during 2023",,,,"20265275",59652
+"Finance","5bf67a28","2025-01-14","E00629-EVT-002","Lateral Transfer","5ed25732","Finance Manager","E00159",,"Finance","Payroll Specialist",,"20265275",66550
+"Operations","4238022a","2023-10-15","E00630-EVT-001","Hire","f4e9b590","Operations Analyst","E00487","Replacement/new hire during 2023",,,,"20265275",87098
+"Customer Support","2dccf6c9","2023-10-20","E00631-EVT-001","Hire","33212925","Implementation Specialist","E00019","Replacement/new hire during 2023",,,,"20265275",58958
+"Customer Support","23c7fa02","2023-11-15","E00632-EVT-001","Hire","f91e021b","Support Specialist","E00125","Replacement/new hire during 2023",,,,"20265275",72343
+"Customer Support","0a932cfe","2023-06-20","E00633-EVT-001","Hire","a1ebacf5","Support Specialist",,"Replacement/new hire during 2023",,,,"20265275",71064
+"Operations","9a258a2f","2023-12-29","E00634-EVT-001","Hire","8cda7d96","Operations Manager","E00250","Replacement/new hire during 2023",,,,"20265275",107210
+"Finance","a52b04e6","2023-10-20","E00635-EVT-001","Hire","f130bcdc","Financial Analyst","E00589","Replacement/new hire during 2023",,,,"20265275",76764
+"Finance","03efb985","2023-02-16","E00636-EVT-001","Hire","41c29771","Financial Analyst",,"Replacement/new hire during 2023",,,,"20265275",72001
+"Finance","03efb985","2025-03-17","E00636-EVT-002","Termination","c5ea45fb","Financial Analyst",,,,,"Voluntary resignation","20265275",72001
+"Human Resources","59d28a9d","2023-04-05","E00637-EVT-001","Hire","a0f50409","Compensation Analyst",,"Replacement/new hire during 2023",,,,"20265275",85632
+"Human Resources","59d28a9d","2023-12-20","E00637-EVT-002","Role Change","cf7590a4","Recruiter",,,"Human Resources","Compensation Analyst",,"20265275",93396
+"Operations","ba1e3568","2023-11-24","E00638-EVT-001","Hire","5842cbde","Director of Operations","E00186","Replacement/new hire during 2023",,,,"20265275",145352
+"Customer Support","7e84f744","2023-04-22","E00639-EVT-002","Lateral Transfer","25568417","Support Manager","E00537",,"Customer Support","Support Specialist",,"20265275",60138
+"Customer Support","7e84f744","2023-12-12","E00639-EVT-001","Hire","080976a5","Support Specialist","E00537","Replacement/new hire during 2023",,,,"20265275",55891
+"Human Resources","064aab86","2023-07-29","E00640-EVT-001","Hire","8545c311","Recruiter","E00236","Replacement/new hire during 2023",,,,"20265275",78235
+"Engineering","34c76a83","2023-10-31","E00641-EVT-001","Hire","98818312","Software Engineer II","E00017","Replacement/new hire during 2023",,,,"20265275",82026
+"Operations","95ba88a7","2023-09-07","E00642-EVT-001","Hire","7ca901ed","Operations Analyst","E00071","Replacement/new hire during 2023",,,,"20265275",70958
+"Operations","95ba88a7","2024-04-15","E00642-EVT-002","Termination","6121807e","Operations Analyst","E00071",,,,"Contract ended","20265275",70958
+"Operations","7985f148","2023-03-04","E00643-EVT-001","Hire","baf9144c","Director of Operations","E00205","Replacement/new hire during 2023",,,,"20265275",155631
+"Customer Support","27e4d04a","2023-10-12","E00644-EVT-001","Hire","243112d7","Customer Success Manager","E00239","Replacement/new hire during 2023",,,,"20265275",107165
+"Customer Support","27e4d04a","2024-09-24","E00644-EVT-002","Termination","ef4c9803","Customer Success Manager","E00239",,,,"Contract ended","20265275",107165
+"Marketing","78795bdb","2023-09-28","E00645-EVT-001","Hire","dc0686a2","Marketing Coordinator","E00612","Replacement/new hire during 2023",,,,"20265275",59087
+"Engineering","5cb393ca","2023-06-13","E00646-EVT-001","Hire","f5aa1a01","Senior Software Engineer","E00423","Replacement/new hire during 2023",,,,"20265275",141882
+"IT","d4e11f1b","2023-06-01","E00647-EVT-001","Hire","8295fb9c","Systems Administrator",,"Replacement/new hire during 2023",,,,"20265275",56656
+"Customer Support","807f73cc","2023-03-25","E00648-EVT-001","Hire","655bede4","Customer Success Manager","E00640","Replacement/new hire during 2023",,,,"20265275",115217
+"Human Resources","1d0a06d9","2023-06-15","E00649-EVT-001","Hire","261e66cb","Recruiter","E00029","Replacement/new hire during 2023",,,,"20265275",81534
+"Human Resources","1d0a06d9","2024-12-14","E00649-EVT-002","Termination","fd4ebbbd","Recruiter","E00029",,,,"Involuntary termination","20265275",81534
+"Marketing","7b383ccb","2023-09-10","E00650-EVT-001","Hire","c613d172","Marketing Coordinator","E00369","Replacement/new hire during 2023",,,,"20265275",56125
+"Sales","ef613683","2024-07-26","E00651-EVT-001","Hire","880b12f9","Account Executive","E00420","Replacement/new hire during 2024",,,,"20265275",90924
+"Sales","128a1806","2024-07-17","E00652-EVT-001","Hire","73a1233e","Senior Account Executive","E00337","Replacement/new hire during 2024",,,,"20265275",93285
+"Marketing","a690bc84","2024-01-14","E00653-EVT-001","Hire","76ceeee8","Product Marketing Manager",,"Replacement/new hire during 2024",,,,"20265275",108450
+"Legal","0b419ebd","2024-04-20","E00654-EVT-001","Hire","92731c57","Paralegal","E00013","Replacement/new hire during 2024",,,,"20265275",79110
+"Finance","593b866d","2024-09-08","E00655-EVT-001","Hire","d1fdd29c","Controller","E00239","Replacement/new hire during 2024",,,,"20265275",136698
+"Engineering","e91ecbc9","2024-01-23","E00656-EVT-001","Hire","2306e370","DevOps Engineer","E00276","Replacement/new hire during 2024",,,,"20265275",120905
+"Engineering","e91ecbc9","2025-07-08","E00656-EVT-002","Termination","dd259815","DevOps Engineer","E00276",,,,"Retirement","20265275",120905
+"Legal","87eb707d","2024-08-02","E00657-EVT-001","Hire","3a80ce3a","Legal Assistant",,"Replacement/new hire during 2024",,,,"20265275",86041
+"IT","c2f70ae8","2024-12-03","E00658-EVT-001","Hire","a56bdc1d","Network Engineer","E00219","Replacement/new hire during 2024",,,,"20265275",90777
+"Finance","5eb67e28","2024-12-06","E00659-EVT-001","Hire","ebced3ca","Controller","E00010","Replacement/new hire during 2024",,,,"20265275",139712
+"Finance","5f6c134f","2024-12-07","E00660-EVT-001","Hire","ea096665","Financial Analyst","E00121","Replacement/new hire during 2024",,,,"20265275",73160
+"Human Resources","ff87acd1","2024-02-21","E00661-EVT-002","Promotion","e9193cee","Compensation Analyst","E00464",,"Human Resources","HR Generalist",,"20265275",75790
+"Human Resources","ff87acd1","2024-12-09","E00661-EVT-001","Hire","10e708f7","HR Generalist","E00464","Replacement/new hire during 2024",,,,"20265275",68244
+"Finance","e66dcfc9","2024-02-13","E00662-EVT-001","Hire","7bdf3c29","Controller","E00035","Replacement/new hire during 2024",,,,"20265275",135769
+"Engineering","cfe0311c","2024-06-21","E00663-EVT-001","Hire","09bb1e11","DevOps Engineer","E00277","Replacement/new hire during 2024",,,,"20265275",113981
+"IT","1ac7873a","2024-09-22","E00664-EVT-001","Hire","2d395d9d","Security Analyst","E00458","Replacement/new hire during 2024",,,,"20265275",82485
+"Sales","28b66499","2024-04-15","E00665-EVT-001","Hire","1d93277d","Account Executive","E00623","Replacement/new hire during 2024",,,,"20265275",100599
+"Operations","29a814c3","2024-07-20","E00666-EVT-001","Hire","2593a079","Director of Operations",,"Replacement/new hire during 2024",,,,"20265275",136107
+"Finance","ea8ec060","2024-04-02","E00667-EVT-001","Hire","edea34d5","Financial Analyst","E00607","Replacement/new hire during 2024",,,,"20265275",73027
+"Sales","78656211","2024-03-02","E00668-EVT-002","Promotion","77f73925","Senior Account Executive","E00463",,"Sales","Sales Operations Analyst",,"20265275",83154
+"Sales","78656211","2024-05-03","E00668-EVT-001","Hire","fb094cc8","Sales Operations Analyst","E00463","Replacement/new hire during 2024",,,,"20265275",76552
+"Sales","b0e25f66","2024-03-04","E00669-EVT-001","Hire","b5f360cf","Sales Operations Analyst","E00322","Replacement/new hire during 2024",,,,"20265275",72135
+"IT","260547d1","2024-02-11","E00670-EVT-001","Hire","c7fcd929","Help Desk Analyst","E00347","Replacement/new hire during 2024",,,,"20265275",82386
+"Customer Support","4cc08d07","2024-04-15","E00671-EVT-001","Hire","a112ae01","Implementation Specialist","E00063","Replacement/new hire during 2024",,,,"20265275",65221
+"IT","d785ed82","2024-08-19","E00672-EVT-001","Hire","62f23327","Help Desk Analyst","E00278","Replacement/new hire during 2024",,,,"20265275",69716
+"Legal","dceccfa0","2024-09-28","E00673-EVT-001","Hire","5b6d7fe8","Counsel","E00302","Replacement/new hire during 2024",,,,"20265275",152413
+"Sales","f97c25cb","2024-04-27","E00674-EVT-001","Hire","04521c2f","Account Executive","E00407","Replacement/new hire during 2024",,,,"20265275",94417
+"Finance","d5ec4cab","2024-02-21","E00675-EVT-001","Hire","7188fb9c","Accountant","E00150","Replacement/new hire during 2024",,,,"20265275",72632
+"Engineering","182db74c","2024-01-25","E00676-EVT-001","Hire","a922033c","Software Engineer II","E00109","Replacement/new hire during 2024",,,,"20265275",91370
+"Legal","6fd9d712","2024-12-12","E00677-EVT-001","Hire","8e72270d","Paralegal","E00556","Replacement/new hire during 2024",,,,"20265275",71943
+"Marketing","33ca62e4","2024-02-29","E00678-EVT-001","Hire","9a0f4b3d","Demand Generation Manager","E00302","Replacement/new hire during 2024",,,,"20265275",115804
+"Sales","3b73ebf2","2024-05-05","E00679-EVT-001","Hire","1fddd68d","Sales Operations Analyst",,"Replacement/new hire during 2024",,,,"20265275",73663
+"Sales","3b73ebf2","2024-09-10","E00679-EVT-002","Role Change","6a191dae","Sales Manager",,,"Sales","Sales Operations Analyst",,"20265275",79542
+"Human Resources","eecb7bee","2024-08-26","E00680-EVT-001","Hire","d5430c2b","Recruiter","E00646","Replacement/new hire during 2024",,,,"20265275",75666
+"Legal","56816ab8","2024-01-31","E00681-EVT-001","Hire","e940737f","Compliance Analyst","E00487","Replacement/new hire during 2024",,,,"20265275",69808
+"Legal","8e62d048","2024-09-16","E00682-EVT-001","Hire","540616aa","Counsel","E00128","Replacement/new hire during 2024",,,,"20265275",148204
+"Operations","0b9e2c37","2024-04-09","E00683-EVT-001","Hire","e5f7c40d","Director of Operations","E00653","Replacement/new hire during 2024",,,,"20265275",149683
+"Finance","fccf24c3","2024-12-08","E00684-EVT-001","Hire","09a3c793","Accountant","E00277","Replacement/new hire during 2024",,,,"20265275",85120
+"Sales","dbb8d8f1","2024-09-17","E00685-EVT-001","Hire","b0c80358","Senior Account Executive","E00555","Replacement/new hire during 2024",,,,"20265275",90849
+"Operations","a03fbb77","2024-06-18","E00686-EVT-001","Hire","77d3c9f0","Director of Operations","E00135","Replacement/new hire during 2024",,,,"20265275",145800
+"Customer Support","39a180a5","2024-10-28","E00687-EVT-001","Hire","16e38d74","Support Manager","E00632","Replacement/new hire during 2024",,,,"20265275",103013
+"Finance","292d57fa","2024-01-27","E00688-EVT-001","Hire","dafbe51c","Financial Analyst","E00030","Replacement/new hire during 2024",,,,"20265275",69068
+"Operations","f4061560","2024-02-25","E00689-EVT-001","Hire","4f4eea56","Operations Manager","E00473","Replacement/new hire during 2024",,,,"20265275",104759
+"Customer Support","054716dc","2024-07-02","E00690-EVT-001","Hire","10df4f64","Support Manager","E00507","Replacement/new hire during 2024",,,,"20265275",112674
+"Engineering","b15c90ee","2024-05-24","E00691-EVT-001","Hire","e3442176","Software Engineer I","E00444","Replacement/new hire during 2024",,,,"20265275",86902
+"Human Resources","294969f3","2024-07-18","E00692-EVT-001","Hire","b524c725","Recruiter","E00365","Replacement/new hire during 2024",,,,"20265275",69113
+"Human Resources","294969f3","2025-05-11","E00692-EVT-002","Termination","e2a221ea","Recruiter","E00365",,,,"Voluntary resignation","20265275",69113
+"Marketing","83dda56f","2024-01-22","E00693-EVT-001","Hire","f85b1a0c","Content Specialist","E00463","Replacement/new hire during 2024",,,,"20265275",57598
+"IT","83dda56f","2025-09-29","E00693-EVT-002","Role Change","9f26d291","Security Analyst","E00463",,"Marketing","Content Specialist",,"20265275",62477
+"Legal","609f1b01","2024-09-28","E00694-EVT-001","Hire","b126b834","Compliance Analyst","E00453","Replacement/new hire during 2024",,,,"20265275",81802
+"Operations","ba4711da","2024-11-07","E00695-EVT-001","Hire","fbc2cc51","Operations Manager","E00257","Replacement/new hire during 2024",,,,"20265275",114739
+"Operations","ba4711da","2025-11-25","E00695-EVT-002","Termination","8b525f17","Operations Manager","E00257",,,,"Involuntary termination","20265275",114739
+"Human Resources","5bf7c610","2024-01-25","E00696-EVT-001","Hire","7ee2fa42","Compensation Analyst","E00227","Replacement/new hire during 2024",,,,"20265275",71493
+"Human Resources","5bf7c610","2025-10-28","E00696-EVT-002","Termination","717a4ff7","Compensation Analyst","E00227",,,,"Contract ended","20265275",71493
+"Marketing","a2d57407","2024-10-06","E00697-EVT-001","Hire","137e6de8","Content Specialist",,"Replacement/new hire during 2024",,,,"20265275",59562
+"Engineering","d7936bf6","2024-02-19","E00698-EVT-001","Hire","1c3fe83f","Senior Software Engineer","E00420","Replacement/new hire during 2024",,,,"20265275",135462
+"Legal","64600326","2024-09-18","E00699-EVT-001","Hire","eb4cb5b5","Paralegal","E00471","Replacement/new hire during 2024",,,,"20265275",63000
+"Legal","b5d53a1e","2024-09-02","E00700-EVT-001","Hire","767c57dd","Contracts Specialist","E00276","Replacement/new hire during 2024",,,,"20265275",73695
+"Legal","90a8bc02","2025-10-22","E00701-EVT-001","Hire","da64f261","Counsel","E00544","Replacement/new hire during 2025",,,,"20265275",163364
+"Operations","4031841c","2025-12-23","E00702-EVT-001","Hire","88cc52b2","Logistics Coordinator","E00544","Replacement/new hire during 2025",,,,"20265275",51910
+"Human Resources","2c19a610","2025-02-22","E00703-EVT-001","Hire","31406a10","HR Coordinator","E00226","Replacement/new hire during 2025",,,,"20265275",61519
+"IT","2c19a610","2025-10-21","E00703-EVT-002","Lateral Transfer","f5374437","IT Manager","E00226",,"Human Resources","HR Coordinator",,"20265275",68538
+"Human Resources","3b82d525","2025-07-29","E00704-EVT-001","Hire","2ae91260","HR Manager","E00555","Replacement/new hire during 2025",,,,"20265275",99941
+"Human Resources","0a2f9c7e","2025-04-21","E00705-EVT-001","Hire","82f01292","Compensation Analyst","E00084","Replacement/new hire during 2025",,,,"20265275",82494
+"Sales","07130a23","2025-03-30","E00706-EVT-001","Hire","ed12a76e","Account Executive","E00050","Replacement/new hire during 2025",,,,"20265275",86143
+"Sales","1dff0e95","2025-03-20","E00707-EVT-001","Hire","e57860b1","Sales Operations Analyst","E00153","Replacement/new hire during 2025",,,,"20265275",71073
+"Engineering","104d91ea","2025-09-24","E00708-EVT-001","Hire","8f743ed5","Senior Software Engineer","E00450","Replacement/new hire during 2025",,,,"20265275",144186
+"Human Resources","2d5d6711","2025-07-26","E00709-EVT-002","Promotion","378e8ab4","Recruiter","E00456",,"Human Resources","HR Generalist",,"20265275",73247
+"Human Resources","2d5d6711","2025-07-27","E00709-EVT-001","Hire","f8dcfa78","HR Generalist","E00456","Replacement/new hire during 2025",,,,"20265275",65684
+"Engineering","fd376fcf","2025-04-29","E00710-EVT-001","Hire","bde0deb6","Engineering Manager","E00052","Replacement/new hire during 2025",,,,"20265275",100142
+"Customer Support","3210f3c7","2025-03-13","E00711-EVT-001","Hire","2ff9c279","Customer Success Associate","E00593","Replacement/new hire during 2025",,,,"20265275",107616
+"Customer Support","3210f3c7","2025-12-23","E00711-EVT-002","Lateral Transfer","c6884c5b","Support Specialist","E00593",,"Customer Support","Customer Success Associate",,"20265275",116575
+"Human Resources","ba2bee4f","2025-12-07","E00712-EVT-001","Hire","09ae689c","HR Coordinator","E00612","Replacement/new hire during 2025",,,,"20265275",43793
+"Engineering","8f33d3c7","2025-06-10","E00713-EVT-001","Hire","aaccfdd9","Senior Software Engineer","E00653","Replacement/new hire during 2025",,,,"20265275",138420
+"Human Resources","28b7faaa","2025-07-14","E00714-EVT-001","Hire","70f9fcac","Recruiter",,"Replacement/new hire during 2025",,,,"20265275",78364
+"Operations","1fdc6773","2025-10-16","E00715-EVT-001","Hire","e3473665","Operations Manager","E00143","Replacement/new hire during 2025",,,,"20265275",100028
+"Legal","ffdb6eb0","2025-11-13","E00716-EVT-001","Hire","e3289939","Paralegal","E00022","Replacement/new hire during 2025",,,,"20265275",70635
+"Engineering","3a7a8c8b","2025-08-31","E00717-EVT-001","Hire","a1c183f4","Engineering Manager","E00239","Replacement/new hire during 2025",,,,"20265275",112333
+"Sales","d35fad24","2025-06-02","E00718-EVT-001","Hire","3e472ebd","Sales Operations Analyst",,"Replacement/new hire during 2025",,,,"20265275",74196
+"Marketing","6120d3c7","2025-01-22","E00719-EVT-001","Hire","d0cb0a36","Demand Generation Manager","E00225","Replacement/new hire during 2025",,,,"20265275",102114
+"Legal","b60d55c9","2025-04-26","E00720-EVT-001","Hire","58cd3ec4","Legal Assistant","E00233","Replacement/new hire during 2025",,,,"20265275",102892
+"Marketing","29720211","2025-09-27","E00721-EVT-001","Hire","05ffae2f","Content Specialist","E00703","Replacement/new hire during 2025",,,,"20265275",61444
+"Finance","3783404f","2025-09-10","E00722-EVT-001","Hire","5685a6b9","Financial Analyst","E00555","Replacement/new hire during 2025",,,,"20265275",76103
+"Legal","7e6d1af5","2025-01-06","E00723-EVT-001","Hire","336c9f30","Legal Assistant","E00668","Replacement/new hire during 2025",,,,"20265275",114736
+"Sales","20b95bd0","2025-03-03","E00724-EVT-001","Hire","49905d48","Sales Manager","E00702","Replacement/new hire during 2025",,,,"20265275",109615
+"Legal","edb99168","2025-06-25","E00725-EVT-001","Hire","6a33fc07","Paralegal","E00630","Replacement/new hire during 2025",,,,"20265275",59864
+"Human Resources","cee58127","2025-03-08","E00726-EVT-001","Hire","fb98356a","Recruiter","E00625","Replacement/new hire during 2025",,,,"20265275",80028
+"Human Resources","1334730b","2025-04-09","E00727-EVT-001","Hire","ce072605","HR Coordinator","E00194","Replacement/new hire during 2025",,,,"20265275",44814
+"Marketing","2cddedc8","2025-01-27","E00728-EVT-001","Hire","69d39020","Demand Generation Manager","E00177","Replacement/new hire during 2025",,,,"20265275",110083
+"Legal","71b5429d","2025-04-10","E00729-EVT-001","Hire","aa0d3607","Paralegal","E00413","Replacement/new hire during 2025",,,,"20265275",70226
+"Human Resources","2608fb81","2025-07-08","E00730-EVT-001","Hire","878a964e","HR Manager","E00062","Replacement/new hire during 2025",,,,"20265275",114496
+"Sales","c3d780fe","2025-11-25","E00731-EVT-001","Hire","dde8977b","Sales Manager","E00624","Replacement/new hire during 2025",,,,"20265275",115813
+"Sales","3b093727","2025-11-13","E00732-EVT-001","Hire","883b6f0d","Sales Manager","E00706","Replacement/new hire during 2025",,,,"20265275",102371
+"Customer Support","86fcf799","2025-01-16","E00733-EVT-001","Hire","275a7586","Support Manager","E00208","Replacement/new hire during 2025",,,,"20265275",110483
+"Finance","321b6f68","2025-12-22","E00734-EVT-001","Hire","612b1a7e","Financial Analyst","E00304","Replacement/new hire during 2025",,,,"20265275",87555
+"IT","424c369d","2025-10-15","E00735-EVT-001","Hire","9cbf1fcc","Help Desk Analyst","E00083","Replacement/new hire during 2025",,,,"20265275",84791
+"Sales","15e036ab","2025-05-20","E00736-EVT-001","Hire","74f1487a","Sales Manager","E00685","Replacement/new hire during 2025",,,,"20265275",116514
+"IT","8c76ad2d","2025-06-21","E00737-EVT-001","Hire","508a14a0","IT Manager",,"Replacement/new hire during 2025",,,,"20265275",96835
+"Operations","c6c92d49","2025-01-26","E00738-EVT-001","Hire","273c6373","Operations Analyst","E00264","Replacement/new hire during 2025",,,,"20265275",81070
+"Human Resources","600b18c2","2025-02-17","E00739-EVT-001","Hire","054ecf0e","HR Manager","E00670","Replacement/new hire during 2025",,,,"20265275",112124
+"Marketing","ccd552be","2025-03-29","E00740-EVT-001","Hire","77cb4877","Demand Generation Manager","E00357","Replacement/new hire during 2025",,,,"20265275",102639
+"Legal","c18ec692","2025-03-09","E00741-EVT-001","Hire","c1ae5ab2","Compliance Analyst","E00496","Replacement/new hire during 2025",,,,"20265275",84326
+"Operations","5ae1765d","2025-09-19","E00742-EVT-001","Hire","add538ce","Logistics Coordinator","E00081","Replacement/new hire during 2025",,,,"20265275",44409
+"Engineering","4b800db9","2025-02-08","E00743-EVT-001","Hire","cf505dee","Software Engineer II","E00552","Replacement/new hire during 2025",,,,"20265275",76459
+"Operations","cb804c75","2025-10-04","E00744-EVT-001","Hire","28bdb35e","Operations Analyst","E00682","Replacement/new hire during 2025",,,,"20265275",76963
+"Human Resources","9bb2dac5","2025-09-12","E00745-EVT-001","Hire","131236c4","Compensation Analyst","E00440","Replacement/new hire during 2025",,,,"20265275",76731
+"Marketing","3aca4bf8","2025-06-21","E00746-EVT-001","Hire","43258440","Marketing Coordinator","E00730","Replacement/new hire during 2025",,,,"20265275",60664
+"Legal","031473cc","2025-10-01","E00747-EVT-001","Hire","e40e50c2","Counsel","E00542","Replacement/new hire during 2025",,,,"20265275",154798
+"Engineering","8658bb26","2025-11-07","E00748-EVT-001","Hire","a0c15f58","Senior Software Engineer","E00532","Replacement/new hire during 2025",,,,"20265275",137066
+"Legal","50594c0a","2025-08-18","E00749-EVT-001","Hire","766c72aa","Paralegal","E00460","Replacement/new hire during 2025",,,,"20265275",71795
+"Operations","84e495fd","2025-09-12","E00750-EVT-001","Hire","49076fe2","Director of Operations","E00128","Replacement/new hire during 2025",,,,"20265275",141043
