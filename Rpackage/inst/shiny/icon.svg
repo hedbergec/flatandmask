@@ -1,19 +1,79 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Blue shield with isometric black and white cube</title>
   <defs>
-    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#4F46E5;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#3B82F6;stop-opacity:1" />
+    <linearGradient id="shieldGradient" x1="256" y1="32" x2="256" y2="486" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#0f3c9e"/>
     </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="145%" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.28"/>
+    </filter>
   </defs>
-  <path d="M 128 20 L 220 60 L 220 130 C 220 180 128 225 128 225 C 128 225 36 180 36 130 L 36 60 Z"
-        fill="url(#shieldGrad)" stroke="#1E40AF" stroke-width="2"/>
-  <circle cx="100" cy="110" r="6" fill="#FFD700" opacity="0.8"/>
-  <circle cx="120" cy="100" r="6" fill="#FFD700" opacity="0.8"/>
-  <circle cx="140" cy="115" r="6" fill="#FFD700" opacity="0.8"/>
-  <g transform="translate(128, 160)">
-    <path d="M -15 0 L -5 10 L 15 -10"
-          stroke="#FFFFFF" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <path
+    d="M256 10L456 76V224C456 364 374 456 256 502C138 456 56 364 56 224V76L256 10Z"
+    fill="url(#shieldGradient)"
+    filter="url(#shadow)"
+  />
+  <path
+    d="M256 35L430 92V224C430 346 360 428 256 472C152 428 82 346 82 224V92L256 35Z"
+    stroke="#93c5fd"
+    stroke-width="10"
+    stroke-linejoin="round"
+    opacity="0.85"
+  />
+
+  <g transform="translate(0 -28)" filter="url(#shadow)">
+    <!-- Top face tiles -->
+    <polygon points="256,118 303,145 256,172 209,145" fill="#ffffff"/>
+    <polygon points="303,145 350,172 303,199 256,172" fill="#111827"/>
+    <polygon points="350,172 397,199 350,226 303,199" fill="#ffffff"/>
+
+    <polygon points="209,145 256,172 209,199 162,172" fill="#111827"/>
+    <polygon points="256,172 303,199 256,226 209,199" fill="#ffffff"/>
+    <polygon points="303,199 350,226 303,253 256,226" fill="#111827"/>
+
+    <polygon points="162,172 209,199 162,226 115,199" fill="#ffffff"/>
+    <polygon points="209,199 256,226 209,253 162,226" fill="#111827"/>
+    <polygon points="256,226 303,253 256,280 209,253" fill="#ffffff"/>
+
+    <!-- Left face, solved black -->
+    <polygon points="115,199 162,226 162,280 115,253" fill="#050505"/>
+    <polygon points="162,226 209,253 209,307 162,280" fill="#050505"/>
+    <polygon points="209,253 256,280 256,334 209,307" fill="#050505"/>
+
+    <polygon points="115,253 162,280 162,334 115,307" fill="#050505"/>
+    <polygon points="162,280 209,307 209,361 162,334" fill="#050505"/>
+    <polygon points="209,307 256,334 256,388 209,361" fill="#050505"/>
+
+    <polygon points="115,307 162,334 162,388 115,361" fill="#050505"/>
+    <polygon points="162,334 209,361 209,415 162,388" fill="#050505"/>
+    <polygon points="209,361 256,388 256,442 209,415" fill="#050505"/>
+
+    <!-- Right face, solved white -->
+    <polygon points="397,199 350,226 350,280 397,253" fill="#ffffff"/>
+    <polygon points="350,226 303,253 303,307 350,280" fill="#ffffff"/>
+    <polygon points="303,253 256,280 256,334 303,307" fill="#ffffff"/>
+
+    <polygon points="397,253 350,280 350,334 397,307" fill="#ffffff"/>
+    <polygon points="350,280 303,307 303,361 350,334" fill="#ffffff"/>
+    <polygon points="303,307 256,334 256,388 303,361" fill="#ffffff"/>
+
+    <polygon points="397,307 350,334 350,388 397,361" fill="#ffffff"/>
+    <polygon points="350,334 303,361 303,415 350,388" fill="#ffffff"/>
+    <polygon points="303,361 256,388 256,442 303,415" fill="#ffffff"/>
+
+    <!-- Face outlines and gridlines -->
+    <path d="M256 118L397 199L256 280L115 199L256 118Z" stroke="#111827" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M115 199L256 280V442L115 361V199Z" stroke="#111827" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M397 199L256 280V442L397 361V199Z" stroke="#111827" stroke-width="5" stroke-linejoin="round"/>
+
+    <path d="M209 145L350 226M162 172L303 253M303 145L162 226M350 172L209 253" stroke="#334155" stroke-width="3" stroke-linecap="round" opacity="0.95"/>
+
+    <path d="M162 226V388M209 253V415M115 253L256 334M115 307L256 388" stroke="#6b7280" stroke-width="3" stroke-linecap="round" opacity="0.9"/>
+    <path d="M350 226V388M303 253V415M397 253L256 334M397 307L256 388" stroke="#9ca3af" stroke-width="3" stroke-linecap="round" opacity="0.95"/>
+
+    <path d="M115 199L256 118L397 199L397 361L256 442L115 361V199Z" stroke="#020617" stroke-width="7" stroke-linejoin="round"/>
   </g>
-  <rect x="110" y="75" width="36" height="28" rx="3" fill="none" stroke="#FFFFFF" stroke-width="2"/>
-  <circle cx="128" cy="85" r="4" fill="#FFFFFF"/>
 </svg>

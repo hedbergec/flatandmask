@@ -478,6 +478,20 @@ if ($BuildRPackage) {
         throw "R package directory not found: $RPackagePath"
     }
 
+    $rootSvgIconPath = Join-Path $projectRoot "icon.svg"
+    $rPackageShinyDir = Join-Path $RPackagePath "inst\shiny"
+    $rPackageSvgIconPath = Join-Path $rPackageShinyDir "icon.svg"
+    if (Test-Path $rootSvgIconPath) {
+        if (-not (Test-Path $rPackageShinyDir)) {
+            New-Item -ItemType Directory -Path $rPackageShinyDir -Force | Out-Null
+        }
+        Copy-Item -Path $rootSvgIconPath -Destination $rPackageSvgIconPath -Force
+        Write-Host "Copied root icon.svg into R package: $rPackageSvgIconPath" -ForegroundColor Green
+    }
+    else {
+        Write-Host "Root icon.svg not found; R package icon was not refreshed." -ForegroundColor Yellow
+    }
+
     $descriptionPath = Join-Path $RPackagePath "DESCRIPTION"
     if (-not (Test-Path $descriptionPath)) {
         throw "R package DESCRIPTION file not found: $descriptionPath"
