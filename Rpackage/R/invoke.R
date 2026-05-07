@@ -112,7 +112,7 @@ invoke_csv_masking_fast <- function(input_file, output_folder, key_file, secret_
   write_job_estimate_status("CSV")
 
   csv <- utils::read.csv(input_file, stringsAsFactors = FALSE, check.names = FALSE,
-                         fileEncoding = "UTF-8-BOM")
+                         fileEncoding = "UTF-8-BOM", colClasses = "character")
   headers <- names(csv)
   for (i in seq_len(nrow(csv))) {
     for (name in headers) csv[i, name] <- mask_if_needed(paste0("root.", name), csv[i, name], i - 1L)

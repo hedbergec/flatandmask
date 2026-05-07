@@ -6,7 +6,8 @@ set_csv_job_estimate <- function(input_file, mask_fields, row_count) {
   selected_columns <- 0L
   if (sample_limit > 0L) {
     sample <- utils::read.csv(input_file, nrows = sample_limit, stringsAsFactors = FALSE,
-                              check.names = FALSE, fileEncoding = "UTF-8-BOM")
+                              check.names = FALSE, fileEncoding = "UTF-8-BOM",
+                              colClasses = "character")
     sampled <- nrow(sample)
     selected_columns <- sum(paste0("root.", names(sample)) |> normalize_field_name() %in% selected)
     for (name in names(sample)) {
@@ -22,7 +23,8 @@ set_csv_job_estimate <- function(input_file, mask_fields, row_count) {
 
 get_csv_fields <- function(file_path) {
   names(utils::read.csv(file_path, nrows = 1L, stringsAsFactors = FALSE,
-                        check.names = FALSE, fileEncoding = "UTF-8-BOM"))
+                        check.names = FALSE, fileEncoding = "UTF-8-BOM",
+                        colClasses = "character"))
 }
 
 convert_to_csv_line <- function(values) {

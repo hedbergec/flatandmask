@@ -19,7 +19,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.3.0"
+$script:AppVersion = "1.4.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
