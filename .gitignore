@@ -1,4 +1,5 @@
 todo.txt
+.DS_Store
 BUILD_EXECUTABLE.md
 build-executable.sh
 build-executable.ps1
