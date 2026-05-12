@@ -954,7 +954,7 @@ Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_prob
 
 ## Change Log
 
-- **v1.5.0** - Quote all generated CSV fields in the PowerShell and R implementations, including masked data values and masking-key values, so leading `+` values remain text when opened in Excel
+- **v1.5.0** - Quote all generated CSV fields in the PowerShell and R implementations, including masked data values and masking-key values, so leading `+` or `-` outputs remain text when opened in Excel
 - **v1.4.0** - Preserve leading-zero CSV values as character data in the R implementation so values like `0123`, `00123`, and `123` mask to distinct deterministic outputs, matching the PowerShell behavior; added regression fixtures for leading-zero CSV and JSON string values
 - **v1.3.0** - Updated the logo/icon assets, aligned the R package version with the Windows tool, added smarter field-selection prompts and searchable field selectors, retained selected fields across selector reopen/filter operations, and simplified the Shiny output-folder workflow
 - **v1.2.3** - Added timestamped output folders for GUI applications (PowerShell GUI and R Shiny GUI create `Masked_Data_GUI_<timestamp>` subfolders), updated documentation with table of contents and GUI output behavior details, clarified that replication scripts default to using the timestamped folder where they were generated
