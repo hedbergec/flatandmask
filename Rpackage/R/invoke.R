@@ -86,7 +86,7 @@ invoke_socrata_json_masking <- function(json, input_file, output_folder, key_fil
   base <- tools::file_path_sans_ext(basename(input_file))
   writeLines(as.character(jsonlite::toJSON(json, auto_unbox = TRUE, pretty = TRUE, null = "null")),
              file.path(output_folder, paste0(base, "_masked.json")), useBytes = TRUE)
-  utils::write.csv(do.call(rbind, csv_rows), file.path(output_folder, "data.csv"), row.names = FALSE, na = "", fileEncoding = "UTF-8")
+  write_quoted_csv(do.call(rbind, csv_rows), file.path(output_folder, "data.csv"))
   export_masking_key(key_file)
   .invoke_progress_callback("normalize", 100L, 100L, "Socrata rows are already tabular")
   .invoke_progress_callback("export", 100L, 100L, "Wrote data.csv, masked JSON, and masking key")
@@ -121,7 +121,7 @@ invoke_csv_masking_fast <- function(input_file, output_folder, key_file, secret_
     .set_state(state)
     update_processing_progress(i, nrow(csv), phase = "Masking CSV", detail = "Writing data.csv")
   }
-  utils::write.csv(csv, file.path(output_folder, "data.csv"), row.names = FALSE, na = "", fileEncoding = "UTF-8")
+  write_quoted_csv(csv, file.path(output_folder, "data.csv"))
   write_status_panel(phase = "Finalizing", detail = "Writing masking key", force = TRUE)
   .invoke_progress_callback("normalize", 100L, 100L, "CSV normalization not required")
   .invoke_progress_callback("export", 1L, 2L, "Writing masking key")

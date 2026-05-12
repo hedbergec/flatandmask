@@ -2,7 +2,7 @@
 
 .new_state <- function() {
   list(
-    app_version = "1.4.0",
+    app_version = "1.5.0",
     app_title = "JsonCSVMaskr",
     repo_url = "https://github.com/hedbergec/flatandmask",
     author_name = "Eric Hedberg",

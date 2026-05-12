@@ -2,7 +2,7 @@
 
 <img src="icon.svg" width="64" height="64" alt="Data Masking Tool logo">
 
-**Version 1.4.0**
+**Version 1.5.0**
 
 Copyright (c) 2026 Design Effects, LLC
 
@@ -416,7 +416,7 @@ The all-tests runner uses a fixed regression key, reads the current version from
 test_output\regression\<version>\
 ```
 
-For the current build, outputs are saved under `test_output\regression\1.4.0\`.
+For the current build, outputs are saved under `test_output\regression\1.5.0\`.
 
 This test flow masks all bundled example data plus core synthetic fixtures, including:
 
@@ -745,17 +745,17 @@ Install from a downloaded package artifact after downloading the `.zip` or `.tar
 install.packages(c("digest", "jsonlite", "shiny", "shinyFiles"))
 
 # Windows binary package
-install.packages("JsonCSVMaskr_1.4.0.zip", repos = NULL, type = "win.binary")
+install.packages("JsonCSVMaskr_1.5.0.zip", repos = NULL, type = "win.binary")
 
 # Source package on Windows, macOS, or Linux
-install.packages("JsonCSVMaskr_1.4.0.tar.gz", repos = NULL, type = "source")
+install.packages("JsonCSVMaskr_1.5.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Use the actual downloaded file path if the package artifact is not in the current R working directory:
 
 ```r
-install.packages("C:/Users/you/Downloads/JsonCSVMaskr_1.4.0.zip", repos = NULL, type = "win.binary")
-install.packages("~/Downloads/JsonCSVMaskr_1.4.0.tar.gz", repos = NULL, type = "source")
+install.packages("C:/Users/you/Downloads/JsonCSVMaskr_1.5.0.zip", repos = NULL, type = "win.binary")
+install.packages("~/Downloads/JsonCSVMaskr_1.5.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Install from a local checkout:
@@ -884,7 +884,7 @@ Build and check from the repository root:
 
 ```bash
 R CMD build Rpackage
-R CMD check JsonCSVMaskr_1.4.0.tar.gz --no-manual
+R CMD check JsonCSVMaskr_1.5.0.tar.gz --no-manual
 ```
 
 On Windows with R installed and available on `PATH`, build the `JsonCSVMaskr` R package artifacts with:
@@ -954,6 +954,7 @@ Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_prob
 
 ## Change Log
 
+- **v1.5.0** - Quote all generated CSV fields in the PowerShell and R implementations, including masked data values and masking-key values, so leading `+` values remain text when opened in Excel
 - **v1.4.0** - Preserve leading-zero CSV values as character data in the R implementation so values like `0123`, `00123`, and `123` mask to distinct deterministic outputs, matching the PowerShell behavior; added regression fixtures for leading-zero CSV and JSON string values
 - **v1.3.0** - Updated the logo/icon assets, aligned the R package version with the Windows tool, added smarter field-selection prompts and searchable field selectors, retained selected fields across selector reopen/filter operations, and simplified the Shiny output-folder workflow
 - **v1.2.3** - Added timestamped output folders for GUI applications (PowerShell GUI and R Shiny GUI create `Masked_Data_GUI_<timestamp>` subfolders), updated documentation with table of contents and GUI output behavior details, clarified that replication scripts default to using the timestamped folder where they were generated

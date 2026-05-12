@@ -1,6 +1,6 @@
 Package: JsonCSVMaskr
 Title: Deterministic Masking for JSON and CSV Data
-Version: 1.4.0
+Version: 1.5.0
 Authors@R: person("Eric", "Hedberg", email = "hedbergec@outlook.com", role = c("aut", "cre"))
 Author: Eric Hedberg [aut, cre]
 Maintainer: Eric Hedberg <hedbergec@outlook.com>

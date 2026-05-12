@@ -19,7 +19,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.4.0"
+$script:AppVersion = "1.5.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
@@ -1196,6 +1196,47 @@ function Convert-RowsForCsvExport {
     return @($normalizedRows)
 }
 
+function Export-QuotedCsv {
+    param(
+        [object[]]$Rows,
+        [string]$Path,
+        [string[]]$Columns
+    )
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    $writer = $null
+    try {
+        $writer = New-Object System.IO.StreamWriter($Path, $false, $utf8NoBom)
+        $columns = if ($Columns -and $Columns.Count -gt 0) {
+            @($Columns)
+        } else {
+            $seen = @{}
+            $ordered = @()
+            foreach ($row in $Rows) {
+                foreach ($name in @($row.PSObject.Properties.Name)) {
+                    if (-not $seen.ContainsKey($name)) {
+                        $seen[$name] = $true
+                        $ordered += $name
+                    }
+                }
+            }
+            @($ordered)
+        }
+        $writer.WriteLine((ConvertTo-CsvLine -Values $columns))
+
+        foreach ($row in $Rows) {
+            $values = foreach ($column in $columns) {
+                $property = $row.PSObject.Properties[$column]
+                if ($null -ne $property) { $property.Value } else { $null }
+            }
+            $writer.WriteLine((ConvertTo-CsvLine -Values @($values)))
+        }
+    }
+    finally {
+        if ($writer) { $writer.Dispose() }
+    }
+}
+
 function Test-SocrataJson {
     param($Json)
     return (
@@ -1487,9 +1528,10 @@ function Complete-MaskingOutputs {
     foreach ($tableName in $script:Tables.Keys) {
         $name = if ($tableName -eq "root") { "data" } else { $tableName.Replace("root_", "") }
         $path = Join-Path $OutputFolder "$name.csv"
-        $rowCount = (Convert-RowsForCsvExport -Rows @($script:Tables[$tableName])).Count
+        $rows = Convert-RowsForCsvExport -Rows @($script:Tables[$tableName])
+        $rowCount = $rows.Count
         Write-StatusPanel -Phase "Exporting CSV" -Detail "Writing $name.csv ($rowCount rows)" -Force
-        Convert-RowsForCsvExport -Rows @($script:Tables[$tableName]) | Export-Csv -NoTypeInformation -Path $path -Force -Encoding UTF8
+        Export-QuotedCsv -Rows $rows -Path $path
         $exportStep++
         Set-GuiProgressStage -Bar $exportProgressBar -Current $exportStep -Total $exportTotal -Force
     }
@@ -1512,17 +1554,18 @@ function Export-MaskingKey {
     param([string]$KeyFile)
 
     if ($script:MappingWithRows.Count -gt 0) {
-        $script:MappingWithRows | Select-Object Original, Masked, Field, RowIndex | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+        Export-QuotedCsv -Rows @($script:MappingWithRows | Select-Object Original, Masked, Field, RowIndex) -Path $KeyFile -Columns @("Original", "Masked", "Field", "RowIndex")
     } elseif ($script:Mapping.Count -gt 0) {
-        $script:Mapping.GetEnumerator() | ForEach-Object {
+        $rows = @($script:Mapping.GetEnumerator() | ForEach-Object {
             [PSCustomObject]@{
                 Original = $_.Key
                 Masked   = $_.Value.Masked
                 Field    = $_.Value.Field
             }
-        } | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+        })
+        Export-QuotedCsv -Rows $rows -Path $KeyFile -Columns @("Original", "Masked", "Field")
     } else {
-        @() | Export-Csv -NoTypeInformation -Path $KeyFile -Force -Encoding UTF8
+        Export-QuotedCsv -Rows @() -Path $KeyFile -Columns @("Original", "Masked", "Field", "RowIndex")
     }
 }
 

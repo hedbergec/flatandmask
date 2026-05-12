@@ -24,7 +24,7 @@
 #' @importFrom shiny actionButton br checkboxGroupInput column fileInput fluidPage h3 h4 hr observe observeEvent passwordInput reactiveVal renderText runApp shinyApp sidebarLayout sidebarPanel tagList tags textInput uiOutput
 #' @importFrom stats setNames
 #' @importFrom tools file_ext
-#' @importFrom utils count.fields read.csv read.table tail write.csv
+#' @importFrom utils count.fields read.csv read.table tail
 #' @rawNamespace export(add_estimated_table_names_from_object)
 #' @rawNamespace export(add_gui_log_line)
 #' @rawNamespace export(add_json_object_array_counts)

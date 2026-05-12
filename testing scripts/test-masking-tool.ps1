@@ -270,6 +270,63 @@ function Convert-RowsForCsvExport {
     return @($normalizedRows)
 }
 
+function ConvertTo-CsvLine {
+    param([object[]]$Values)
+
+    $escaped = foreach ($value in $Values) {
+        if ($null -eq $value) {
+            '""'
+        }
+        else {
+            '"' + ([string]$value).Replace('"', '""') + '"'
+        }
+    }
+
+    return ($escaped -join ',')
+}
+
+function Export-QuotedCsv {
+    param(
+        [object[]]$Rows,
+        [string]$Path,
+        [string[]]$Columns
+    )
+
+    $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+    $writer = $null
+    try {
+        $writer = New-Object System.IO.StreamWriter($Path, $false, $utf8NoBom)
+        $columns = if ($Columns -and $Columns.Count -gt 0) {
+            @($Columns)
+        }
+        else {
+            $seen = @{}
+            $ordered = @()
+            foreach ($row in $Rows) {
+                foreach ($name in @($row.PSObject.Properties.Name)) {
+                    if (-not $seen.ContainsKey($name)) {
+                        $seen[$name] = $true
+                        $ordered += $name
+                    }
+                }
+            }
+            @($ordered)
+        }
+        $writer.WriteLine((ConvertTo-CsvLine -Values $columns))
+
+        foreach ($row in $Rows) {
+            $values = foreach ($column in $columns) {
+                $property = $row.PSObject.Properties[$column]
+                if ($null -ne $property) { $property.Value } else { $null }
+            }
+            $writer.WriteLine((ConvertTo-CsvLine -Values @($values)))
+        }
+    }
+    finally {
+        if ($writer) { $writer.Dispose() }
+    }
+}
+
 function Export-MaskingArtifacts {
     param(
         [string]$InputFile,
@@ -325,7 +382,7 @@ function Export-MaskingArtifacts {
         }
 
         $csvPath = Join-Path $OutputFolder "$inputFileName.csv"
-        $maskedRows | Export-Csv -NoTypeInformation -Encoding UTF8 -Path $csvPath -Force
+        Export-QuotedCsv -Rows $maskedRows -Path $csvPath
     }
     else {
         throw "Unsupported file type for $InputFile"
@@ -335,15 +392,15 @@ function Export-MaskingArtifacts {
         foreach ($tableName in $state.Tables.Keys) {
             $fileName = if ($tableName -eq "root") { "data.csv" } else { "$($tableName.Replace('root_', '')).csv" }
             $tablePath = Join-Path $OutputFolder $fileName
-            Convert-RowsForCsvExport -Rows @($state.Tables[$tableName].ToArray()) | Export-Csv -NoTypeInformation -Encoding UTF8 -Path $tablePath -Force
+            Export-QuotedCsv -Rows (Convert-RowsForCsvExport -Rows @($state.Tables[$tableName].ToArray())) -Path $tablePath
         }
     }
 
     if ($state.MappingWithRows.Count -gt 0) {
-        $state.MappingWithRows | Export-Csv -NoTypeInformation -Encoding UTF8 -Path $keyFile -Force
+        Export-QuotedCsv -Rows @($state.MappingWithRows) -Path $keyFile -Columns @("Original", "Masked", "Field", "RowIndex")
     }
     else {
-        @() | Export-Csv -NoTypeInformation -Encoding UTF8 -Path $keyFile -Force
+        Export-QuotedCsv -Rows @() -Path $keyFile -Columns @("Original", "Masked", "Field", "RowIndex")
     }
 
 $replicationScript = @"

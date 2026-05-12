@@ -1,3 +1,28 @@
+write_quoted_csv <- function(data, path) {
+  dir.create(dirname(path), recursive = TRUE, showWarnings = FALSE)
+  con <- file(path, open = "w", encoding = "UTF-8")
+  on.exit(close(con), add = TRUE)
+
+  quote_values <- function(values) {
+    escaped <- vapply(values, function(value) {
+      if (length(value) == 0L || is.na(value)) {
+        "\"\""
+      } else {
+        paste0("\"", gsub("\"", "\"\"", as.character(value), fixed = TRUE), "\"")
+      }
+    }, character(1), USE.NAMES = FALSE)
+    paste(escaped, collapse = ",")
+  }
+
+  writeLines(quote_values(names(data)), con, useBytes = TRUE)
+  if (nrow(data) > 0L) {
+    for (i in seq_len(nrow(data))) {
+      writeLines(quote_values(data[i, , drop = TRUE]), con, useBytes = TRUE)
+    }
+  }
+  invisible(path)
+}
+
 complete_masking_outputs <- function(output_folder, key_file, input_file, secret_key, mask_fields,
                                      skip_replication_script = FALSE) {
   dir.create(output_folder, recursive = TRUE, showWarnings = FALSE)
@@ -13,7 +38,7 @@ complete_masking_outputs <- function(output_folder, key_file, input_file, secret
     data <- convert_rows_for_csv_export(rows)
     path <- file.path(output_folder, paste0(name, ".csv"))
     write_status_panel(phase = "Exporting CSV", detail = sprintf("Writing %s.csv (%d rows)", name, nrow(data)), force = TRUE)
-    utils::write.csv(data, path, row.names = FALSE, na = "", fileEncoding = "UTF-8")
+    write_quoted_csv(data, path)
     export_step <- export_step + 1L
     .invoke_progress_callback("export", export_step, export_total, sprintf("Wrote %s.csv", name))
   }
@@ -56,8 +81,7 @@ export_masking_key <- function(key_file) {
     data <- data.frame(Original = character(), Masked = character(),
                        Field = character(), RowIndex = integer())
   }
-  dir.create(dirname(key_file), recursive = TRUE, showWarnings = FALSE)
-  utils::write.csv(data, key_file, row.names = FALSE, na = "", fileEncoding = "UTF-8")
+  write_quoted_csv(data, key_file)
   invisible(key_file)
 }
 
