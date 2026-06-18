@@ -23,9 +23,10 @@ Socrata exports with \code{meta.view.columns} and row-array \code{data}; GeoJSON
 
 \section{Masking behavior}{
 
-Masked values are the first 12 Base64 characters of an HMAC-SHA256 digest of
-the original value using the supplied secret key. The same original value and
-key always produce the same masked value. Empty values remain empty.
+Masked values are an \code{x} prefix followed by the first 12 Base64 characters of
+an HMAC-SHA256 digest of the original value using the supplied secret key. The
+same original value and key always produce the same masked value. Empty values
+remain empty.
 }
 
 \author{

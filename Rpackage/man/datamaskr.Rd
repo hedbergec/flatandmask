@@ -7,11 +7,19 @@
 \usage{
 datamaskr(input_file, output_folder,
   key_file = file.path(output_folder, "masking_key.csv"),
-  secret_key, mask_fields, progress_callback = NULL)
+  secret_key, mask_fields, progress_callback = NULL,
+  missing_value_keyword_action = c("mask", "blank"),
+  missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!",
+    "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED",
+    "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE"))
 
 invoke_masking(input_file, output_folder,
   key_file = file.path(output_folder, "masking_key.csv"),
-  secret_key, mask_fields, progress_callback = NULL)
+  secret_key, mask_fields, progress_callback = NULL,
+  missing_value_keyword_action = c("mask", "blank"),
+  missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!",
+    "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED",
+    "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE"))
 }
 \arguments{
 \item{input_file}{Path to a \code{.csv} or \code{.json} file.}
@@ -30,6 +38,14 @@ to mask. JSON paths may include or omit the \code{root.} prefix.}
 \item{progress_callback}{Optional function called as
 \code{progress_callback(stage, current, total, message)}, where \code{stage} is one
 of \code{"load"}, \code{"mask"}, \code{"normalize"}, or \code{"export"}.}
+
+\item{missing_value_keyword_action}{How to handle selected masked-field
+values that exactly match \code{missing_value_keywords}. Use \code{"mask"} to create
+deterministic masks, or \code{"blank"} to export blanks and omit those keyword
+values from the masking key.}
+
+\item{missing_value_keywords}{Character vector of database-style missing
+value tokens to detect, compared case-insensitively after trimming.}
 }
 \value{
 Invisibly returns \code{output_folder}. Files are written for their side

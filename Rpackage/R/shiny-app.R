@@ -355,14 +355,8 @@ jsoncsvmaskr_app <- function() {
       reset_app()
     })
 
-    observeEvent(input$run, {
-      if (isTRUE(is_running())) return()
+    start_masking_run <- function(missing_value_keyword_action = "mask") {
       run_input_path <- input_path()
-      if (!nzchar(run_input_path) || !file.exists(run_input_path) ||
-          !nzchar(input$secret_key %||% "") || length(selected_fields()) == 0L) {
-        status_text("Choose an input file, enter a secret key, and select at least one field.")
-        return()
-      }
       is_running(TRUE)
       dir.create(output_dir(), recursive = TRUE, showWarnings = FALSE)
       status_text("Processing...")
@@ -381,7 +375,10 @@ jsoncsvmaskr_app <- function() {
         dir.create(gui_output_dir, recursive = TRUE, showWarnings = FALSE)
         
         key_file <- file.path(gui_output_dir, "masking_key.csv")
-        invoke_masking(run_input_path, gui_output_dir, key_file, input$secret_key, selected_fields(), callback)
+        invoke_masking(
+          run_input_path, gui_output_dir, key_file, input$secret_key, selected_fields(), callback,
+          missing_value_keyword_action = missing_value_keyword_action
+        )
         state <- .state()
         status_text(sprintf("Complete! Processed %d %s | Masked %d fields | Generated %d tables\nOutput saved to: %s",
                             state$processed_lines, tolower(state$progress_record_label),
@@ -393,6 +390,62 @@ jsoncsvmaskr_app <- function() {
       }, finally = {
         is_running(FALSE)
       })
+    }
+
+    prompt_or_start_masking_run <- function() {
+      run_input_path <- input_path()
+      hits <- tryCatch(
+        find_missing_value_keywords_in_input(run_input_path, selected_fields()),
+        error = function(e) {
+          write_verbose_log(paste("Missing keyword scan skipped:", conditionMessage(e)))
+          data.frame(Field = character(), Keyword = character(), Count = integer())
+        }
+      )
+      if (nrow(hits) == 0L) {
+        start_masking_run("mask")
+        return(invisible(NULL))
+      }
+
+      summary_lines <- apply(utils::head(hits, 12L), 1L, function(row) {
+        sprintf("%s in %s (%s occurrence(s))", row[["Keyword"]], row[["Field"]], row[["Count"]])
+      })
+      if (nrow(hits) > 12L) {
+        summary_lines <- c(summary_lines, sprintf("...and %d more keyword/field combinations", nrow(hits) - 12L))
+      }
+      shiny::showModal(shiny::modalDialog(
+        title = "Missing Value Keywords Found",
+        shiny::tags$p("Selected masked fields contain database-style missing value keywords."),
+        shiny::tags$pre(paste(summary_lines, collapse = "\n")),
+        shiny::tags$p("Create masks for these values, or export blanks for them?"),
+        footer = shiny::tagList(
+          shiny::modalButton("Cancel"),
+          shiny::actionButton("missing_keywords_blank", "Use Blanks"),
+          shiny::actionButton("missing_keywords_mask", "Create Masks")
+        ),
+        easyClose = FALSE
+      ))
+      invisible(NULL)
+    }
+
+    observeEvent(input$run, {
+      if (isTRUE(is_running())) return()
+      run_input_path <- input_path()
+      if (!nzchar(run_input_path) || !file.exists(run_input_path) ||
+          !nzchar(input$secret_key %||% "") || length(selected_fields()) == 0L) {
+        status_text("Choose an input file, enter a secret key, and select at least one field.")
+        return()
+      }
+      prompt_or_start_masking_run()
+    })
+
+    observeEvent(input$missing_keywords_mask, {
+      shiny::removeModal()
+      start_masking_run("mask")
+    })
+
+    observeEvent(input$missing_keywords_blank, {
+      shiny::removeModal()
+      start_masking_run("blank")
     })
 
     output$setup_status <- shiny::renderText(status_text())

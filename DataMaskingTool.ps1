@@ -19,7 +19,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-$script:AppVersion = "1.5.0"
+$script:AppVersion = "2.0.0"
 $script:AppTitle = "Data Masking Tool"
 $script:AuthorName = "Eric Hedberg"
 $script:AuthorEmail = "hedbergec@outlook.com"
@@ -35,6 +35,8 @@ $script:LastInputFile = $null
 $script:LastOutputFolder = $null
 $script:SelectedFields = @()
 $script:SecretKey = ""
+$script:MissingValueKeywords = @("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!", "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED", "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE")
+$script:MissingValueKeywordAction = "Mask"
 $script:Mapping = New-OrdinalHashtable
 $script:MappingWithRows = New-Object System.Collections.ArrayList
 $script:Tables = New-OrdinalHashtable
@@ -998,6 +1000,165 @@ function Should-MaskField {
     return $false
 }
 
+function Test-MissingValueKeyword {
+    param(
+        [AllowNull()]$Value,
+        [string[]]$Keywords = $script:MissingValueKeywords
+    )
+
+    if ($null -eq $Value) { return $false }
+    $text = ([string]$Value).Trim()
+    if ([string]::IsNullOrEmpty($text)) { return $false }
+    foreach ($keyword in @($Keywords)) {
+        if ($text -ieq ([string]$keyword).Trim()) {
+            return $true
+        }
+    }
+    return $false
+}
+
+function Add-MissingValueKeywordHit {
+    param(
+        [hashtable]$Hits,
+        [string]$Field,
+        [AllowNull()]$Value
+    )
+
+    $keyword = ([string]$Value).Trim().ToUpperInvariant()
+    $key = "$Field|$keyword"
+    if ($Hits.ContainsKey($key)) {
+        $Hits[$key].Count++
+    } else {
+        $Hits[$key] = [PSCustomObject]@{
+            Field   = $Field
+            Keyword = $keyword
+            Count   = 1
+        }
+    }
+}
+
+function Find-MissingValueKeywordsInObject {
+    param(
+        [AllowNull()][object]$Object,
+        [string]$Prefix = "root",
+        [hashtable]$SelectedFieldSet,
+        [hashtable]$Hits,
+        [string[]]$Keywords = $script:MissingValueKeywords
+    )
+
+    if ($null -eq $Object) { return }
+
+    if ($Object -is [PSCustomObject]) {
+        $properties = $Object.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" }
+        foreach ($prop in $properties) {
+            Find-MissingValueKeywordsInObject -Object (,$prop.Value) -Prefix "$Prefix.$($prop.Name)" -SelectedFieldSet $SelectedFieldSet -Hits $Hits -Keywords $Keywords
+        }
+        return
+    }
+
+    if ($Object -is [System.Collections.IEnumerable] -and $Object -isnot [string]) {
+        foreach ($item in $Object) {
+            Find-MissingValueKeywordsInObject -Object $item -Prefix $Prefix -SelectedFieldSet $SelectedFieldSet -Hits $Hits -Keywords $Keywords
+        }
+        return
+    }
+
+    $normalized = Normalize-FieldName $Prefix
+    if ($SelectedFieldSet.ContainsKey($normalized) -and (Test-MissingValueKeyword -Value $Object -Keywords $Keywords)) {
+        Add-MissingValueKeywordHit -Hits $Hits -Field $normalized -Value $Object
+    }
+}
+
+function Find-MissingValueKeywordsInInput {
+    param(
+        [string]$InputFile,
+        [string[]]$MaskFields,
+        [string[]]$Keywords = $script:MissingValueKeywords
+    )
+
+    $hits = @{}
+    $selectedFieldSet = Get-SelectedFieldSet -MaskFields $MaskFields
+    $ext = [System.IO.Path]::GetExtension($InputFile).ToLowerInvariant()
+
+    if ($ext -eq ".csv") {
+        Import-Csv $InputFile -ErrorAction Stop | ForEach-Object {
+            foreach ($prop in @($_.PSObject.Properties | Where-Object { -not ($_.Name -like "PS*") -and $_.Name -ne "SyncRoot" })) {
+                $field = Normalize-FieldName "root.$($prop.Name)"
+                if ($selectedFieldSet.ContainsKey($field) -and (Test-MissingValueKeyword -Value $prop.Value -Keywords $Keywords)) {
+                    Add-MissingValueKeywordHit -Hits $hits -Field $field -Value $prop.Value
+                }
+            }
+        }
+    } elseif ($ext -eq ".json") {
+        $json = $null
+        try {
+            $json = Get-Content $InputFile -Raw | ConvertFrom-Json
+        }
+        catch {
+            foreach ($record in @(Read-LooseJsonRecords -FilePath $InputFile)) {
+                Find-MissingValueKeywordsInObject -Object $record -Prefix "root" -SelectedFieldSet $selectedFieldSet -Hits $hits -Keywords $Keywords
+            }
+            return @($hits.Values | Sort-Object Field, Keyword)
+        }
+        if (Test-SocrataJson $json) {
+            $columns = @(Get-SocrataColumns $json)
+            foreach ($row in @($json.data)) {
+                $values = @($row)
+                for ($i = 0; $i -lt $columns.Count; $i++) {
+                    $field = Normalize-FieldName "root.$($columns[$i].Name)"
+                    if ($selectedFieldSet.ContainsKey($field) -and $i -lt $values.Count -and (Test-MissingValueKeyword -Value $values[$i] -Keywords $Keywords)) {
+                        Add-MissingValueKeywordHit -Hits $hits -Field $field -Value $values[$i]
+                    }
+                }
+            }
+        } elseif (Test-HeaderArrayJson $json) {
+            foreach ($record in @(Convert-HeaderArrayRowsToObjects $json)) {
+                Find-MissingValueKeywordsInObject -Object $record -Prefix "root" -SelectedFieldSet $selectedFieldSet -Hits $hits -Keywords $Keywords
+            }
+        } else {
+            $recordCollection = Get-JsonRecordCollectionInfo $json
+            if ($null -ne $recordCollection) {
+                foreach ($record in @($recordCollection.Records)) {
+                    Find-MissingValueKeywordsInObject -Object $record -Prefix "root" -SelectedFieldSet $selectedFieldSet -Hits $hits -Keywords $Keywords
+                }
+            } elseif ($json -is [System.Collections.IEnumerable] -and $json -isnot [string]) {
+                foreach ($record in @($json)) {
+                    Find-MissingValueKeywordsInObject -Object $record -Prefix "root" -SelectedFieldSet $selectedFieldSet -Hits $hits -Keywords $Keywords
+                }
+            } else {
+                Find-MissingValueKeywordsInObject -Object $json -Prefix "root" -SelectedFieldSet $selectedFieldSet -Hits $hits -Keywords $Keywords
+            }
+        }
+    }
+
+    return @($hits.Values | Sort-Object Field, Keyword)
+}
+
+function Show-MissingValueKeywordPrompt {
+    param([object[]]$Hits)
+
+    if (@($Hits).Count -eq 0) { return "Mask" }
+
+    $summary = @($Hits | Select-Object -First 12 | ForEach-Object {
+        "$($_.Keyword) in $($_.Field) ($($_.Count) occurrence(s))"
+    }) -join "`r`n"
+    if (@($Hits).Count -gt 12) {
+        $summary += "`r`n...and $(@($Hits).Count - 12) more keyword/field combinations"
+    }
+
+    $message = "Selected masked fields contain database-style missing value keywords:`r`n`r`n$summary`r`n`r`nYes = create masks for these values`r`nNo = export blanks for these values`r`nCancel = stop this run"
+    $answer = [System.Windows.Forms.MessageBox]::Show(
+        $message,
+        "Missing Value Keywords Found",
+        [System.Windows.Forms.MessageBoxButtons]::YesNoCancel,
+        [System.Windows.Forms.MessageBoxIcon]::Question
+    )
+
+    if ($answer -eq [System.Windows.Forms.DialogResult]::Yes) { return "Mask" }
+    if ($answer -eq [System.Windows.Forms.DialogResult]::No) { return "Blank" }
+    return $null
+}
+
 function Get-MaskedValue {
     param($Value, $Key)
     if ([string]::IsNullOrEmpty($Value)) { return $Value }
@@ -1005,7 +1166,14 @@ function Get-MaskedValue {
     $hmac.Key = [Text.Encoding]::UTF8.GetBytes($Key)
     $bytes = [Text.Encoding]::UTF8.GetBytes([string]$Value)
     $hash = $hmac.ComputeHash($bytes)
-    return ([Convert]::ToBase64String($hash).Substring(0, 12))
+    return ConvertTo-ExcelSafeMaskedValue ([Convert]::ToBase64String($hash).Substring(0, 12))
+}
+
+function ConvertTo-ExcelSafeMaskedValue {
+    param($Value)
+
+    if ($null -eq $Value) { return $null }
+    return "x$Value"
 }
 
 function Add-MappingRow {
@@ -1031,6 +1199,10 @@ function Mask-IfNeeded {
         $script:MaskedFieldsProcessed++
         $strVal = [string]$Value
         $normalizedField = Normalize-FieldName $FieldName
+        if ($script:MissingValueKeywordAction -eq "Blank" -and (Test-MissingValueKeyword -Value $strVal)) {
+            Write-MaskLog -Field $normalizedField -OriginalValue $strVal -MaskedValue ""
+            return ""
+        }
         if (-not $script:Mapping.ContainsKey($strVal)) {
             $script:Mapping[$strVal] = @{
                 Masked = Get-MaskedValue $strVal $script:SecretKey
@@ -1115,7 +1287,7 @@ function New-TableRowId {
     $sha = [System.Security.Cryptography.SHA256]::Create()
     try {
         $hash = $sha.ComputeHash([Text.Encoding]::UTF8.GetBytes($idSource))
-        return (($hash | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 8)
+        return ConvertTo-ExcelSafeMaskedValue ((($hash | ForEach-Object { $_.ToString("x2") }) -join "").Substring(0, 8))
     }
     finally {
         $sha.Dispose()
@@ -1823,11 +1995,16 @@ function Invoke-Masking {
         [string]$OutputFolder,
         [string]$KeyFile,
         [string]$SecretKey,
-        [string[]]$MaskFields
+        [string[]]$MaskFields,
+        [ValidateSet("Mask", "Blank")]
+        [string]$MissingValueKeywordAction = "Mask",
+        [string[]]$MissingValueKeywords = @("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!", "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED", "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE")
     )
     
     $script:SelectedFields = $MaskFields
     $script:SecretKey = $SecretKey
+    $script:MissingValueKeywordAction = $MissingValueKeywordAction
+    $script:MissingValueKeywords = @($MissingValueKeywords)
     $script:Mapping = New-OrdinalHashtable
     $script:MappingWithRows = New-Object System.Collections.ArrayList
     $script:Tables = New-OrdinalHashtable
@@ -1955,7 +2132,10 @@ function Generate-ReplicationScript {
         [string]$OutputFolder,
         [string]$InputFile,
         [string]$SecretKey,
-        [string[]]$MaskFields
+        [string[]]$MaskFields,
+        [ValidateSet("Mask", "Blank")]
+        [string]$MissingValueKeywordAction = $script:MissingValueKeywordAction,
+        [string[]]$MissingValueKeywords = $script:MissingValueKeywords
     )
     
     Export-ReplicationToolSource -OutputFolder $OutputFolder
@@ -1965,8 +2145,14 @@ function Generate-ReplicationScript {
         $maskFieldsList += "'" + ([string]$field).Replace("'", "''") + "'"
     }
     $maskFieldsForScript = $maskFieldsList -join ','
+    $missingKeywordList = @()
+    foreach ($keyword in @($MissingValueKeywords)) {
+        $missingKeywordList += "'" + ([string]$keyword).Replace("'", "''") + "'"
+    }
+    $missingKeywordsForScript = $missingKeywordList -join ','
     $inputFileForScript = "'" + ([string]$InputFile).Replace("'", "''") + "'"
     $secretKeyForScript = "'" + ([string]$SecretKey).Replace("'", "''") + "'"
+    $missingActionForScript = "'" + ([string]$MissingValueKeywordAction).Replace("'", "''") + "'"
     
 $scriptContent = @"
 # Replicate a Flat & Mask masking run.
@@ -2010,6 +2196,8 @@ if (-not (Test-Path -LiteralPath `$InputFile)) {
 }
 
 `$MaskFields = @($maskFieldsForScript)
+`$MissingValueKeywordAction = $missingActionForScript
+`$MissingValueKeywords = @($missingKeywordsForScript)
 `$replicationInputFile = `$InputFile
 `$replicationOutputFolder = `$OutputFolder
 `$replicationSecretKey = `$SecretKey
@@ -2033,7 +2221,7 @@ if (`$markerIndex -lt 0) {
 Invoke-Expression `$toolText.Substring(0, `$markerIndex)
 
 `$keyFile = Join-Path `$replicationOutputFolder "masking_key.csv"
-Invoke-Masking -InputFile `$replicationInputFile -OutputFolder `$replicationOutputFolder -KeyFile `$keyFile -SecretKey `$replicationSecretKey -MaskFields `$MaskFields
+Invoke-Masking -InputFile `$replicationInputFile -OutputFolder `$replicationOutputFolder -KeyFile `$keyFile -SecretKey `$replicationSecretKey -MaskFields `$MaskFields -MissingValueKeywordAction `$MissingValueKeywordAction -MissingValueKeywords `$MissingValueKeywords
 
 Write-Host "Replication complete!" -ForegroundColor Green
 Write-Host "Output: `$replicationOutputFolder"
@@ -2651,13 +2839,27 @@ $runButton.Add_Click({
     $mainForm.Refresh()
     
     try {
+        $missingKeywordAction = "Mask"
+        try {
+            $missingKeywordHits = @(Find-MissingValueKeywordsInInput -InputFile $script:LastInputFile -MaskFields $script:SelectedFields)
+            $chosenAction = Show-MissingValueKeywordPrompt -Hits $missingKeywordHits
+            if ($null -eq $chosenAction) {
+                $statusLabel.Text = "Ready"
+                return
+            }
+            $missingKeywordAction = $chosenAction
+        }
+        catch {
+            Write-VerboseLog "Missing keyword scan skipped: $($_.Exception.Message)"
+        }
+
         # Create timestamped subfolder for GUI runs
         $timestamp = Get-Date -Format "yyyy-MM-dd_HH-mm-ss"
         $guiOutputFolder = Join-Path $script:LastOutputFolder "Masked_Data_GUI_$timestamp"
         New-Item -ItemType Directory -Force -Path $guiOutputFolder | Out-Null
         
         $keyFile = Join-Path $guiOutputFolder "masking_key.csv"
-        Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $guiOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields
+        Invoke-Masking -InputFile $script:LastInputFile -OutputFolder $guiOutputFolder -KeyFile $keyFile -SecretKey $script:SecretKey -MaskFields $script:SelectedFields -MissingValueKeywordAction $missingKeywordAction
         $statusLabel.Text = "Complete! Processed $($script:ProcessedLines) $($script:ProgressRecordLabel.ToLowerInvariant()) | Masked $($script:MaskedFieldsProcessed) fields | Generated $($script:TablesProduced) tables"
         Complete-GuiProgressStages
         [System.Windows.Forms.MessageBox]::Show("Masking completed successfully!`n`n$($script:ProgressRecordLabel) processed: $($script:ProcessedLines)`nFields masked: $($script:MaskedFieldsProcessed) (est ~$($script:EstimatedFieldsToMask))`nTables produced: $($script:TablesProduced) (est ~$($script:EstimatedTablesToProduce))`n`nOutput saved to: $guiOutputFolder", "Success", [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Information)

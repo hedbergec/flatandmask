@@ -14,9 +14,10 @@
 #' `items`, or `records`; and top-level header-row array JSON.
 #'
 #' @section Masking behavior:
-#' Masked values are the first 12 Base64 characters of an HMAC-SHA256 digest of
-#' the original value using the supplied secret key. The same original value and
-#' key always produce the same masked value. Empty values remain empty.
+#' Masked values are an `x` prefix followed by the first 12 Base64 characters of
+#' an HMAC-SHA256 digest of the original value using the supplied secret key. The
+#' same original value and key always produce the same masked value. Empty values
+#' remain empty.
 #'
 #' @keywords internal
 #' @importFrom digest digest hmac
@@ -109,6 +110,12 @@
 #' @param progress_callback Optional function called as
 #'   `progress_callback(stage, current, total, message)`, where `stage` is one
 #'   of `"load"`, `"mask"`, `"normalize"`, or `"export"`.
+#' @param missing_value_keyword_action How to handle selected masked-field
+#'   values that exactly match `missing_value_keywords`. Use `"mask"` to create
+#'   deterministic masks, or `"blank"` to export blanks and omit those keyword
+#'   values from the masking key.
+#' @param missing_value_keywords Character vector of database-style missing
+#'   value tokens to detect, compared case-insensitively after trimming.
 #'
 #' @return Invisibly returns `output_folder`. Files are written for their side
 #'   effects. CSV jobs write `data.csv`, `masking_key.csv`, and
@@ -128,11 +135,19 @@
 #' @usage
 #' datamaskr(input_file, output_folder,
 #'   key_file = file.path(output_folder, "masking_key.csv"),
-#'   secret_key, mask_fields, progress_callback = NULL)
+#'   secret_key, mask_fields, progress_callback = NULL,
+#'   missing_value_keyword_action = c("mask", "blank"),
+#'   missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!",
+#'     "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED",
+#'     "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE"))
 #'
 #' invoke_masking(input_file, output_folder,
 #'   key_file = file.path(output_folder, "masking_key.csv"),
-#'   secret_key, mask_fields, progress_callback = NULL)
+#'   secret_key, mask_fields, progress_callback = NULL,
+#'   missing_value_keyword_action = c("mask", "blank"),
+#'   missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!",
+#'     "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED",
+#'     "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE"))
 NULL
 
 #' Deterministic masking primitives
@@ -153,7 +168,7 @@ NULL
 #' @param object,Object R list representing a JSON object or array.
 #' @param prefix,Prefix Current JSON path prefix.
 #'
-#' @return `get_masked_value()` returns a 12-character deterministic mask.
+#' @return `get_masked_value()` returns an Excel-safe deterministic mask.
 #'   Field-selection helpers return logical values or normalized character
 #'   vectors. Object functions return masked R objects or update internal
 #'   state used by a masking run.

@@ -1,0 +1,6 @@
+Name,Email,Status,Notes
+Alice,alice@example.com,ACTIVE,Real value
+Bob,NULL,UNKNOWN,Should prompt
+Carla,NA,NOT AVAILABLE,Should prompt
+Dan,#N/A,NO DATA,Should prompt
+Eve,eve@example.com,UNSPECIFIED,Should prompt

@@ -57,7 +57,14 @@ function Get-MaskedValue {
     $hmac.Key = [Text.Encoding]::UTF8.GetBytes($Key)
     $bytes = [Text.Encoding]::UTF8.GetBytes([string]$Value)
     $hash = $hmac.ComputeHash($bytes)
-    return [Convert]::ToBase64String($hash).Substring(0, 12)
+    return ConvertTo-ExcelSafeMaskedValue ([Convert]::ToBase64String($hash).Substring(0, 12))
+}
+
+function ConvertTo-ExcelSafeMaskedValue {
+    param($Value)
+
+    if ($null -eq $Value) { return $null }
+    return "x$Value"
 }
 
 function New-MaskingState {
@@ -80,7 +87,7 @@ function Get-NextSyntheticId {
     }
 
     $State.TableCounters[$TableName]++
-    return "{0}-{1:d4}" -f $TableName.Replace("root_", "").Replace("_", "-"), $State.TableCounters[$TableName]
+    return ConvertTo-ExcelSafeMaskedValue ("{0}-{1:d4}" -f $TableName.Replace("root_", "").Replace("_", "-"), $State.TableCounters[$TableName])
 }
 
 function Add-MaskingKeyEntry {

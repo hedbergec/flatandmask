@@ -104,9 +104,12 @@ export_replication_tool_source <- function(output_folder) {
   invisible(path)
 }
 
-generate_replication_script <- function(output_folder, input_file, secret_key, mask_fields) {
+generate_replication_script <- function(output_folder, input_file, secret_key, mask_fields,
+                                        missing_value_keyword_action = .state()$missing_value_keyword_action,
+                                        missing_value_keywords = .state()$missing_value_keywords) {
   export_replication_tool_source(output_folder)
   mask_fields_text <- paste(sprintf("%s", deparse(mask_fields)), collapse = "\n")
+  missing_keywords_text <- paste(sprintf("%s", deparse(missing_value_keywords)), collapse = "\n")
   input_file <- normalizePath(input_file, winslash = "/", mustWork = FALSE)
   output_folder <- normalizePath(output_folder, winslash = "/", mustWork = FALSE)
   content <- c(
@@ -127,12 +130,14 @@ generate_replication_script <- function(output_folder, input_file, secret_key, m
     sprintf("output_folder <- if (length(args) >= 2) args[[2]] else %s", deparse(output_folder)),
     sprintf("secret_key <- if (length(args) >= 3) args[[3]] else %s", deparse(secret_key)),
     paste0("mask_fields <- ", mask_fields_text),
+    sprintf("missing_value_keyword_action <- %s", deparse(missing_value_keyword_action)),
+    paste0("missing_value_keywords <- ", missing_keywords_text),
     "",
     "input_file <- normalizePath(input_file, winslash = '/', mustWork = TRUE)",
     "dir.create(output_folder, recursive = TRUE, showWarnings = FALSE)",
     "output_folder <- normalizePath(output_folder, winslash = '/', mustWork = FALSE)",
     "key_file <- file.path(output_folder, 'masking_key.csv')",
-    "invoke_masking(input_file, output_folder, key_file, secret_key, mask_fields)",
+    "invoke_masking(input_file, output_folder, key_file, secret_key, mask_fields, missing_value_keyword_action = missing_value_keyword_action, missing_value_keywords = missing_value_keywords)",
     "message('Replication complete: ', output_folder)"
   )
   path <- file.path(output_folder, "replicate_masking.R")

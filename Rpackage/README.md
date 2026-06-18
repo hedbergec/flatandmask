@@ -5,6 +5,36 @@ deterministically masks selected JSON and CSV fields with HMAC-SHA256, exports a
 masking key, normalizes nested JSON into related CSV tables, and includes a
 Shiny GUI for point-and-click use.
 
+## Version 2.0.0 Behavior
+
+Version 2.0.0 adds two important output-safety flows:
+
+- Non-empty masked values and generated relationship IDs now start with `x`, so Excel treats masks as text even when the underlying HMAC output begins with `=`, `+`, `-`, or `@`.
+- The Shiny GUI scans selected masked fields for database-style missing-value keywords and asks whether to create masks or export blanks for those values.
+
+The default missing-keyword list is:
+
+```text
+NULL, NA, N/A, NAN, #N/A, #NULL!, NONE, NIL, MISSING, UNKNOWN,
+UNSPECIFIED, UNDEFINED, NOT APPLICABLE, NOT AVAILABLE, NO DATA, NO VALUE
+```
+
+Scripted R runs create masks for those values by default. Use `missing_value_keyword_action = "blank"` to export blanks instead:
+
+```r
+datamaskr(
+  input_file = "your-data.csv",
+  output_folder = "~/Documents/MASKED/csv-results",
+  secret_key = "your-secret-key",
+  mask_fields = c("Name", "Email"),
+  missing_value_keyword_action = "blank"
+)
+```
+
+Use `missing_value_keywords = c(...)` to provide a custom keyword list.
+
+If you need pre-v2 behavior, the repository root preserves the actual `v1.5.0` artifacts under `old builds/v1.5.0/`.
+
 ## Install From GitHub
 
 Install R first, then run one of these in R:
@@ -100,6 +130,8 @@ datamaskr(
 ```
 
 For complex nested JSON, the package creates multiple related CSV files. Use the generated synthetic ID columns (like `root_id`, `projects_id`) to join tables manually.
+
+In v2.0.0, those generated ID values are also prefixed with `x` for Excel safety.
 
 ## Examples with Package Data
 

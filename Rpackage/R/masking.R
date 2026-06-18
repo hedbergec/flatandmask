@@ -16,6 +16,109 @@ should_mask_field <- function(field_path) {
   normalize_field_name(field_path) %in% normalize_field_name(state$selected_fields)
 }
 
+is_missing_value_keyword <- function(value, keywords = .state()$missing_value_keywords) {
+  if (is.null(value) || length(value) == 0L) return(FALSE)
+  value <- trimws(as.character(value[[1L]]))
+  if (is.na(value)) return(FALSE)
+  if (!nzchar(value)) return(FALSE)
+  any(toupper(value) == toupper(trimws(as.character(keywords))))
+}
+
+add_missing_value_keyword_hit <- function(hits, field, value) {
+  keyword <- toupper(trimws(as.character(value[[1L]])))
+  key <- paste(field, keyword, sep = "|")
+  if (is.null(hits[[key]])) {
+    hits[[key]] <- list(Field = field, Keyword = keyword, Count = 1L)
+  } else {
+    hits[[key]]$Count <- hits[[key]]$Count + 1L
+  }
+  hits
+}
+
+find_missing_value_keywords_in_object <- function(object, prefix = "root", selected_field_set,
+                                                  hits = list(),
+                                                  keywords = .state()$missing_value_keywords) {
+  if (is.null(object)) return(hits)
+  if (is_object_record(object)) {
+    for (name in visible_names(object)) {
+      hits <- find_missing_value_keywords_in_object(object[[name]], paste(prefix, name, sep = "."),
+                                                    selected_field_set, hits, keywords)
+    }
+    return(hits)
+  }
+  if (is_list_array(object)) {
+    for (item in object) {
+      hits <- find_missing_value_keywords_in_object(item, prefix, selected_field_set, hits, keywords)
+    }
+    return(hits)
+  }
+  field <- normalize_field_name(prefix)
+  if (field %in% selected_field_set && is_missing_value_keyword(object, keywords)) {
+    hits <- add_missing_value_keyword_hit(hits, field, object)
+  }
+  hits
+}
+
+find_missing_value_keywords_in_input <- function(input_file, mask_fields,
+                                                 keywords = .state()$missing_value_keywords) {
+  selected <- get_selected_field_set(mask_fields)
+  hits <- list()
+  ext <- tolower(tools::file_ext(input_file))
+  if (identical(ext, "csv")) {
+    csv <- utils::read.csv(input_file, stringsAsFactors = FALSE, check.names = FALSE,
+                           fileEncoding = "UTF-8-BOM", colClasses = "character",
+                           na.strings = character())
+    for (name in names(csv)) {
+      field <- normalize_field_name(paste0("root.", name))
+      if (!(field %in% selected)) next
+      for (value in csv[[name]]) {
+        if (is_missing_value_keyword(value, keywords)) {
+          hits <- add_missing_value_keyword_hit(hits, field, value)
+        }
+      }
+    }
+  } else if (identical(ext, "json")) {
+    json <- tryCatch(jsonlite::fromJSON(input_file, simplifyVector = FALSE), error = function(e) NULL)
+    if (is.null(json)) {
+      for (record in read_loose_json_records(input_file)) {
+        hits <- find_missing_value_keywords_in_object(record, "root", selected, hits, keywords)
+      }
+      hits <- unname(hits)
+      if (!length(hits)) return(data.frame(Field = character(), Keyword = character(), Count = integer()))
+      out <- do.call(rbind, lapply(hits, as.data.frame, stringsAsFactors = FALSE))
+      return(out[order(out$Field, out$Keyword), , drop = FALSE])
+    }
+    if (test_socrata_json(json)) {
+      columns <- get_socrata_columns(json)
+      for (row in json$data) {
+        for (i in seq_along(columns)) {
+          field <- normalize_field_name(paste0("root.", columns[[i]]$Name))
+          if (field %in% selected && i <= length(row) && is_missing_value_keyword(row[[i]], keywords)) {
+            hits <- add_missing_value_keyword_hit(hits, field, row[[i]])
+          }
+        }
+      }
+    } else if (test_header_array_json(json)) {
+      for (record in convert_header_array_rows_to_objects(json)) {
+        hits <- find_missing_value_keywords_in_object(record, "root", selected, hits, keywords)
+      }
+    } else {
+      collection <- get_json_record_collection_info(json)
+      if (!is.null(collection)) {
+        for (record in collection$records) {
+          hits <- find_missing_value_keywords_in_object(record, "root", selected, hits, keywords)
+        }
+      } else {
+        hits <- find_missing_value_keywords_in_object(json, "root", selected, hits, keywords)
+      }
+    }
+  }
+  hits <- unname(hits)
+  if (!length(hits)) return(data.frame(Field = character(), Keyword = character(), Count = integer()))
+  out <- do.call(rbind, lapply(hits, as.data.frame, stringsAsFactors = FALSE))
+  out[order(out$Field, out$Keyword), , drop = FALSE]
+}
+
 get_masked_value <- function(value, key) {
   if (is.null(value) || length(value) == 0L) return("")
   if (length(value) > 1L) value <- value[[1L]]
@@ -25,7 +128,12 @@ get_masked_value <- function(value, key) {
                            algo = "sha256",
                            serialize = FALSE,
                            raw = TRUE)
-  substr(jsonlite::base64_enc(raw_hash), 1L, 12L)
+  excel_safe_masked_value(substr(jsonlite::base64_enc(raw_hash), 1L, 12L))
+}
+
+excel_safe_masked_value <- function(value) {
+  if (is.null(value) || length(value) == 0L) return(value)
+  paste0("x", as.character(value))
 }
 
 add_mapping_row <- function(original, masked, field, row_index = NULL) {
@@ -49,6 +157,12 @@ mask_if_needed <- function(field_name, value, row_index = NULL) {
   if (!is.null(value) && length(value) > 1L) value <- value[[1L]]
   str_val <- if (is.null(value) || length(value) == 0L || is.na(value)) "" else as.character(value)
   normalized_field <- normalize_field_name(field_name)
+  if (identical(state$missing_value_keyword_action, "blank") &&
+      is_missing_value_keyword(str_val, state$missing_value_keywords)) {
+    .set_state(state)
+    write_mask_log(normalized_field, str_val, "")
+    return("")
+  }
   key <- paste0("value:", str_val)
   if (!exists(key, envir = state$mapping, inherits = FALSE)) {
     masked <- get_masked_value(str_val, state$secret_key)
@@ -110,7 +224,7 @@ new_table_row_id <- function(table_name) {
   next_id <- get(table_name, envir = state$table_id_counters, inherits = FALSE) + 1L
   assign(table_name, next_id, envir = state$table_id_counters)
   .set_state(state)
-  substr(digest::digest(paste(table_name, next_id, sep = "|"), algo = "sha256", serialize = FALSE), 1L, 8L)
+  excel_safe_masked_value(substr(digest::digest(paste(table_name, next_id, sep = "|"), algo = "sha256", serialize = FALSE), 1L, 8L))
 }
 
 process_masked_object <- function(object, table_name = "root", id_map = list()) {

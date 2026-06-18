@@ -112,7 +112,8 @@ invoke_csv_masking_fast <- function(input_file, output_folder, key_file, secret_
   write_job_estimate_status("CSV")
 
   csv <- utils::read.csv(input_file, stringsAsFactors = FALSE, check.names = FALSE,
-                         fileEncoding = "UTF-8-BOM", colClasses = "character")
+                         fileEncoding = "UTF-8-BOM", colClasses = "character",
+                         na.strings = character())
   headers <- names(csv)
   for (i in seq_len(nrow(csv))) {
     for (name in headers) csv[i, name] <- mask_if_needed(paste0("root.", name), csv[i, name], i - 1L)
@@ -138,10 +139,15 @@ invoke_csv_masking_fast <- function(input_file, output_folder, key_file, secret_
 }
 
 datamaskr <- function(input_file, output_folder, key_file = file.path(output_folder, "masking_key.csv"),
-                      secret_key, mask_fields, progress_callback = NULL) {
+                      secret_key, mask_fields, progress_callback = NULL,
+                      missing_value_keyword_action = c("mask", "blank"),
+                      missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!", "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED", "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE")) {
+  missing_value_keyword_action <- match.arg(missing_value_keyword_action)
   state <- .new_state()
   state$selected_fields <- mask_fields
   state$secret_key <- secret_key
+  state$missing_value_keyword_action <- missing_value_keyword_action
+  state$missing_value_keywords <- missing_value_keywords
   state$progress_callback <- progress_callback
   .set_state(state)
   reset_job_estimate()
@@ -215,13 +221,17 @@ datamaskr <- function(input_file, output_folder, key_file = file.path(output_fol
 }
 
 invoke_masking <- function(input_file, output_folder, key_file = file.path(output_folder, "masking_key.csv"),
-                           secret_key, mask_fields, progress_callback = NULL) {
+                           secret_key, mask_fields, progress_callback = NULL,
+                           missing_value_keyword_action = c("mask", "blank"),
+                           missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!", "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED", "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE")) {
   datamaskr(
     input_file = input_file,
     output_folder = output_folder,
     key_file = key_file,
     secret_key = secret_key,
     mask_fields = mask_fields,
-    progress_callback = progress_callback
+    progress_callback = progress_callback,
+    missing_value_keyword_action = missing_value_keyword_action,
+    missing_value_keywords = missing_value_keywords
   )
 }

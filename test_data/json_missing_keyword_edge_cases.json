@@ -1,0 +1,50 @@
+{
+  "records": [
+    {
+      "id": "1",
+      "email": " NULL ",
+      "status": "unknown",
+      "profile": {
+        "secondary_email": "#NULL!",
+        "availability": "not applicable"
+      },
+      "aliases": [
+        "NA",
+        "real-alias"
+      ],
+      "events": [
+        {
+          "code": "NO VALUE",
+          "detail": "real-detail"
+        },
+        {
+          "code": "ok",
+          "detail": "NAN"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "email": "person@example.com",
+      "status": "ACTIVE",
+      "profile": {
+        "secondary_email": "none",
+        "availability": "available"
+      },
+      "aliases": [
+        "MISSING",
+        "real-alias-2"
+      ],
+      "events": [
+        {
+          "code": "UNDEFINED",
+          "detail": "actual"
+        },
+        {
+          "code": "OK2",
+          "detail": "NOT AVAILABLE"
+        }
+      ]
+    }
+  ]
+}

@@ -41,7 +41,7 @@ empty string.}
 \item{prefix, Prefix}{Current JSON path prefix.}
 }
 \value{
-\code{get_masked_value()} returns a 12-character deterministic mask.
+\code{get_masked_value()} returns an Excel-safe deterministic mask.
 Field-selection helpers return logical values or normalized character
 vectors. Object functions return masked R objects or update internal
 state used by a masking run.

@@ -2,7 +2,7 @@
 
 .new_state <- function() {
   list(
-    app_version = "1.5.0",
+    app_version = "2.0.0",
     app_title = "JsonCSVMaskr",
     repo_url = "https://github.com/hedbergec/flatandmask",
     author_name = "Eric Hedberg",
@@ -11,6 +11,8 @@
     last_output_folder = NULL,
     selected_fields = character(),
     secret_key = "",
+    missing_value_keywords = c("NULL", "NA", "N/A", "NAN", "#N/A", "#NULL!", "NONE", "NIL", "MISSING", "UNKNOWN", "UNSPECIFIED", "UNDEFINED", "NOT APPLICABLE", "NOT AVAILABLE", "NO DATA", "NO VALUE"),
+    missing_value_keyword_action = "mask",
     mapping = new.env(parent = emptyenv()),
     mapping_rows = list(),
     tables = new.env(parent = emptyenv()),

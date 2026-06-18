@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Alice",
+    "email": "alice@example.com",
+    "status": "ACTIVE",
+    "notes": "Real value"
+  },
+  {
+    "name": "Bob",
+    "email": "NULL",
+    "status": "UNKNOWN",
+    "notes": "Should prompt"
+  },
+  {
+    "name": "Carla",
+    "email": "NA",
+    "status": "NOT AVAILABLE",
+    "notes": "Should prompt"
+  },
+  {
+    "name": "Dan",
+    "email": "#N/A",
+    "status": "NO DATA",
+    "notes": "Should prompt"
+  },
+  {
+    "name": "Eve",
+    "email": "eve@example.com",
+    "status": "UNSPECIFIED",
+    "notes": "Should prompt"
+  }
+]

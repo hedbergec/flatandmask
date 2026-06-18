@@ -2,7 +2,7 @@
 
 <img src="icon.svg" width="64" height="64" alt="Data Masking Tool logo">
 
-**Version 1.5.0**
+**Version 2.0.0**
 
 Copyright (c) 2026 Design Effects, LLC
 
@@ -67,6 +67,7 @@ This opens the R Shiny version of the tool in your browser.
 
 - [New to GitHub? Download and Start Here](#new-to-github-download-and-start-here)
 - [Overview](#overview)
+- [Version 2.0.0 Behavior Changes](#version-200-behavior-changes)
 - [GUI Output Folder Behavior](#gui-output-folder-behavior)
 - [Windows Program Requirements](#windows-program-requirements)
 - [Windows Installation & Deployment](#windows-installation--deployment)
@@ -93,6 +94,8 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 ### Key Features
 
 - **Deterministic Masking**: Same input = same masked value (using HMAC-SHA256)
+- **Excel-Safe Mask Tokens**: Non-empty masked values and generated join IDs are prefixed with `x` so Excel treats them as text
+- **Missing Keyword Handling**: Detect database-style missing-value tokens in selected masked fields and choose whether to mask them or export blanks
 - **Multi-Format Support**: Process CSV plus standard, loose, tabular, and envelope JSON formats with identical interface
 - **Interactive Field Selection**: Choose which columns/fields to mask via GUI
 - **JSON Schema Tree Viewer**: Searchable tree browser for complex nested JSON structures
@@ -104,6 +107,96 @@ Data Masking Tool is a self-contained PowerShell GUI application that determinis
 - **Release Notice & Update Check**: GUI and terminal startup show the no-warranty notice, repo URL, and contact info; the GUI can check GitHub for newer releases or tags
 - **Replication Bundle**: Auto-generated replay script plus matching `DataMaskingTool.ps1` source copy for consistent reruns
 - **Portable Single EXE**: Fully self-contained executable with zero external dependencies
+
+## Version 2.0.0 Behavior Changes
+
+Version 2.0.0 intentionally changes masked output behavior.
+
+### Excel-Safe Masked Values
+
+All non-empty masked values now start with `x`, including generated relationship/join IDs such as `root_id` and child-table IDs. This prevents Excel from interpreting masked values that happen to begin with formula-trigger characters such as `=`, `+`, `-`, or `@`.
+
+For example, a previous mask like `+3q5S6IFRKIS` is now exported as `x+3q5S6IFRKIS`.
+
+### Missing Keyword Flow
+
+The PowerShell GUI and R Shiny GUI scan selected masked fields for common database-style missing-value keywords before a run. When these values are found, the GUI asks whether to:
+
+- create deterministic masks for those keyword values, or
+- export blanks for those keyword values.
+
+The default keyword list is:
+
+```text
+NULL, NA, N/A, NAN, #N/A, #NULL!, NONE, NIL, MISSING, UNKNOWN,
+UNSPECIFIED, UNDEFINED, NOT APPLICABLE, NOT AVAILABLE, NO DATA, NO VALUE
+```
+
+Scripted runs keep the default behavior of creating masks unless you opt into blanks:
+
+```powershell
+Invoke-Masking -InputFile ".\input.csv" -OutputFolder ".\out" -KeyFile ".\out\masking_key.csv" `
+  -SecretKey "your-secret-key" -MaskFields @("root.Name") `
+  -MissingValueKeywordAction Blank
+```
+
+```r
+datamaskr(
+  input_file = "input.csv",
+  output_folder = "out",
+  secret_key = "your-secret-key",
+  mask_fields = "root.Name",
+  missing_value_keyword_action = "blank"
+)
+```
+
+Use `-MissingValueKeywords` in PowerShell or `missing_value_keywords = c(...)` in R to supply a custom keyword list.
+
+### Missing Keyword Demo Files
+
+Two small fixtures are included for testing the GUI prompt:
+
+```text
+example data/gui_missing_keyword_demo.csv
+example data/gui_missing_keyword_demo.json
+```
+
+In either the PowerShell GUI or R Shiny GUI:
+
+1. Select one of those files.
+2. Select `Email` and `Status` for CSV, or `root.email` and `root.status` for JSON.
+3. Enter any secret key and run masking.
+4. The tool should prompt because selected fields contain values such as `NULL`, `NA`, `#N/A`, `UNKNOWN`, `NOT AVAILABLE`, `NO DATA`, and `UNSPECIFIED`.
+
+Choose the mask option to see those values exported as deterministic `x...` masks, or choose the blank option to see them exported as empty values and omitted from `masking_key.csv`.
+
+A broader JSON edge-case fixture is also included for regression testing:
+
+```text
+test_data/json_missing_keyword_edge_cases.json
+```
+
+It covers envelope JSON, nested objects, scalar arrays, arrays of objects, whitespace-padded keywords, and mixed-case keyword values. To exercise it manually, select these JSON fields:
+
+```text
+root.email
+root.status
+root.profile.secondary_email
+root.profile.availability
+root.aliases
+root.events.code
+root.events.detail
+```
+
+### Preserved v1.5.0 Builds
+
+The actual GitHub `v1.5.0` release artifacts are preserved in:
+
+```text
+old builds/v1.5.0/
+```
+
+Use those archived artifacts if you need the pre-v2 behavior, where masked values did not receive the `x` prefix and the missing-keyword prompt/blanking flow did not exist.
 
 ## GUI Output Folder Behavior
 
@@ -710,6 +803,17 @@ DataMaskingTool.ps1              # Main script
 launch.bat                        # Batch launcher (optional)
 ```
 
+**Archived v1.5.0 behavior:**
+
+```
+old builds/v1.5.0/
+├── build/dist/                   # v1.5.0 portable PowerShell files
+├── build/exe/                    # v1.5.0 standalone EXE
+└── build/Rpackage/               # v1.5.0 R package artifacts
+```
+
+Use the archived `v1.5.0` artifacts only when you need the older behavior without the v2 `x` prefix and missing-keyword flow.
+
 ## R Implementation (`JsonCSVMaskr`)
 
 The repository also includes an R package in `Rpackage/` that mirrors the PowerShell masking engine and provides both scripted and Shiny GUI workflows on Windows, macOS, and Linux.
@@ -745,17 +849,17 @@ Install from a downloaded package artifact after downloading the `.zip` or `.tar
 install.packages(c("digest", "jsonlite", "shiny", "shinyFiles"))
 
 # Windows binary package
-install.packages("JsonCSVMaskr_1.5.0.zip", repos = NULL, type = "win.binary")
+install.packages("JsonCSVMaskr_2.0.0.zip", repos = NULL, type = "win.binary")
 
 # Source package on Windows, macOS, or Linux
-install.packages("JsonCSVMaskr_1.5.0.tar.gz", repos = NULL, type = "source")
+install.packages("JsonCSVMaskr_2.0.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Use the actual downloaded file path if the package artifact is not in the current R working directory:
 
 ```r
-install.packages("C:/Users/you/Downloads/JsonCSVMaskr_1.5.0.zip", repos = NULL, type = "win.binary")
-install.packages("~/Downloads/JsonCSVMaskr_1.5.0.tar.gz", repos = NULL, type = "source")
+install.packages("C:/Users/you/Downloads/JsonCSVMaskr_2.0.0.zip", repos = NULL, type = "win.binary")
+install.packages("~/Downloads/JsonCSVMaskr_2.0.0.tar.gz", repos = NULL, type = "source")
 ```
 
 Install from a local checkout:
@@ -884,7 +988,7 @@ Build and check from the repository root:
 
 ```bash
 R CMD build Rpackage
-R CMD check JsonCSVMaskr_1.5.0.tar.gz --no-manual
+R CMD check JsonCSVMaskr_2.0.0.tar.gz --no-manual
 ```
 
 On Windows with R installed and available on `PATH`, build the `JsonCSVMaskr` R package artifacts with:
@@ -956,6 +1060,7 @@ Rscript Rpackage\tools\validate-fixtures.R . .\test_output\r_correspondence_prob
 
 ## Change Log
 
+- **v2.0.0** - Prefix non-empty masked values and generated relationship IDs with `x` so Excel treats all masks as text; add GUI prompts and scripted options for database-style missing-value keywords such as `NULL`, `NA`, `#N/A`, `UNKNOWN`, and `NOT AVAILABLE`; preserve actual `v1.5.0` artifacts under `old builds/v1.5.0` for users who need pre-v2 behavior
 - **v1.5.0** - Quote all generated CSV fields in the PowerShell and R implementations, including masked data values and masking-key values, so leading `+` or `-` outputs remain text when opened in Excel; validated with the full 22-scenario PowerShell regression suite and matching-key R correspondence check against the 1.5.0 Windows outputs
 - **v1.4.0** - Preserve leading-zero CSV values as character data in the R implementation so values like `0123`, `00123`, and `123` mask to distinct deterministic outputs, matching the PowerShell behavior; added regression fixtures for leading-zero CSV and JSON string values
 - **v1.3.0** - Updated the logo/icon assets, aligned the R package version with the Windows tool, added smarter field-selection prompts and searchable field selectors, retained selected fields across selector reopen/filter operations, and simplified the Shiny output-folder workflow
